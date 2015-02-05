@@ -1,0 +1,29 @@
+From 2c3247f83c630875a7e8e347aed0cde3c1919639 Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Sun, 27 Apr 2014 10:08:45 +0200
+Subject: [PATCH 11/21] packaging: updated path to client plugins.
+
+Change-Id: I2fad60e0db77de480687a1f9992da46e08e9783e
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.spec | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index 5b5ffa0..9825be9 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -109,8 +109,8 @@ rm -rf %{buildroot}
+ %{_libdir}/libQt5WaylandClient.so.5*
+ %{_libdir}/qt5/plugins/platforms/libqwayland-generic.so
+ %{_libdir}/qt5/plugins/platforms/libqwayland-egl.so
+-%{_libdir}/qt5/plugins/wayland-graphics-integration/client/libwayland-egl.so
+-%{_libdir}/qt5/plugins/wayland-graphics-integration/client/libdrm-egl-server.so
++%{_libdir}/qt5/plugins/wayland-graphics-integration-client/libwayland-egl.so
++%{_libdir}/qt5/plugins/wayland-graphics-integration-client/libdrm-egl-server.so
+ 
+ 
+ %files devel
+-- 
+1.9.1
+

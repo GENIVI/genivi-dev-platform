@@ -1,0 +1,28 @@
+From 61c25dd9854b434bf01ff5533dc2395fd8baaaa5 Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Fri, 23 May 2014 10:39:20 +0200
+Subject: [PATCH 14/21] Bump package version to 5.3.0
+
+Change-Id: I97d355d424b705ccd5df19d1d53d711d02c6beba
+Bug-Tizen: TIVI-2416
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.spec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index c0b73bb..b1c3092 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -27,7 +27,7 @@
+ 
+ Name:       qt5-qtwayland
+ Summary:    Qt Wayland compositor
+-Version:    5.2.96+rc2
++Version:    5.3.0
+ Release:    0
+ Group:      Base/Libraries
+ License:    LGPL-2.1+ or GPL-3.0
+-- 
+1.9.1
+

@@ -1,0 +1,65 @@
+From 424c23191d81b072255bd7f178ad0ee2c2ea091a Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Fri, 25 Apr 2014 14:32:22 +0200
+Subject: [PATCH 10/21] Added manifest file according to smack 3-domain model.
+
+Bug-Tizen:TIVI-2416
+
+Change-Id: I414e245a5c8847bec32ef6a97569d0f06221e1db
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.manifest | 5 +++++
+ packaging/qt5-qtwayland.spec     | 4 ++++
+ 2 files changed, 9 insertions(+)
+ create mode 100644 packaging/qt5-qtwayland.manifest
+
+diff --git a/packaging/qt5-qtwayland.manifest b/packaging/qt5-qtwayland.manifest
+new file mode 100644
+index 0000000..75b0fa5
+--- /dev/null
++++ b/packaging/qt5-qtwayland.manifest
+@@ -0,0 +1,5 @@
++<manifest>
++    <request>
++        <domain name="_"/>
++    </request>
++</manifest>
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index 7b400cb..5b5ffa0 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -34,6 +34,7 @@ License:    LGPL-2.1+ or GPL-3.0
+ URL:        http://qt.digia.com
+ Source0:    %{name}-%{version}.tar.bz2
+ %if %{with wayland}
++Source1001: %{name}.manifest
+ BuildRequires:  pkgconfig(Qt5Core)
+ BuildRequires:  pkgconfig(Qt5Gui)
+ BuildRequires:  pkgconfig(Qt5OpenGL)
+@@ -75,6 +76,7 @@ This package contains the Qt wayland compositor development files for wayland_eg
+ 
+ %prep
+ %setup -q -n %{name}-%{version}/qtwayland
++cp %{SOURCE1001} .
+ 
+ %build
+ export QTDIR=/usr/share/qt5
+@@ -103,6 +105,7 @@ rm -rf %{buildroot}
+ 
+ %files
+ %defattr(-,root,root,-)
++%manifest %{name}.manifest
+ %{_libdir}/libQt5WaylandClient.so.5*
+ %{_libdir}/qt5/plugins/platforms/libqwayland-generic.so
+ %{_libdir}/qt5/plugins/platforms/libqwayland-egl.so
+@@ -112,6 +115,7 @@ rm -rf %{buildroot}
+ 
+ %files devel
+ %defattr(-,root,root,-)
++%manifest %{name}.manifest
+ %{_libdir}/libQt5WaylandClient.so
+ %{_includedir}/qt5/*
+ %{_libdir}/libQt5WaylandClient.la
+-- 
+1.9.1
+

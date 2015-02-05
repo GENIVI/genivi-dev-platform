@@ -1,0 +1,19 @@
+{
+	"sources" : [ 
+		{
+			"name" : "GeniviLogReplayer",
+			"path" : "/usr/lib/navigation/genivilogreplayerplugin.so",
+			"delay" : "1000"
+		}
+	],
+	"sinks": [
+		{
+			"name" : "DBusSink",
+			"path" : "/usr/lib/automotive-message-broker/dbussinkplugin.so",
+			"frequency" : "1060",
+			"sessionbus" : 1
+		}
+
+	]
+}
+

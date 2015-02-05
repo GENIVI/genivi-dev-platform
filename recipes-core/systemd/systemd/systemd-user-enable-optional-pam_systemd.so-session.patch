@@ -1,0 +1,23 @@
+From 9fdd31573abaf57ad3ea4b62c1ae245c47a4e927 Mon Sep 17 00:00:00 2001
+From: Holger Behrens <holger.behrens@windriver.com>
+Date: Mon, 5 Jan 2015 11:17:54 +0100
+Subject: [meta-ivi][PATCH] systemd-user: enable optional pam_systemd.so
+ session
+
+Signed-off-by: Holger Behrens <holger.behrens@windriver.com>
+---
+ src/login/systemd-user | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/login/systemd-user b/src/login/systemd-user
+index 99635af..0ccc602 100644
+--- a/src/login/systemd-user
++++ b/src/login/systemd-user
+@@ -4,3 +4,4 @@
+ 
+ account  include common-account
+ session  include common-session
++session optional pam_systemd.so
+-- 
+2.2.1
+

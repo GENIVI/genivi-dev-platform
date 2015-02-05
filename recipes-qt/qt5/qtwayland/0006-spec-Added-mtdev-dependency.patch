@@ -1,0 +1,28 @@
+From 84ee4c83810c60bd086afdab60275aff47068863 Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Wed, 8 Jan 2014 22:34:53 +0100
+Subject: [PATCH 06/21] spec: Added mtdev dependency
+
+Tizen-Bug: TIVI-2416
+
+Change-Id: I00a72e16242a09acf7f12406fd8c45933f7d378b
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index 940c36c..c4ace9d 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -45,6 +45,7 @@ BuildRequires:  pkgconfig(glib-2.0)
+ BuildRequires:  libffi-devel
+ BuildRequires:  fdupes
+ BuildRequires:  pkgconfig(xkbcommon)
++BuildRequires:  pkgconfig(mtdev)
+ %endif
+ %description
+ Qt is a cross-platform application and UI framework. Using Qt, you can
+-- 
+1.9.1
+

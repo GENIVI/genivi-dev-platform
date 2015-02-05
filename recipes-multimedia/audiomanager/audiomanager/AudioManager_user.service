@@ -1,0 +1,11 @@
+[Unit]
+Description=AudioManager service
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/AudioManager -c/usr/lib/audioManager/control/libPluginControlInterface.so -l/usr/lib/audioManager/command/ -r/usr/lib/audioManager/routing/
+Restart=always
+RestartSec=5
+TimeoutSec=5

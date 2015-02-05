@@ -1,0 +1,11 @@
+[Unit]
+Description=Weston service
+After=dbus.service
+
+[Service]
+ExecStart=/usr/bin/weston-launch -u root
+ExecStop=/usr/bin/killall -s KILL weston
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

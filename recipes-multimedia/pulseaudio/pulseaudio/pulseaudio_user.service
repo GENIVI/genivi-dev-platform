@@ -1,0 +1,11 @@
+[Unit]
+Description=pulseaudio server
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pulseaudio -p /usr/lib/pulse-5.0/modules/ -n -F /etc/pulse/am_poc.pa
+Restart=always
+RestartSec=5
+TimeoutSec=5

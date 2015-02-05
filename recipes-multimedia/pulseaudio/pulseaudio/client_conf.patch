@@ -1,0 +1,10 @@
+Index: pulseaudio-5.0/src/pulse/client.conf.in
+===================================================================
+--- pulseaudio-5.0.orig/src/pulse/client.conf.in	2014-01-21 15:39:57.000000000 +0200
++++ pulseaudio-5.0/src/pulse/client.conf.in	2014-10-07 18:14:46.309096000 +0300
+@@ -35,3 +35,5 @@
+ 
+ ; auto-connect-localhost = no
+ ; auto-connect-display = no
++
++default-server = 127.0.0.1

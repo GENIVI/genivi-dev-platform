@@ -1,0 +1,62 @@
+.nofail
+
+.fail
+
+load-module module-null-sink
+load-module module-pipe-sink
+load-module module-loopback
+
+
+
+### Automatically restore the volume of streams and devices
+#load-module module-stream-restore
+#load-module module-card-restore
+
+### Automatically load driver modules depending on the hardware available
+#.ifexists module-udev-detect.so
+#load-module module-udev-detect
+#.else
+### Use the static hardware detection module (for systems that lack udev support)
+#load-module module-detect
+#.endif
+
+### Load several protocols
+#.ifexists module-esound-protocol-unix.so
+#load-module module-esound-protocol-unix
+#.endif
+#load-module module-native-protocol-unix
+load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1
+
+### Automatically restore the default sink/source when changed by the user
+### during runtime
+### NOTE: This should be loaded as early as possible so that subsequent modules
+### that look up the default sink/source get the right value
+#load-module module-default-device-restore
+
+### Automatically move streams to the default sink if the sink they are
+### connected to dies, similar for sources
+#load-module module-rescue-streams
+
+load-module module-alsa-sink sink_name=master device=hw:0,0
+load-module module-remap-sink sink_name="AlsaPrimary"
+load-module module-remap-sink sink_name="AlsaSecondary"
+
+#load-module module-jack-sink
+#load-module module-jack-source
+#load-module module-jackdbus-detect
+
+### Make sure we always have a sink around, even if it is a null sink.
+load-module module-always-sink
+
+### Modules to allow autoloading of filters (such as echo cancellation)
+### on demand. module-filter-heuristics tries to determine what filters
+### make sense, and module-filter-apply does the heavy-lifting of
+### loading modules and rerouting streams.
+load-module module-filter-heuristics
+load-module module-filter-apply
+
+#Make  the  specified  sink (identified by its symbolic name) the  default sink.
+set-default-sink null
+# Make the specified source (identified by its symbolic name) the default source.
+set-default-source null-monitor
+

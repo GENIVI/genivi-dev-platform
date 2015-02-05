@@ -1,0 +1,772 @@
+From c4219cca0febd7119e0bec776fdc2877b3448e0b Mon Sep 17 00:00:00 2001
+From: Philippe Coval <philippe.coval@open.eurogiciel.org>
+Date: Tue, 10 Jun 2014 16:22:17 +0200
+Subject: [PATCH 19/21] xdg-shell: upgrade to support current version
+ (weston-1.5.0)
+
+The protocol file is a raw copy of
+
+Source: http://cgit.freedesktop.org/wayland/weston/plain/protocol/xdg-shell.xml?id=1.5.0
+
+Task-number: QTBUG-38633/related
+Reviewed-by: Giulio Camuffo <giulio.camuffo@jollamobile.com>
+Reviewed-by: Philippe Coval <rzr@gna.org>
+Origin: https://www.qt.gitorious.org/qt/qtwayland/commit/4bac130b97fbaa565aa9883eb302557ef0185d50
+Change-Id: I41ca2f89c09a8b6348ce2fbf6d59f44b4c81ffff
+---
+ src/3rdparty/protocol/xdg-shell.xml | 288 ++++++++++++++++++------------------
+ src/client/client.pro               |   2 +
+ src/client/qwaylanddisplay.cpp      |  10 +-
+ src/client/qwaylanddisplay_p.h      |   5 +-
+ src/client/qwaylandxdgshell.cpp     |  77 ++++++++++
+ src/client/qwaylandxdgshell_p.h     |  73 +++++++++
+ src/client/qwaylandxdgsurface.cpp   |  60 ++++++--
+ src/client/qwaylandxdgsurface_p.h   |  11 +-
+ 8 files changed, 364 insertions(+), 162 deletions(-)
+ create mode 100644 src/client/qwaylandxdgshell.cpp
+ create mode 100644 src/client/qwaylandxdgshell_p.h
+
+diff --git a/src/3rdparty/protocol/xdg-shell.xml b/src/3rdparty/protocol/xdg-shell.xml
+index 4e5cff8..79a2831 100644
+--- a/src/3rdparty/protocol/xdg-shell.xml
++++ b/src/3rdparty/protocol/xdg-shell.xml
+@@ -40,19 +40,22 @@
+ 
+     <enum name="version">
+       <description summary="latest protocol version">
+-	Use this enum to check the protocol version, and it will be updated
+-	automatically.
++	The 'current' member of this enum gives the version of the
++	protocol.  Implementations can compare this to the version
++	they implement using static_assert to ensure the protocol and
++	implementation versions match.
+       </description>
+-      <entry name="current" value="1" summary="Always the latest version"/>
++      <entry name="current" value="3" summary="Always the latest version"/>
+     </enum>
+ 
+ 
+     <request name="use_unstable_version">
+       <description summary="enable use of this unstable version">
+-	Use this request in order to enable use of this interface.
+-
+-	Understand and agree that one is using an unstable interface,
+-	that will likely change in the future, breaking the API.
++	Negotiate the unstable version of the interface.  This
++	mechanism is in place to ensure client and server agree on the
++	unstable versions of the protocol that they speak or exit
++	cleanly if they don't agree.  This request will go away once
++	the xdg-shell protocol is stable.
+       </description>
+       <arg name="version" type="int"/>
+     </request>
+@@ -84,6 +87,28 @@
+       <arg name="y" type="int"/>
+       <arg name="flags" type="uint"/>
+     </request>
++
++    <event name="ping">
++      <description summary="check if the client is alive">
++        The ping event asks the client if it's still alive. Pass the
++        serial specified in the event back to the compositor by sending
++        a "pong" request back with the specified serial.
++
++        Compositors can use this to determine if the client is still
++        alive. It's unspecified what will happen if the client doesn't
++        respond to the ping request, or in what timeframe. Clients should
++        try to respond in a reasonable amount of time.
++      </description>
++      <arg name="serial" type="uint" summary="pass this to the callback"/>
++    </event>
++
++    <request name="pong">
++      <description summary="respond to a ping event">
++	A client must respond to a ping event with a pong request or
++	the client may be deemed unresponsive.
++      </description>
++      <arg name="serial" type="uint" summary="serial of the ping event"/>
++    </request>
+   </interface>
+ 
+   <interface name="xdg_surface" version="1">
+@@ -124,6 +149,32 @@
+       <arg name="parent" type="object" interface="wl_surface" allow-null="true"/>
+     </request>
+ 
++    <request name="set_margin">
++      <description summary="set the visible frame boundaries">
++        This tells the compositor what the visible size of the window
++        should be, so it can use it to determine what borders to use for
++        constrainment and alignment.
++
++        CSD often has invisible areas for decoration purposes, like drop
++        shadows. These "shadow" drawings need to be subtracted out of the
++        normal boundaries of the window when computing where to place
++        windows (e.g. to set this window so it's centered on top of another,
++        or to put it to the left or right of the screen.)
++
++        This value should change as little as possible at runtime, to
++        prevent flicker.
++
++        This value is also ignored when the window is maximized or
++        fullscreen, and assumed to be 0.
++
++        If never called, this value is assumed to be 0.
++      </description>
++      <arg name="left_margin" type="int"/>
++      <arg name="right_margin" type="int"/>
++      <arg name="top_margin" type="int"/>
++      <arg name="bottom_margin" type="int"/>
++    </request>
++
+     <request name="set_title">
+       <description summary="set surface title">
+ 	Set a short title for the surface.
+@@ -150,22 +201,6 @@
+       <arg name="app_id" type="string"/>
+     </request>
+ 
+-    <request name="pong">
+-      <description summary="respond to a ping event">
+-	A client must respond to a ping event with a pong request or
+-	the client may be deemed unresponsive.
+-      </description>
+-      <arg name="serial" type="uint" summary="serial of the ping event"/>
+-    </request>
+-
+-    <event name="ping">
+-      <description summary="ping client">
+-	Ping a client to check if it is receiving events and sending
+-	requests. A client is expected to reply with a pong request.
+-      </description>
+-      <arg name="serial" type="uint"/>
+-    </event>
+-
+     <request name="move">
+       <description summary="start an interactive move">
+ 	Start a pointer-driven move of the surface.
+@@ -217,12 +252,6 @@
+ 	ignore it if it doesn't resize, pick a smaller size (to
+ 	satisfy aspect ratio or resize in steps of NxM pixels).
+ 
+-	The edges parameter provides a hint about how the surface
+-	was resized. The client may use this information to decide
+-	how to adjust its content to the new size (e.g. a scrolling
+-	area might adjust its content position to leave the viewable
+-	content unmoved). Valid edge values are from resize_edge enum.
+-
+ 	The client is free to dismiss all but the last configure
+ 	event it received.
+ 
+@@ -230,7 +259,6 @@
+ 	in surface local coordinates.
+       </description>
+ 
+-      <arg name="edges" type="uint"/>
+       <arg name="width" type="int"/>
+       <arg name="height" type="int"/>
+     </event>
+@@ -250,128 +278,122 @@
+       <arg name="output" type="object" interface="wl_output" allow-null="true"/>
+     </request>
+ 
+-    <event name="request_set_fullscreen">
+-      <description summary="server requests that the client set fullscreen">
+-	Event sent from the compositor to the client requesting that the client
+-	goes to a fullscreen state. It's the client job to call set_fullscreen
+-	and really trigger the fullscreen state.
+-      </description>
+-    </event>
+-
+-    <event name="request_unset_fullscreen">
+-      <description summary="server requests that the client unset fullscreen">
+-	Event sent from the compositor to the client requesting that the client
+-	leaves the fullscreen state. It's the client job to call
+-	unset_fullscreen and really leave the fullscreen state.
+-      </description>
+-    </event>
++    <enum name="state">
++      <description summary="types of state on the surface">
++        The different state values used on the surface. This is designed for
++        state values like maximized, fullscreen. It is paired with the
++        request_change_state event to ensure that both the client and the
++        compositor setting the state can be synchronized.
+ 
+-    <request name="set_fullscreen">
+-      <description summary="set the surface state as fullscreen">
+-	Set the surface as fullscreen.
++        States set in this way are double-buffered. They will get applied on
++        the next commit.
+ 
+-	After this request, the compositor should send a configure event
+-	informing the output size.
++        Desktop environments may extend this enum by taking up a range of
++        values and documenting the range they chose in this description.
++        They are not required to document the values for the range that they
++        chose. Ideally, any good extensions from a desktop environment should
++        make its way into standardization into this enum.
+ 
+-	This request informs the compositor that the next attached buffer
+-	committed will be in a fullscreen state. The buffer size should be the
+-	same size as the size informed in the configure event, if the client
+-	doesn't want to leave any empty area.
++        The current reserved ranges are:
+ 
+-	In other words: the next attached buffer after set_maximized is the new
+-	maximized buffer. And the surface will be positioned at the maximized
+-	position on commit.
+-
+-	A simple way to synchronize and wait for the correct configure event is
+-	to use a wl_display.sync request right after the set_fullscreen
+-	request. When the sync callback returns, the last configure event
+-	received just before it will be the correct one, and should contain the
+-	right size for the surface to maximize.
+-
+-	Setting one state won't unset another state. Use
+-	xdg_surface.unset_fullscreen for unsetting it.
++        0x0000 - 0x0FFF: xdg-shell core values, documented below.
++        0x1000 - 0x1FFF: GNOME
+       </description>
+-    </request>
++      <entry name="maximized" value="1" summary="the surface is maximized">
++        A non-zero value indicates the surface is maximized. Otherwise,
++        the surface is unmaximized.
++      </entry>
++      <entry name="fullscreen" value="2" summary="the surface is fullscreen">
++        A non-zero value indicates the surface is fullscreen. Otherwise,
++        the surface is not fullscreen.
++      </entry>
++    </enum>
+ 
+-    <request name="unset_fullscreen">
+-      <description summary="unset the surface state as fullscreen">
+-	Unset the surface fullscreen state.
++    <request name="request_change_state">
++      <description summary="client requests to change a surface's state">
++        This asks the compositor to change the state. If the compositor wants
++        to change the state, it will send a change_state event with the same
++        state_type, value, and serial, and the event flow continues as if it
++        it was initiated by the compositor.
+ 
+-	Same negotiation as set_fullscreen must be used.
++        If the compositor does not want to change the state, it will send a
++        change_state to the client with the old value of the state.
+       </description>
++      <arg name="state_type" type="uint" summary="the state to set"/>
++      <arg name="value" type="uint" summary="the value to change the state to"/>
++      <arg name="serial" type="uint" summary="an event serial">
++        This serial is so the client can know which change_state event corresponds
++        to which request_change_state request it sent out.
++      </arg>
+     </request>
+ 
+-    <event name="request_set_maximized">
+-      <description summary="server requests that the client set maximized">
+-	Event sent from the compositor to the client requesting that the client
+-	goes to a maximized state. It's the client job to call set_maximized
+-	and really trigger the maximized state.
++    <event name="change_state">
++      <description summary="compositor wants to change a surface's state">
++        This event tells the client to change a surface's state. The client
++        should respond with an ack_change_state request to the compositor to
++        guarantee that the compositor knows that the client has seen it.
+       </description>
+-    </event>
+ 
+-    <event name="request_unset_maximized">
+-      <description summary="server requests that the client unset maximized">
+-	Event sent from the compositor to the client requesting that the client
+-	leaves the maximized state. It's the client job to call unset_maximized
+-	and really leave the maximized state.
+-      </description>
++      <arg name="state_type" type="uint" summary="the state to set"/>
++      <arg name="value" type="uint" summary="the value to change the state to"/>
++      <arg name="serial" type="uint" summary="a serial for the compositor's own tracking"/>
+     </event>
+ 
+-    <request name="set_maximized">
+-      <description summary="set the surface state as maximized">
+-	Set the surface as maximized.
+-
+-	After this request, the compositor will send a configure event
+-	informing the output size minus panel and other MW decorations.
+-
+-	This request informs the compositor that the next attached buffer
+-	committed will be in a maximized state. The buffer size should be the
+-	same size as the size informed in the configure event, if the client
+-	doesn't want to leave any empty area.
++    <request name="ack_change_state">
++      <description summary="ack a change_state event">
++        When a change_state event is received, a client should then ack it
++        using the ack_change_state request to ensure that the compositor
++        knows the client has seen the event.
+ 
+-	In other words: the next attached buffer after set_maximized is the new
+-	maximized buffer. And the surface will be positioned at the maximized
+-	position on commit.
++        By this point, the state is confirmed, and the next attach should
++        contain the buffer drawn for the new state value.
+ 
+-	A simple way to synchronize and wait for the correct configure event is
+-	to use a wl_display.sync request right after the set_maximized request.
+-	When the sync callback returns, the last configure event received just
+-	before it will be the correct one, and should contain the right size
+-	for the surface to maximize.
+-
+-	Setting one state won't unset another state. Use
+-	xdg_surface.unset_maximized for unsetting it.
++        The values here need to be the same as the values in the cooresponding
++        change_state event.
+       </description>
++      <arg name="state_type" type="uint" summary="the state to set"/>
++      <arg name="value" type="uint" summary="the value to change the state to"/>
++      <arg name="serial" type="uint" summary="a serial to pass to change_state"/>
+     </request>
+ 
+-    <request name="unset_maximized">
+-      <description summary="unset the surface state as maximized">
+-	Unset the surface maximized state.
+-
+-	Same negotiation as set_maximized must be used.
++    <request name="set_minimized">
++      <description summary="minimize the surface">
++        Minimize the surface.
+       </description>
+     </request>
+ 
+-    <request name="set_minimized">
+-      <description summary="set the surface state as minimized">
+-	Set the surface minimized state.
+-
+-	Setting one state won't unset another state.
++    <event name="activated">
++      <description summary="surface was activated">
++	The activated_set event is sent when this surface has been
++	activated, which means that the surface has user attention.
++        Window decorations should be updated accordingly. You should
++        not use this event for anything but the style of decorations
++        you display, use wl_keyboard.enter and wl_keyboard.leave for
++        determining keyboard focus.
+       </description>
+-    </request>
++    </event>
+ 
+-    <event name="focused_set">
+-      <description summary="surface was focused">
+-	The focused_set event is sent when this surface has been
+-	activated. Window decorations should be updated accordingly.
++    <event name="deactivated">
++      <description summary="surface was deactivated">
++	The deactivate event is sent when this surface has been
++        deactivated, which means that the surface lost user attention.
++        Window decorations should be updated accordingly. You should
++        not use this event for anything but the style of decorations
++        you display, use wl_keyboard.enter and wl_keyboard.leave for
++        determining keyboard focus.
+       </description>
+     </event>
+ 
+-    <event name="focused_unset">
+-      <description summary="surface was unfocused">
+-	The focused_unset event is sent when this surface has been
+-	deactivated, because another surface has been activated. Window
+-	decorations should be updated accordingly.
++    <event name="close">
++      <description summary="surface wants to be closed">
++        The close event is sent by the compositor when the user
++        wants the surface to be closed. This should be equivalent to
++        the user clicking the close button in client-side decorations,
++        if your application has any...
++
++        This is only a request that the user intends to close your
++        window. The client may choose to ignore this request, or show
++        a dialog to ask the user to save their data...
+       </description>
+     </event>
+   </interface>
+@@ -409,22 +431,6 @@
+       </description>
+     </request>
+ 
+-    <request name="pong">
+-      <description summary="respond to a ping event">
+-	A client must respond to a ping event with a pong request or
+-	the client may be deemed unresponsive.
+-      </description>
+-      <arg name="serial" type="uint" summary="serial of the ping event"/>
+-    </request>
+-
+-    <event name="ping">
+-      <description summary="ping client">
+-	Ping a client to check if it is receiving events and sending
+-	requests. A client is expected to reply with a pong request.
+-      </description>
+-      <arg name="serial" type="uint"/>
+-    </event>
+-
+     <event name="popup_done">
+       <description summary="popup interaction is done">
+ 	The popup_done event is sent out when a popup grab is broken,
+diff --git a/src/client/client.pro b/src/client/client.pro
+index 9ecf82f..73e3b7f 100644
+--- a/src/client/client.pro
++++ b/src/client/client.pro
+@@ -59,6 +59,7 @@ SOURCES +=  qwaylandintegration.cpp \
+             qwaylanddatasource.cpp \
+             qwaylandshellsurface.cpp \
+             qwaylandwlshellsurface.cpp \
++            qwaylandxdgshell.cpp \
+             qwaylandxdgsurface.cpp \
+             qwaylandextendedoutput.cpp \
+             qwaylandextendedsurface.cpp \
+@@ -89,6 +90,7 @@ HEADERS +=  qwaylandintegration_p.h \
+             qwaylanddatasource_p.h \
+             qwaylandshellsurface_p.h \
+             qwaylandwlshellsurface_p.h \
++            qwaylandxdgshell_p.h \
+             qwaylandxdgsurface_p.h \
+             qwaylandextendedoutput_p.h \
+             qwaylandextendedsurface_p.h \
+diff --git a/src/client/qwaylanddisplay.cpp b/src/client/qwaylanddisplay.cpp
+index 7f953ad..2e25672 100644
+--- a/src/client/qwaylanddisplay.cpp
++++ b/src/client/qwaylanddisplay.cpp
+@@ -50,7 +50,7 @@
+ #include "qwaylandclipboard_p.h"
+ #include "qwaylanddatadevicemanager_p.h"
+ #include "qwaylandhardwareintegration_p.h"
+-
++#include "qwaylandxdgshell_p.h"
+ 
+ #include "qwaylandwindowmanagerintegration_p.h"
+ 
+@@ -209,8 +209,7 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
+         mShm = static_cast<struct wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface,1));
+     } else if (interface == QStringLiteral("xdg_shell")
+                && qEnvironmentVariableIsSet("QT_WAYLAND_USE_XDG_SHELL")) {
+-        mShellXdg.reset(new QtWayland::xdg_shell(registry, id));
+-        mShellXdg->use_unstable_version(QtWayland::xdg_shell::version_current);
++        mShellXdg.reset(new QWaylandXdgShell(registry,id));
+     } else if (interface == QStringLiteral("wl_shell")){
+         mShell.reset(new QtWayland::wl_shell(registry, id));
+     } else if (interface == QStringLiteral("wl_seat")) {
+@@ -275,4 +274,9 @@ void QWaylandDisplay::forceRoundTrip()
+     wl_display_roundtrip(mDisplay);
+ }
+ 
++QtWayland::xdg_shell *QWaylandDisplay::shellXdg()
++{
++    return mShellXdg.data();
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/client/qwaylanddisplay_p.h b/src/client/qwaylanddisplay_p.h
+index cf5dfc2..f1b35a7 100644
+--- a/src/client/qwaylanddisplay_p.h
++++ b/src/client/qwaylanddisplay_p.h
+@@ -72,6 +72,7 @@ class QWaylandWindow;
+ class QWaylandEventThread;
+ class QWaylandIntegration;
+ class QWaylandHardwareIntegration;
++class QWaylandXdgShell;
+ 
+ namespace QtWayland {
+     class qt_output_extension;
+@@ -115,7 +116,7 @@ public:
+     QtWayland::wl_compositor *compositor() { return &mCompositor; }
+ 
+     QtWayland::wl_shell *shell() { return mShell.data(); }
+-    QtWayland::xdg_shell *shellXdg() { return mShellXdg.data(); }
++    QtWayland::xdg_shell *shellXdg();
+ 
+     QList<QWaylandInputDevice *> inputDevices() const { return mInputDevices; }
+     QWaylandInputDevice *defaultInputDevice() const;
+@@ -171,7 +172,7 @@ private:
+     QThread *mEventThread;
+     QWaylandEventThread *mEventThreadObject;
+     QScopedPointer<QtWayland::wl_shell> mShell;
+-    QScopedPointer<QtWayland::xdg_shell> mShellXdg;
++    QScopedPointer<QWaylandXdgShell> mShellXdg;
+     QList<QPlatformScreen *> mScreens;
+     QList<QWaylandInputDevice *> mInputDevices;
+     QList<Listener> mRegistryListeners;
+diff --git a/src/client/qwaylandxdgshell.cpp b/src/client/qwaylandxdgshell.cpp
+new file mode 100644
+index 0000000..eb9f91c
+--- /dev/null
++++ b/src/client/qwaylandxdgshell.cpp
+@@ -0,0 +1,77 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Eurogiciel, author: <philippe.coval@eurogiciel.fr>
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qwaylandxdgshell_p.h"
++
++#include "qwaylanddisplay_p.h"
++#include "qwaylandwindow_p.h"
++#include "qwaylandinputdevice_p.h"
++#include "qwaylanddecoration_p.h"
++#include "qwaylandscreen_p.h"
++
++#include <QtCore/QDebug>
++
++QT_BEGIN_NAMESPACE
++
++QWaylandXdgShell::QWaylandXdgShell(struct ::xdg_shell *shell)
++    : QtWayland::xdg_shell(shell)
++{
++}
++
++QWaylandXdgShell::QWaylandXdgShell(struct ::wl_registry *registry, uint32_t id)
++    : QtWayland::xdg_shell(registry, id)
++{
++    use_unstable_version(QtWayland::xdg_shell::version_current);
++}
++
++QWaylandXdgShell::~QWaylandXdgShell()
++{
++    xdg_shell_destroy(object());
++}
++
++
++void QWaylandXdgShell::xdg_shell_ping(uint32_t serial)
++{
++    pong(serial);
++}
++
++
++QT_END_NAMESPACE
+diff --git a/src/client/qwaylandxdgshell_p.h b/src/client/qwaylandxdgshell_p.h
+new file mode 100644
+index 0000000..6a396bd
+--- /dev/null
++++ b/src/client/qwaylandxdgshell_p.h
+@@ -0,0 +1,73 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Eurogiciel, author: <philippe.coval@eurogiciel.fr>
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QWAYLANDXDGSHELL_H
++#define QWAYLANDXDGSHELL_H
++
++#include <QtCore/QSize>
++
++#include <wayland-client.h>
++
++#include <QtWaylandClient/private/qwayland-xdg-shell.h>
++#include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include "qwaylandshellsurface_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QWaylandWindow;
++class QWaylandInputDevice;
++class QWindow;
++
++class Q_WAYLAND_CLIENT_EXPORT QWaylandXdgShell : public QtWayland::xdg_shell
++{
++public:
++    QWaylandXdgShell(struct ::xdg_shell *shell);
++    QWaylandXdgShell(struct ::wl_registry *registry, uint32_t id);
++
++    virtual ~QWaylandXdgShell();
++
++private:
++    void xdg_shell_ping(uint32_t serial) Q_DECL_OVERRIDE;
++};
++
++QT_END_NAMESPACE
++
++#endif // QWAYLANDXDGSHELL_H
+diff --git a/src/client/qwaylandxdgsurface.cpp b/src/client/qwaylandxdgsurface.cpp
+index 1b8affa..5fb74d2 100644
+--- a/src/client/qwaylandxdgsurface.cpp
++++ b/src/client/qwaylandxdgsurface.cpp
+@@ -87,23 +87,25 @@ void QWaylandXdgSurface::move(QWaylandInputDevice *inputDevice)
+ 
+ void QWaylandXdgSurface::setMaximized()
+ {
+-    m_maximized = true;
+-    m_size = m_window->window()->geometry().size();
+-    set_maximized();
++    if (!m_maximized)
++        request_change_state(XDG_SURFACE_STATE_MAXIMIZED, true, 0);
+ }
+ 
+ void QWaylandXdgSurface::setFullscreen()
+ {
+-    m_fullscreen = true;
+-    m_size = m_window->window()->geometry().size();
+-    set_fullscreen();
++    if (!m_fullscreen)
++        request_change_state(XDG_SURFACE_STATE_FULLSCREEN, true, 0);
+ }
+ 
+ void QWaylandXdgSurface::setNormal()
+ {
+     if (m_fullscreen || m_maximized  || m_minimized) {
+-        if (m_maximized) { unset_maximized(); }
+-        if (m_fullscreen) { unset_fullscreen(); }
++        if (m_maximized) {
++            request_change_state(XDG_SURFACE_STATE_MAXIMIZED, false, 0);
++        }
++        if (m_fullscreen) {
++            request_change_state(XDG_SURFACE_STATE_FULLSCREEN, false, 0);
++        }
+ 
+         m_fullscreen = m_maximized = m_minimized = false;
+         setTopLevel();
+@@ -158,16 +160,48 @@ void QWaylandXdgSurface::setAppId(const QString & appId)
+     return QtWayland::xdg_surface::set_app_id(appId);
+ }
+ 
+-void QWaylandXdgSurface::xdg_surface_ping(uint32_t serial)
++void QWaylandXdgSurface::xdg_surface_configure(int32_t width, int32_t height)
+ {
+-    pong(serial);
++    m_window->configure(0 , width, height);
+ }
+ 
+-void QWaylandXdgSurface::xdg_surface_configure(uint32_t edges, int32_t width,
+-                                               int32_t height)
++void QWaylandXdgSurface::xdg_surface_change_state(uint32_t state,
++                                                  uint32_t value,
++                                                  uint32_t serial)
+ {
+-    m_window->configure(edges, width, height);
++
++    if (state == XDG_SURFACE_STATE_MAXIMIZED
++            || state == XDG_SURFACE_STATE_FULLSCREEN) {
++        if (value) {
++            m_size = m_window->window()->geometry().size();
++        } else {
++            QMargins m = m_window->frameMargins();
++            m_window->configure(0, m_size.width() + m.left() + m.right(), m_size.height() + m.top() + m.bottom());
++        }
++    }
++
++    switch (state) {
++    case XDG_SURFACE_STATE_MAXIMIZED:
++        m_maximized = value;
++        break;
++    case XDG_SURFACE_STATE_FULLSCREEN:
++        m_fullscreen = value;
++        break;
++    }
++
++    xdg_surface_ack_change_state(object(), state, value, serial);
+ }
+ 
++void QWaylandXdgSurface::xdg_surface_activated()
++{
++}
++
++void QWaylandXdgSurface::xdg_surface_deactivated()
++{
++}
++
++void QWaylandXdgSurface::xdg_surface_close()
++{
++}
+ 
+ QT_END_NAMESPACE
+diff --git a/src/client/qwaylandxdgsurface_p.h b/src/client/qwaylandxdgsurface_p.h
+index 744d3f3..d2a154e 100644
+--- a/src/client/qwaylandxdgsurface_p.h
++++ b/src/client/qwaylandxdgsurface_p.h
+@@ -93,10 +93,15 @@ private:
+     bool m_fullscreen;
+     QSize m_size;
+ 
+-    void xdg_surface_ping(uint32_t serial) Q_DECL_OVERRIDE;
+-    void xdg_surface_configure(uint32_t edges,
+-                               int32_t width,
++    void xdg_surface_configure(int32_t width,
+                                int32_t height) Q_DECL_OVERRIDE;
++    void xdg_surface_change_state(uint32_t state,
++                                  uint32_t value,
++                                  uint32_t serial) Q_DECL_OVERRIDE;
++    void xdg_surface_activated() Q_DECL_OVERRIDE;
++    void xdg_surface_deactivated() Q_DECL_OVERRIDE;
++    void xdg_surface_close() Q_DECL_OVERRIDE;
++
+     friend class QWaylandWindow;
+ };
+ 
+-- 
+1.9.1
+

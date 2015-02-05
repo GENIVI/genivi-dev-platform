@@ -1,0 +1,69 @@
+From c8339430c4c0b8190bbe89bb941cf400bc2c89ae Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Sat, 4 Jan 2014 14:32:43 +0100
+Subject: [PATCH 05/21] Spec: Qt5WaylandClient handled.
+
+Spec file updated according to qtwayland refactoring.
+Added libQt5WaylandClient, plugins/platforms/libqwayland-generic,
+plugins/wayland-graphics-integration.
+
+Tizen-Bug: TIVI-2416
+Change-Id: I496fdf3cde0c6da6547d79dea92a9451947c1692
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.spec | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index b515c28..940c36c 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -35,12 +35,8 @@ Source0:    %{name}-%{version}.tar.bz2
+ %if %{with wayland}
+ BuildRequires:  pkgconfig(Qt5Core)
+ BuildRequires:  pkgconfig(Qt5Gui)
+-BuildRequires:  pkgconfig(Qt5Widgets)
+ BuildRequires:  pkgconfig(Qt5OpenGL)
+ BuildRequires:  pkgconfig(Qt5PlatformSupport)
+-BuildRequires:  pkgconfig(Qt5Qml)
+-BuildRequires:  pkgconfig(Qt5Quick)
+-BuildRequires:  pkgconfig(Qt5DBus)
+ BuildRequires:  pkgconfig(wayland-client)
+ BuildRequires:  pkgconfig(wayland-cursor)
+ BuildRequires:  pkgconfig(wayland-egl)
+@@ -102,20 +98,22 @@ rm -rf %{buildroot}
+ 
+ %files
+ %defattr(-,root,root,-)
+-#%{_libdir}/libQt5Compositor.so.5*
++%{_libdir}/libQt5WaylandClient.so.5*
++%{_libdir}/qt5/plugins/platforms/libqwayland-generic.so
+ %{_libdir}/qt5/plugins/platforms/libqwayland-egl.so
+-#%{_libdir}/qt5/plugins/waylandcompositors/libwayland-egl.so
++%{_libdir}/qt5/plugins/wayland-graphics-integration/client/libwayland-egl.so
++%{_libdir}/qt5/plugins/wayland-graphics-integration/client/libdrm-egl-server.so
++
+ 
+ %files devel
+ %defattr(-,root,root,-)
+-#%{_libdir}/libQt5Compositor.so
+-#%{_includedir}/qt5/*
+-#%{_libdir}/libQt5Compositor.la
+-#%{_libdir}/libQt5Compositor.prl
+-#%{_libdir}/pkgconfig/Qt5Compositor.pc
+-#%{_libdir}/cmake/Qt5Compositor/*
+-#%{_datadir}/qt5/mkspecs/modules/qt_lib_compositor.pri
+-#%{_datadir}/qt5/mkspecs/modules/qt_lib_compositor_private.pri
++%{_libdir}/libQt5WaylandClient.so
++%{_includedir}/qt5/*
++%{_libdir}/libQt5WaylandClient.la
++%{_libdir}/libQt5WaylandClient.prl
++%{_libdir}/pkgconfig/Qt5WaylandClient.pc
++%{_datadir}/qt5/mkspecs/modules/qt_lib_waylandclient.pri
++%{_datadir}/qt5/mkspecs/modules/qt_lib_waylandclient_private.pri
+ %{_libdir}/qt5/bin/qtwaylandscanner
+ %{_libdir}/cmake
+ %endif
+-- 
+1.9.1
+

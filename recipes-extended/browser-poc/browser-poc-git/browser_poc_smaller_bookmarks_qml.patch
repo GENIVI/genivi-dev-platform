@@ -1,0 +1,13 @@
+Index: git/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp
+===================================================================
+--- git.orig/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp	2014-10-14 14:34:52.967798427 +0300
++++ git/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp	2014-10-14 14:35:44.815796911 +0300
+@@ -69,7 +69,7 @@
+ 
+ void QtQuick2ApplicationViewer::changeGeometry(bool open) {
+     if(open)
+-        setGeometry(0, 0, 1024, 768);
++        setGeometry(0, 0, 1024, 256);
+     else
+        setGeometry(0, 0, 1024, 80);
+ }

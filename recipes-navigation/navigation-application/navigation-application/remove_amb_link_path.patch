@@ -1,0 +1,12 @@
+Index: git/src/genivilogreplayer/CMakeLists.txt
+===================================================================
+--- git.orig/src/genivilogreplayer/CMakeLists.txt
++++ git/src/genivilogreplayer/CMakeLists.txt
+@@ -9,6 +9,6 @@ set(genivilogreplayer_sources genivilogr
+ add_library(genivilogreplayerplugin MODULE ${genivilogreplayer_sources})
+ set_target_properties(genivilogreplayerplugin PROPERTIES PREFIX "")
+ include_directories(${automotive-message-broker_SRC}/lib ${GLIB_INCLUDE_DIRS})
+-target_link_libraries(genivilogreplayerplugin amb -L${automotive-message-broker_BIN}/lib)
++target_link_libraries(genivilogreplayerplugin amb)
+ 
+ install(TARGETS genivilogreplayerplugin LIBRARY DESTINATION lib/automotive-message-broker)

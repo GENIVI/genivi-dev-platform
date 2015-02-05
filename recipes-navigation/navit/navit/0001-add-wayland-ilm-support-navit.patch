@@ -1,0 +1,1111 @@
+From 
+From: Nobuhiko <NOBUHIKO_TANIBATA@xddp.denso.co.jp>
+Date: 
+Subject: [PATCH] 
+
+Signed-off-by: Nobuhiko <NOBUHIKO_TANIBATA@xddp.denso.co.jp>
+---
+diff -urN navit/cmake/FindOpenGL.cmake navit/cmake/FindOpenGL.cmake
+--- navit/cmake/FindOpenGL.cmake	1970-01-01 01:00:00.000000000 +0100
++++ navit/cmake/FindOpenGL.cmake	2014-09-23 12:53:02.000000000 +0200
+@@ -0,0 +1,124 @@
++include(LibFindMacros)
++
++libfind_pkg_check_modules(OPENGL_PKGCONFIG gl)
++libfind_pkg_check_modules(OPENGL_GLU_PKGCONFIG glu)
++libfind_pkg_check_modules(OPENGL_GLUT_PKGCONFIG glut)
++libfind_pkg_check_modules(OPENGLES_EGL_PKGCONFIG egl)
++libfind_pkg_check_modules(OPENGLES_PKGCONFIG glesv1_cm)
++libfind_pkg_check_modules(OPENGLES2_PKGCONFIG glesv2)
++
++################
++# Includes dirs
++################
++FIND_PATH(OPENGL_INCLUDE_DIR GL/gl.h
++   PATHS
++      ${OPENGL_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++)
++
++FIND_PATH(OPENGL_GLU_INCLUDE_DIR GL/glu.h
++   PATHS
++      ${OPENGL_GLU_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++      /usr/include
++)
++
++FIND_PATH(OPENGL_GLUT_INCLUDE_DIR GL/glut.h
++   PATHS
++      ${OPENGL_GLUT_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++      /usr/include
++)
++
++FIND_PATH(OPENGLES_EGL_INCLUDE_DIR EGL/egl.h
++   PATHS
++      ${OPENGLES_EGL_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++)
++
++FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h
++   PATHS
++      ${OPENGLES_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++)
++
++FIND_PATH(OPENGLES2_INCLUDE_DIR GLES2/gl2.h
++   PATHS
++      ${OPENGLES2_PKGCONFIG_INCLUDE_DIRS}
++      ${WLD}/usrfs/include
++)
++
++#################
++# Libraries dirs
++#################
++FIND_LIBRARY(OPENGL_gl_LIBRARY GL
++   PATHS
++      ${OPENGL_PKGCONFIG_LIBRARY_DIRS}
++      ${WLD}/usrfs/lib
++)
++
++FIND_LIBRARY(OPENGL_glu_LIBRARY GLU
++   PATHS
++      ${OPENGL_GLU_PKGCONFIG_LIBRARY_DIRS}
++      /usr/lib
++)
++
++FIND_LIBRARY(GLUT_glut_LIBRARY glut
++   PATHS
++      ${OPENGL_GLUT_PKGCONFIG_LIBRARY_DIRS}
++      /usr/lib
++)
++
++FIND_LIBRARY(OPENGLES_EGL_LIBRARY EGL
++   PATHS
++      ${OPENGLES_EGL_PKGCONFIG_LIBRARY_DIRS}
++      ${WLD}/usrfs/lib
++)
++
++FIND_LIBRARY(OPENGLES_glesv1_CM_LIBRARY GLESv1_CM
++   PATHS
++      ${OPENGLES_PKGCONFIG_LIBRARY_DIRS}
++      ${WLD}/usrfs/lib
++)
++
++FIND_LIBRARY(OPENGLES2_glesv2_LIBRARY GLESv2
++   PATHS
++      ${OPENGLES2_PKGCONFIG_LIBRARY_DIRS}
++      ${WLD}/usrfs/lib
++)
++
++IF (OPENGL_gl_LIBRARY)
++   SET(OPENGL_FOUND TRUE)
++ENDIF (OPENGL_gl_LIBRARY)
++
++IF (OPENGL_glu_LIBRARY)
++   SET(OPENGL_GLU_FOUND TRUE)
++ENDIF (OPENGL_glu_LIBRARY)
++
++IF (OPENGL_glut_LIBRARY)
++   SET(GLUT_FOUND TRUE)
++ENDIF (OPENGL_glut_LIBRARY)
++
++IF (OPENGLES_EGL_LIBRARY)
++   IF (OPENGLES_glesv1_CM_LIBRARY)
++      SET(USE_OPENGLES TRUE)
++   ENDIF (OPENGLES_glesv1_CM_LIBRARY)
++
++   IF (OPENGLES2_glesv2_LIBRARY)
++      SET(USE_OPENGLES2 TRUE)
++   ENDIF (OPENGLES2_glesv2_LIBRARY)
++ENDIF (OPENGLES_EGL_LIBRARY)
++
++# Result
++MESSAGE(STATUS "OPENGL_INCLUDE_DIR        : ${OPENGL_INCLUDE_DIR}")
++MESSAGE(STATUS "OPENGL_gl_LIBRARY         : ${OPENGL_gl_LIBRARY}")
++MESSAGE(STATUS "OPENGL_GLU_INCLUDE_DIR    : ${OPENGL_GLU_INCLUDE_DIR}")
++MESSAGE(STATUS "OPENGL_glu_LIBRARY        : ${OPENGL_glu_LIBRARY}")
++MESSAGE(STATUS "OPENGL_GLUT_INCLUDE_DIR   : ${OPENGL_GLUT_INCLUDE_DIR}")
++MESSAGE(STATUS "GLUT_glut_LIBRARY         : ${GLUT_glut_LIBRARY}")
++MESSAGE(STATUS "OPENGLES_EGL_INCLUDE_DIR  : ${OPENGLES_EGL_INCLUDE_DIR}")
++MESSAGE(STATUS "OPENGLES_EGL_LIBRARY      : ${OPENGLES_EGL_LIBRARY}")
++MESSAGE(STATUS "OPENGLES_INCLUDE_DIR      : ${OPENGLES_INCLUDE_DIR}")
++MESSAGE(STATUS "OPENGLES_glesv1_CM_LIBRARY: ${OPENGLES_glesv1_CM_LIBRARY}")
++MESSAGE(STATUS "OPENGLES2_INCLUDE_DIR     : ${OPENGLES2_INCLUDE_DIR}")
++MESSAGE(STATUS "OPENGLES2_glesv2_LIBRARY  : ${OPENGLES2_glesv2_LIBRARY}")
+diff -urN navit/cmake/FindWayland.cmake navit/cmake/FindWayland.cmake
+--- navit/cmake/FindWayland.cmake	1970-01-01 01:00:00.000000000 +0100
++++ navit/cmake/FindWayland.cmake	2014-09-23 12:53:02.000000000 +0200
+@@ -0,0 +1,152 @@
++include(LibFindMacros)
++message(STATUS "FindWayland.cmake: Start")
++
++if (USE_WAYLAND AND WAYLAND_LIBRARIES AND WAYLAND_INCLUDE_DIRS)
++  message(STATUS "  [WAYLAND_LIBRARIES]    Found: ${WAYLAND_LIBRARIES}")
++  message(STATUS "  [WAYLAND_INCLUDE_DIRS] Found: ${WAYLAND_INCLUDE_DIRS}")
++else (USE_WAYLAND AND WAYLAND_LIBRARIES AND WAYLAND_INCLUDE_DIRS)
++
++  libfind_pkg_check_modules(WAYLAND_WLCLIENT_PKGCONFIG wayland-client)
++  libfind_pkg_check_modules(WAYLAND_WLEGL_PKGCONFIG wayland-egl)
++  libfind_pkg_check_modules(WAYLAND_CURSOR_PKGCONFIG wayland-cursor)
++
++  #################################################################
++  #
++  # Finding Include
++  #
++  #################################################################
++
++  if (NOT WAYLAND_WLCLIENT_INCLUDE_DIR)
++    find_path(WAYLAND_WLCLIENT_INCLUDE_DIR
++      NAMES
++        wayland-client.h
++      PATHS
++        ${WAYLAND_WLCLIENT_PKGCONFIG_INCLUDE_DIRS}
++        ${WLD}/usrfs/include
++    )
++  endif (NOT WAYLAND_WLCLIENT_INCLUDE_DIR)
++
++  if (NOT WAYLAND_WLEGL_INCLUDE_DIR)
++    find_path(WAYLAND_WLEGL_INCLUDE_DIR
++      NAMES
++        wayland-egl.h
++      PATHS
++        ${WAYLAND_WLEGL_PKGCONFIG_INCLUDE_DIRS}
++        ${WLD}/usrfs/include
++    )
++  endif (NOT WAYLAND_WLEGL_INCLUDE_DIR)
++
++  ################################################################
++  #
++  # Finding Result of Include
++  #
++  ################################################################
++
++  if (WAYLAND_WLCLIENT_INCLUDE_DIR)
++    message(STATUS "  [WAYLAND_WLCLIENT_INCLUDE_DIR]    Found: ${WAYLAND_WLCLIENT_INCLUDE_DIR}")
++  else (WAYLAND_WLCLIENT_INCLUDE_DIR)
++    message(STATUS "  [WAYLAND_WLCLIENT_INCLUDE_DIR]    Could not find")
++  endif (WAYLAND_WLCLIENT_INCLUDE_DIR)
++
++  if (WAYLAND_WLEGL_INCLUDE_DIR)
++    message(STATUS "  [WAYLAND_WLEGL_INCLUDE_DIR]       Found: ${WAYLAND_WLEGL_INCLUDE_DIR}")
++  else (WAYLAND_WLEGL_INCLUDE_DIR)
++    message(STATUS "  [WAYLAND_WLEGL_INCLUDE_DIR]       Could not find")
++  endif (WAYLAND_WLEGL_INCLUDE_DIR)
++
++  if (WAYLAND_WLCLIENT_INCLUDE_DIR AND WAYLAND_WLEGL_INCLUDE_DIR)
++    if (${WAYLAND_WLCLIENT_INCLUDE_DIR} STREQUAL ${WAYLAND_WLEGL_INCLUDE_DIR})
++      set (WAYLAND_INCLUDE_DIRS
++        ${WAYLAND_WLCLIENT_INCLUDE_DIR}
++      )
++    else (${WAYLAND_WLCLIENT_INCLUDE_DIR} STREQUAL ${WAYLAND_WLEGL_INCLUDE_DIR})
++      set (WAYLAND_INCLUDE_DIRS
++        ${WAYLAND_WLCLIENT_INCLUDE_DIR}
++        ${WAYLAND_WLEGL_INCLUDE_DIR}
++      )
++    endif (${WAYLAND_WLCLIENT_INCLUDE_DIR} STREQUAL ${WAYLAND_WLEGL_INCLUDE_DIR})
++    message(STATUS "  [WAYLAND_INCLUDE_DIRS]            Found: ${WAYLAND_INCLUDE_DIRS}")
++  else (WAYLAND_WLCLIENT_INCLUDE_DIR AND WAYLAND_WLEGL_INCLUDE_DIR)
++    message(STATUS "  [WAYLAND_INCLUDE_DIRS]            Could not find")
++  endif (WAYLAND_WLCLIENT_INCLUDE_DIR AND WAYLAND_WLEGL_INCLUDE_DIR)
++
++  #################################################################
++  #
++  # Finding Library
++  #
++  #################################################################
++
++  if (NOT WAYLAND_WLCLIENT_LIBRARY)
++    find_library(WAYLAND_WLCLIENT_LIBRARY
++      NAMES
++        wayland-client
++      PATHS
++        ${WAYLAND_WLCLIENT_PKG_CONFIG_LIBRARY_DIRS}
++        ${WLD}/usrfs/lib
++    )
++  endif (WAYLAND_WLCLIENT_LIBRARY)
++
++  if (NOT WAYLAND_WLEGL_LIBRARY)
++    find_library(WAYLAND_WLEGL_LIBRARY
++      NAMES
++        wayland-egl
++      PATHS
++        ${WAYLAND_WLEGL_PKG_CONFIG_LIBRARY_DIRS}
++        ${WLD}/usrfs/lib
++    )
++  endif (NOT WAYLAND_WLCLIENT_LIBRARY)
++
++  if (NOT WAYLAND_WLCURSOR_LIBRARY)
++    find_library(WAYLAND_WLCURSOR_LIBRARY
++      NAMES
++        wayland-cursor
++      PATHS
++        ${WAYLAND_CURSOR_PKG_CONFIG_LIBRARY_DIRS}
++        ${WLD}/usrfs/lib
++    )
++  endif (NOT WAYLAND_WLCURSOR_LIBRARY)
++
++  ################################################################
++  #
++  # Finding Result of Library
++  #
++  ################################################################
++
++  if (WAYLAND_WLCLIENT_LIBRARY)
++    message(STATUS "  [WAYLAND_WLCLIENT_LIBRARY]        Found: ${WAYLAND_WLCLIENT_LIBRARY}")
++  else (WAYLAND_WLCLIENT_LIBRARY)
++    message(STATUS "  [WAYLAND_WLCLIENT_LIBRARY]        Could not find")
++  endif (WAYLAND_WLCLIENT_LIBRARY)
++
++  if (WAYLAND_WLEGL_LIBRARY)
++    message(STATUS "  [WAYLAND_WLEGL_LIBRARY]           Found: ${WAYLAND_WLEGL_LIBRARY}")
++  else (WAYLAND_WLEGL_LIBRARY)
++    message(STATUS "  [WAYLAND_WLEGL_LIBRARY]           Could not find")
++  endif (WAYLAND_WLEGL_LIBRARY)
++
++  if (WAYLAND_WLCURSOR_LIBRARY)
++    message(STATUS "  [WAYLAND_WLCURSOR_LIBRARY]        Found: ${WAYLAND_WLCURSOR_LIBRARY}")
++  else (WAYLAND_WLCURSOR_LIBRARY)
++    message(STATUS "  [WAYLAND_WLCURSOR_LIBRARY]        Could not find")
++  endif (WAYLAND_WLCURSOR_LIBRARY)
++
++  if (WAYLAND_WLCLIENT_LIBRARY AND WAYLAND_WLEGL_LIBRARY AND WAYLAND_WLCURSOR_LIBRARY)
++    set (WAYLAND_LIBRARIES
++      ${WAYLAND_WLCLIENT_LIBRARY}
++      ${WAYLAND_WLEGL_LIBRARY}
++      ${WAYLAND_WLCURSOR_LIBRARY}
++    )
++    message(STATUS "  [WAYLAND_LIBRARIES]               Found: ${WAYLAND_LIBRARIES}")
++  else (WAYLAND_WLCLIENT_LIBRARY AND WAYLAND_WLEGL_LIBRARY AND WAYLAND_WLCURSOR_LIBRARY)
++    message(STATUS "  [WAYLAND_LIBRARIES]               Could not find")
++  endif (WAYLAND_WLCLIENT_LIBRARY AND WAYLAND_WLEGL_LIBRARY AND WAYLAND_WLCURSOR_LIBRARY)
++
++
++  if (WAYLAND_LIBRARIES AND WAYLAND_INCLUDE_DIRS)
++    set (USE_WAYLAND TRUE)
++  endif (WAYLAND_LIBRARIES AND WAYLAND_INCLUDE_DIRS)
++
++endif (USE_WAYLAND AND WAYLAND_LIBRARIES AND WAYLAND_INCLUDE_DIRS)
++
++message(STATUS "FindWayland.cmake: End")
++
+diff -urN navit/cmake/FindX11.cmake navit/cmake/FindX11.cmake
+--- navit/cmake/FindX11.cmake	1970-01-01 01:00:00.000000000 +0100
++++ navit/cmake/FindX11.cmake	2014-09-23 12:53:02.000000000 +0200
+@@ -0,0 +1,15 @@
++include(LibFindMacros)
++
++libfind_pkg_check_modules(X11_PKGCONFIG x11)
++
++FIND_PATH(X11_INCLUDE_DIR X11/Xlib.h
++   PATHS
++      ${X11_PKGCONFIG_INCLUDE_DIRS}
++      /usr/include
++)
++
++FIND_LIBRARY(X11_LIBRARY X11
++   PATHS
++      ${X11_PKGCONFIG_LIBRARY_DIRS}
++      /usr/lib
++)
+diff -urN navit/CMakeLists.txt navit/CMakeLists.txt
+--- navit/CMakeLists.txt	2014-10-20 15:21:29.325431500 +0200
++++ navit/CMakeLists.txt	2014-09-23 12:53:02.000000000 +0200
+@@ -110,6 +110,8 @@
+ find_package(SDL_ttf)
+ find_package(SDL_image)
+ find_package(OpenGL)
++find_package(Wayland)
++find_package(X11)
+ find_package(GLUT)
+ find_package(GTK2 2.6 COMPONENTS gtk)
+ find_package(XGettextGlade)
+@@ -283,10 +285,14 @@
+       message (STATUS "opengl found: ${OPENGL_gl_LIBRARY}")
+       include_directories(${OPENGL_INCLUDE_DIR})
+       if (USE_OPENGLES2)
++         include_directories(${OPENGLES2_INCLUDE_DIR};${WAYLAND_INCLUDE_DIRS})
+ 	 set(USE_OPENGLES TRUE)
+-	 set(GRAPHICS_OPENGL_LIBRARY GLESv2 EGL)
++#	 set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY};${WAYLAND_LIBRARIES})
++	 set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${WAYLAND_LIBRARIES})
+       elseif (USE_OPENGLES)
+-         set(GRAPHICS_OPENGL_LIBRARY GLESv1_CM EGL)
++         include_directories(${OPENGLES_INCLUDE_DIR})
++#        set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY})
++         set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY})
+       else()
+          set(GRAPHICS_OPENGL_LIBRARY ${OPENGL_gl_LIBRARY};${OPENGL_glu_LIBRARY};${GLUT_glut_LIBRARY})
+       endif(USE_OPENGLES2)
+diff -urN navit/.gitignore navit/.gitignore
+--- navit/.gitignore	2014-10-20 15:21:29.165431502 +0200
++++ navit/.gitignore	1970-01-01 01:00:00.000000000 +0100
+@@ -1,2 +0,0 @@
+-/.gitk-tmp.*
+-/CMakeLists.txt.user*
+diff -urN navit/navit/graphics/Makefile.am navit/navit/graphics/Makefile.am
+--- navit/navit/graphics/Makefile.am	2014-10-20 15:21:05.133431904 +0200
++++ navit/navit/graphics/Makefile.am	2014-09-23 12:53:02.000000000 +0200
+@@ -2,9 +2,9 @@
+ if GRAPHICS_ANDROID
+   SUBDIRS+=android
+ endif
+-if GRAPHICS_GTK_DRAWING_AREA
+-  SUBDIRS+=gtk_drawing_area
+-endif
++#if GRAPHICS_GTK_DRAWING_AREA
++#  SUBDIRS+=gtk_drawing_area
++#endif
+ if GRAPHICS_NULL
+   SUBDIRS+=null
+ endif
+diff -urN navit/navit/graphics/opengl/CMakeLists.txt navit/navit/graphics/opengl/CMakeLists.txt
+--- navit/navit/graphics/opengl/CMakeLists.txt	2014-10-20 15:21:04.565431914 +0200
++++ navit/navit/graphics/opengl/CMakeLists.txt	2014-09-23 12:53:02.000000000 +0200
+@@ -1,6 +1,11 @@
+ set(graphics_opengl_SOURCES graphics_opengl.c)
+ if (USE_OPENGLES)
+-   LIST(APPEND graphics_opengl_SOURCES graphics_opengl_x11.c graphics_opengl_egl.c)
++#  LIST(APPEND graphics_opengl_SOURCES graphics_opengl_x11.c graphics_opengl_egl.c)
++   LIST(APPEND graphics_opengl_SOURCES graphics_opengl_egl.c)
++   if (USE_WAYLAND)
++      LIST(APPEND graphics_opengl_SOURCES graphics_opengl_wayland.c)
++   endif (USE_WAYLAND)
+ endif (USE_OPENGLES)
+ module_add_library(graphics_opengl ${graphics_opengl_SOURCES}) 
++message(STATUS "Compiling graphics_opengl_SOURCES=${graphics_opengl_SOURCES}")
+ 
+diff -urN navit/navit/graphics/opengl/graphics_opengl.c navit/navit/graphics/opengl/graphics_opengl.c
+--- navit/navit/graphics/opengl/graphics_opengl.c	2014-10-20 15:21:04.557431914 +0200
++++ navit/navit/graphics/opengl/graphics_opengl.c	2014-09-23 12:53:02.000000000 +0200
+@@ -161,6 +161,7 @@
+ 	struct graphics_opengl_window_system_methods *window_system_methods;
+ 	struct graphics_opengl_platform *platform;
+ 	struct graphics_opengl_platform_methods *platform_methods;
++	struct graphics_opengl_wayland_window *wayland_window;
+ };
+ 
+ static struct graphics_priv *graphics_priv_root;
+@@ -216,7 +217,7 @@
+    attribute vec2        position;       \
+    attribute vec2        texture_position;       \
+    uniform mat4        mvp;             \
+-   varying vec2 v_texture_position; \
++   varying mediump vec2 v_texture_position; \
+                                          \
+    void main()                           \
+    {                                     \
+@@ -230,7 +231,7 @@
+    uniform lowp vec4   avcolor;                        \
+    uniform sampler2D texture; \
+    uniform bool use_texture; \
+-   varying vec2 v_texture_position; \
++   varying mediump vec2 v_texture_position; \
+    void  main()                                        \
+    {                                                   \
+       if (use_texture) { \
+@@ -1259,9 +1261,17 @@
+ }
+ #endif
+ 
++static struct event_priv *
++event_opengl_new(struct event_methods *meth);
++
+ static void *
+ get_data(struct graphics_priv *this, char *type)
+ {
++	const char* platform = getenv("NAVIT_PLATFORM");
++	if (platform == NULL) {
++		platform = "";
++	}
++
+ 	/*TODO initialize gtkglext context when type=="gtk_widget" */
+ 	if (!strcmp(type, "gtk_widget")) {
+ 		fprintf(stderr,
+@@ -1277,11 +1287,31 @@
+ 		GLfloat matrix[16];
+ 		int i;
+ 
+-		this->window_system=graphics_opengl_x11_new(NULL, this->width, this->height, 32, &this->window_system_methods);
+-		this->platform=graphics_opengl_egl_new(this->window_system_methods->get_display(this->window_system),
+-						       this->window_system_methods->get_window(this->window_system),
+-						       &this->platform_methods);
+-		this->window_system_methods->set_callbacks(this->window_system, this, resize_callback_do, click_notify_do, motion_notify_do, NULL);
++		if (strcmp(platform, "wayland") == 0) {
++			this->wayland_window = graphics_opengl_wayland_new(
++				NULL, this->width, this->height, 0, &this->window_system_methods);
++			this->platform = graphics_opengl_egl_new(
++				this->window_system_methods->get_display(this->wayland_window),
++				this->window_system_methods->get_window(this->wayland_window),
++				&this->platform_methods);
++			this->window_system_methods->set_callbacks(
++				this->wayland_window, this, resize_callback_do,
++				click_notify_do, motion_notify_do, NULL);
++		} else {
++#if 0
++/* disable for temporary */
++			this->window_system = graphics_opengl_x11_new(
++				NULL, this->width, this->height, 32, &this->window_system_methods);
++			this->platform = graphics_opengl_egl_new(
++				this->window_system_methods->get_display(this->window_system),
++				this->window_system_methods->get_window(this->window_system),
++				&this->platform_methods);
++			this->window_system_methods->set_callbacks(
++				this->window_system, this, resize_callback_do,
++				click_notify_do, motion_notify_do, NULL);
++#endif
++		}
++
+ 		resize_callback(this->width,this->height);
+ #if 0
+ 		glClearColor ( 0.4 , 0.4 , 0.4 , 1);
+@@ -1333,9 +1363,17 @@
+ 		win->fullscreen = graphics_opengl_fullscreen;
+ 		win->disable_suspend = graphics_opengl_disable_suspend;
+ 		return win;
++	} else if (strcmp(type, "display") == 0) {
++		return (this->wayland_window) ? this->window_system_methods->get_display(this->wayland_window)
++					      : NULL;
+ 	} else {
+ #ifdef USE_OPENGLES
+-		return NULL;
++		if (strcmp(platform, "wayland") == 0) {
++			return this->window_system_methods->get_nativehandle(this->wayland_window);
++		}
++		else {
++			return NULL;
++		}
+ #else
+ 		return &this->DLid;
+ #endif
+@@ -1362,7 +1400,9 @@
+ {
+ 	gr->overlay_enabled = !disable;
+ 	gr->force_redraw = 1;
++#if 0
+ 	draw_mode(gr, draw_mode_end);
++#endif
+ }
+ 
+ static void
+diff -urN navit/navit/graphics/opengl/graphics_opengl.h navit/navit/graphics/opengl/graphics_opengl.h
+--- navit/navit/graphics/opengl/graphics_opengl.h	2014-10-20 15:21:04.561431914 +0200
++++ navit/navit/graphics/opengl/graphics_opengl.h	2014-09-23 12:53:02.000000000 +0200
+@@ -1,12 +1,13 @@
+ struct graphics_opengl_window_system;
+ struct graphics_opengl_platform;
+-
++struct graphics_opengl_wayland_window;
+ 
+ struct graphics_opengl_window_system_methods {
+-	void (*destroy)(struct graphics_opengl_window_system *);
+-	void *(*get_display)(struct graphics_opengl_window_system *);
+-	void *(*get_window)(struct graphics_opengl_window_system *);
+-	void (*set_callbacks)(struct graphics_opengl_window_system *, void *data, void *resize, void *button, void *motion, void *keypress);
++	void (*destroy)(void *);
++	void *(*get_display)(void *);
++	void *(*get_window)(void *);
++	void (*set_callbacks)(void *, void *data, void *resize, void *button, void *motion, void *keypress);
++	void *(*get_nativehandle)(void *);
+ };
+ 
+ struct graphics_opengl_platform_methods {
+@@ -16,3 +17,5 @@
+ 
+ struct graphics_opengl_window_system *graphics_opengl_x11_new(void *displayname, int w, int h, int depth, struct graphics_opengl_window_system_methods **methods);
+ struct graphics_opengl_platform *graphics_opengl_egl_new(void *display, void *window, struct graphics_opengl_platform_methods **methods);
++struct graphics_opengl_wayland_window *graphics_opengl_wayland_new(void *displayname, int w, int h, int depth, struct graphics_opengl_window_system_methods **methods);
++
+diff -urN navit/navit/graphics/opengl/graphics_opengl_wayland.c navit/navit/graphics/opengl/graphics_opengl_wayland.c
+--- navit/navit/graphics/opengl/graphics_opengl_wayland.c	1970-01-01 01:00:00.000000000 +0100
++++ navit/navit/graphics/opengl/graphics_opengl_wayland.c	2014-09-23 12:53:02.000000000 +0200
+@@ -0,0 +1,476 @@
++#include <stdio.h>
++#include <unistd.h>
++#include <glib.h>
++#include <EGL/egl.h>
++#include <linux/input.h>
++
++#include "wayland-client.h"
++#include "wayland-egl.h"
++
++#include "graphics_opengl.h"
++#include "callback.h"
++#include "event.h"
++#include "debug.h"
++
++struct graphics_opengl_wayland_display {
++	struct wl_display      *wl_display;
++	struct wl_registry     *wl_registry;
++	struct wl_compositor   *wl_compositor;
++	struct wl_shell        *wl_shell;
++	struct wl_seat         *wl_seat;
++	struct wl_pointer      *wl_pointer;
++	struct wl_touch        *wl_touch;
++};
++
++struct graphics_opengl_wayland_window {
++	struct graphics_opengl_wayland_display *display;
++	int      window_width;
++	int      window_height;
++	struct wl_surface       *wl_surface;
++	struct wl_shell_surface *wl_shell_surface;
++	struct wl_egl_window    *wl_egl_window;
++
++	struct callback     *callback;
++	struct event_watch  *event_watch;
++	void *data;
++	void (*resize)(void *data, int w, int h);
++	void (*button)(void *data, int button, int state, int x, int y);
++	void (*motion)(void *data, int x, int y);
++	void *keypress;
++	int x;
++	int y;
++};
++
++/********************* input handling ****************************/
++
++static void
++pointer_handle_enter(void *data, struct wl_pointer *wl_pointer,
++	uint32_t serial, struct wl_surface *wl_surface,
++	wl_fixed_t sx, wl_fixed_t sy)
++{
++	(void)data;
++	(void)wl_pointer;
++	(void)serial;
++	(void)wl_surface;
++	(void)sx;
++	(void)sy;
++}
++
++static void
++pointer_handle_leave(void *data, struct wl_pointer *wl_pointer,
++	uint32_t serial, struct wl_surface *wl_surface)
++{
++	(void)data;
++	(void)wl_pointer;
++	(void)serial;
++	(void)wl_surface;
++}
++
++static void
++pointer_handle_motion(void *data, struct wl_pointer *wl_pointer,
++	uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
++{
++	(void)wl_pointer;
++	(void)time;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	int x = wl_fixed_to_int(sx);
++	int y = wl_fixed_to_int(sy);
++	window->motion(window->data, x, y);
++
++	window->x = x;
++	window->y = y;
++}
++
++static void
++pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
++	uint32_t serial, uint32_t time, uint32_t button,
++	uint32_t state)
++{
++	(void)wl_pointer;
++	(void)serial;
++	(void)time;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED)
++	{
++		window->button(window->data, 1, state, window->x, window->y); 
++	}
++	else if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_RELEASED)
++	{
++		window->button(window->data, 1, state, window->x, window->y); 
++	}
++}
++
++static void
++pointer_handle_axis(void *data, struct wl_pointer *wl_pointer,
++	uint32_t time, uint32_t axis, wl_fixed_t value)
++{
++	(void)wl_pointer;
++	(void)time;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	int axis_value = wl_fixed_to_int(value);
++
++	if (0 > axis_value)
++	{
++		window->button(window->data, 4, 1, window->x, window->y);
++		window->button(window->data, 4, 0, window->x, window->y);
++	}
++	else
++	{
++		window->button(window->data, 5, 1, window->x, window->y);
++		window->button(window->data, 5, 0, window->x, window->y);
++	}
++}
++
++static void
++touch_handle_down(void *data, struct wl_touch *wl_touch,
++	uint32_t serial, uint32_t time, struct wl_surface *wl_surface,
++	int32_t id, wl_fixed_t xw, wl_fixed_t yw)
++{
++	(void)wl_touch;
++	(void)serial;
++	(void)time;
++	(void)wl_surface;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	int x = wl_fixed_to_int(xw);
++	int y = wl_fixed_to_int(yw);
++	window->button(window->data, 1, 1, x, y);
++
++	window->x = x;
++	window->y = y;
++}
++
++static void
++touch_handle_up(void *data, struct wl_touch *wl_touch,
++	uint32_t serial, uint32_t time, int32_t id)
++{
++	(void)wl_touch;
++	(void)serial;
++	(void)time;
++	(void)id;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	window->button(window->data, 1, 0, window->x, window->y);
++}
++
++static void
++touch_handle_motion(void *data, struct wl_touch *wl_touch,
++	uint32_t time, int32_t id, wl_fixed_t xw, wl_fixed_t yw)
++{
++	(void)wl_touch;
++	(void)time;
++	(void)id;
++
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	int x = wl_fixed_to_int(xw);
++	int y = wl_fixed_to_int(yw);
++	window->motion(window->data, x, y);
++
++	window->x = x;
++	window->y = y;
++}
++
++static void
++touch_handle_frame(void *data, struct wl_touch *wl_touch)
++{
++	(void)data;
++	(void)wl_touch;
++}
++
++static void
++touch_handle_cancel(void *data, struct wl_touch *wl_touch)
++{
++	(void)data;
++	(void)wl_touch;
++}
++
++static const struct wl_pointer_listener wl_pointer_listener = {
++	pointer_handle_enter,
++	pointer_handle_leave,
++	pointer_handle_motion,
++	pointer_handle_button,
++	pointer_handle_axis,
++};
++
++static const struct wl_touch_listener wl_touch_listener = {
++	touch_handle_down,
++	touch_handle_up,
++	touch_handle_motion,
++	touch_handle_frame,
++	touch_handle_cancel,
++};
++
++static void
++seat_handle_capabilities(void *data, struct wl_seat *wl_seat,
++	enum wl_seat_capability caps)
++{
++	struct graphics_opengl_wayland_window *window = 
++		(struct graphics_opengl_wayland_window*)data;
++
++	if ((caps & WL_SEAT_CAPABILITY_POINTER) && !window->display->wl_pointer)
++	{
++		window->display->wl_pointer = wl_seat_get_pointer(wl_seat);
++		wl_pointer_add_listener(window->display->wl_pointer, &wl_pointer_listener, window);
++	}
++	else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && window->display->wl_pointer)
++	{
++		wl_pointer_destroy(window->display->wl_pointer);
++		window->display->wl_pointer = NULL;
++	}
++
++	if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !window->display->wl_touch)
++	{
++		window->display->wl_touch = wl_seat_get_touch(wl_seat);
++		wl_touch_set_user_data(window->display->wl_touch, window);
++		wl_touch_add_listener(window->display->wl_touch, &wl_touch_listener, window);
++	}
++	else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && window->display->wl_touch)
++	{
++		wl_touch_destroy(window->display->wl_touch);
++		window->display->wl_touch = NULL;
++	}
++}
++
++static const struct wl_seat_listener wl_seat_listener = {
++	seat_handle_capabilities,
++};
++
++/********************* registry_handle_global ****************************/
++
++static void
++registry_handle_global(void *data, struct wl_registry *wl_registry, uint32_t name,
++                       const char *interface, uint32_t version)
++{
++	(void)version;
++
++	struct graphics_opengl_wayland_window *window = 
++		(struct graphics_opengl_wayland_window*)data;
++
++	if (strcmp(interface, "wl_compositor") == 0) {
++		window->display->wl_compositor = 
++			wl_registry_bind(wl_registry, name,
++			                 &wl_compositor_interface, 1);
++/**
++	} else if (strcmp(interface, "wl_shell") == 0) {
++		window->display->wl_shell =
++			wl_registry_bind(wl_registry, name,
++			                 &wl_shell_interface, 1);
++**/
++	} else if (strcmp(interface, "wl_seat") == 0) {
++		window->display->wl_seat =
++			wl_registry_bind(wl_registry, name,
++			                 &wl_seat_interface, 1);
++		wl_seat_add_listener(window->display->wl_seat, &wl_seat_listener, window);
++	}
++}
++
++static const struct wl_registry_listener registry_listener = {
++	registry_handle_global,
++	NULL
++};
++
++/********************* set methods ****************************/
++
++static void *
++graphics_opengl_wayland_get_wl_display(void *data)
++{
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++	return (void *)window->display->wl_display;
++}
++
++static void *
++graphics_opengl_wayland_get_wl_egl_window(void *data)
++{
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++	return (void *)window->wl_egl_window;
++}
++
++static void
++graphics_opengl_wayland_set_callbacks(void *window_data,
++	void *data, void *resize, void *button, void *motion, void *keypress)
++{
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)window_data;
++
++	window->data     = data;
++	window->resize   = resize;
++	window->button   = button;
++	window->motion   = motion;
++	window->keypress = keypress;
++}
++
++static void
++graphics_opengl_wayland_destroy(void *data)
++{
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	struct graphics_opengl_wayland_display *display;
++	display = window->display;
++
++	if (window->wl_shell_surface) {
++		wl_shell_surface_destroy(window->wl_shell_surface);
++	}
++
++	if (display->wl_shell) {
++		wl_shell_destroy(display->wl_shell);
++	}
++
++	if (display->wl_compositor) {
++		wl_compositor_destroy(display->wl_compositor);
++	}
++
++	wl_display_flush(display->wl_display);
++	wl_display_disconnect(display->wl_display);
++}
++
++static void *
++graphics_opengl_wayland_get_nativehandle(void *data)
++{
++	struct graphics_opengl_wayland_window *window =
++		(struct graphics_opengl_wayland_window*)data;
++
++	return (void *)window->wl_surface;
++}
++
++struct graphics_opengl_window_system_methods graphics_opengl_wayland_methods = {
++	graphics_opengl_wayland_destroy,
++	graphics_opengl_wayland_get_wl_display,
++	graphics_opengl_wayland_get_wl_egl_window,
++	graphics_opengl_wayland_set_callbacks,
++	graphics_opengl_wayland_get_nativehandle,
++};
++
++/********************* wl_shell_surface listener ****************************/
++
++static void
++handle_ping(void *data, struct wl_shell_surface *wl_shell_surface, uint32_t serial)
++{
++	(void)data;
++	wl_shell_surface_pong(wl_shell_surface, serial);
++}
++
++static void
++handle_configure(void *data, struct wl_shell_surface *wl_shell_surface,
++	uint32_t edges, int32_t width, int32_t height)
++{
++	(void)wl_shell_surface;
++	(void)edges;
++
++	struct graphics_opengl_wayland_window *window = data;
++	if (window->wl_egl_window)
++		wl_egl_window_resize(window->wl_egl_window, width, height, 0, 0);
++}
++
++static void
++handle_popup_done(void *data, struct wl_shell_surface *wl_shell_surface)
++{
++	(void)data;
++	(void)wl_shell_surface;
++}
++
++static struct wl_shell_surface_listener wl_shell_surface_listener = {
++	handle_ping,
++	handle_configure,
++	handle_popup_done
++};
++
++/********************* event_methods ****************************/
++
++static void
++graphics_opengl_wayland_watch(struct graphics_opengl_wayland_window *window)
++{
++	wl_display_dispatch(window->display->wl_display);
++}
++
++/********************* public function ****************************/
++
++struct graphics_opengl_wayland_window *
++graphics_opengl_wayland_new(void *displayname, int w, int h, int depth,
++                            struct graphics_opengl_window_system_methods **methods)
++{
++	(void)displayname;
++	(void)depth;
++
++	struct graphics_opengl_wayland_display *display;
++	struct graphics_opengl_wayland_window  *window;
++
++	/* Wayland Window Display Create */
++	display = (struct graphics_opengl_wayland_display*)malloc(
++		sizeof(struct graphics_opengl_wayland_display));
++	window  = (struct graphics_opengl_wayland_window*)malloc(
++		sizeof(struct graphics_opengl_wayland_window));
++
++	memset(display, 0x00, sizeof(struct graphics_opengl_wayland_display));
++	memset(window,  0x00, sizeof(struct graphics_opengl_wayland_window));
++
++	window->display = display;
++	window->window_width  = w;
++	window->window_height = h;
++
++	display->wl_display = wl_display_connect(NULL);
++	if (display->wl_display == NULL) {
++		dbg(0, "[ERROR] : failed to open wayland display(wl_display_connect)\n");
++		goto error;
++	}
++
++	display->wl_registry = wl_display_get_registry(display->wl_display);
++	wl_registry_add_listener(display->wl_registry, &registry_listener, window);
++
++	wl_display_dispatch(display->wl_display);
++	wl_display_roundtrip(display->wl_display);
++
++	*methods = &graphics_opengl_wayland_methods;
++
++	/* Create Window for egl_new */
++	window->wl_surface = wl_compositor_create_surface(window->display->wl_compositor);
++	if (window->display->wl_shell) {
++		window->wl_shell_surface = wl_shell_get_shell_surface(
++			window->display->wl_shell, window->wl_surface);
++		wl_shell_surface_add_listener(window->wl_shell_surface,
++			&wl_shell_surface_listener, window);
++	}
++
++	window->wl_egl_window = wl_egl_window_create(window->wl_surface,
++		window->window_width,
++		window->window_height);
++
++	if (window->display->wl_shell) {
++		wl_shell_surface_set_toplevel(window->wl_shell_surface);
++	}
++
++	/* Set Callback */
++	window->callback = callback_new_1(callback_cast(graphics_opengl_wayland_watch), window);
++	if (!event_request_system("glib", "graphics_opengl_wayland_new"))
++		goto error;
++
++	window->event_watch = event_add_watch(
++		(void *)wl_display_get_fd(window->display->wl_display),
++		event_watch_cond_read, window->callback);
++
++	return window;
++
++error:
++	dbg(0, "[ERROR] : graphics_opengl_wayland.c wayland_new\n");
++	graphics_opengl_wayland_destroy(window);
++	return NULL;
++}
++
++
+diff -urN navit/navit/graphics/opengl/graphics_opengl_x11.c navit/navit/graphics/opengl/graphics_opengl_x11.c
+--- navit/navit/graphics/opengl/graphics_opengl_x11.c	2014-10-20 15:21:04.565431914 +0200
++++ navit/navit/graphics/opengl/graphics_opengl_x11.c	2014-09-23 12:53:02.000000000 +0200
+@@ -24,8 +24,10 @@
+ 
+ 
+ static void
+-graphics_opengl_x11_destroy(struct graphics_opengl_window_system *x11)
++graphics_opengl_x11_destroy(void *data)
+ {
++	struct graphics_opengl_window_system *x11 =
++		(struct graphics_opengl_window_system*)data;
+ 	if (x11->watch)
+ 		event_remove_watch(x11->watch);
+ 	if (x11->cb)
+@@ -41,20 +43,27 @@
+ }
+ 
+ static void *
+-graphics_opengl_get_display(struct graphics_opengl_window_system *x11)
++graphics_opengl_get_display(void *data)
+ {
++	struct graphics_opengl_window_system *x11 =
++		(struct graphics_opengl_window_system*)data;
+ 	return x11->display;
+ }
+ 
+ static void *
+-graphics_opengl_get_window(struct graphics_opengl_window_system *x11)
++graphics_opengl_get_window(void *data)
+ {
++	struct graphics_opengl_window_system *x11 =
++		(struct graphics_opengl_window_system*)data;
+ 	return (void *)x11->window;
+ }
+ 
+ static void
+-graphics_opengl_set_callbacks(struct graphics_opengl_window_system *x11, void *data, void *resize, void *button, void *motion, void *keypress)
++graphics_opengl_set_callbacks(void *window_data, void *data, void *resize, void *button, void *motion, void *keypress)
+ {
++	struct graphics_opengl_window_system *x11 =
++		(struct graphics_opengl_window_system*)window_data;
++
+ 	x11->data=data;
+ 	x11->resize=resize;
+ 	x11->button=button;
+@@ -68,6 +77,7 @@
+ 	graphics_opengl_get_display,
+ 	graphics_opengl_get_window,
+ 	graphics_opengl_set_callbacks,
++	NULL,
+ };
+ 
+ static void
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 290a1e9..2f74ecf 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -284,25 +284,25 @@ if (FREETYPE_FOUND)
+    if (OPENGL_FOUND AND OPENGL_GLU_FOUND AND GLUT_FOUND AND OPENGL_INCLUDE_DIR)
+       message (STATUS "opengl found: ${OPENGL_gl_LIBRARY}")
+       include_directories(${OPENGL_INCLUDE_DIR})
+-      if (USE_OPENGLES2)
+-         include_directories(${OPENGLES2_INCLUDE_DIR};${WAYLAND_INCLUDE_DIRS})
+-	 set(USE_OPENGLES TRUE)
+-#	 set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY};${WAYLAND_LIBRARIES})
+-	 set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${WAYLAND_LIBRARIES})
+-      elseif (USE_OPENGLES)
+-         include_directories(${OPENGLES_INCLUDE_DIR})
+-#        set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY})
+-         set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY})
+-      else()
+-         set(GRAPHICS_OPENGL_LIBRARY ${OPENGL_gl_LIBRARY};${OPENGL_glu_LIBRARY};${GLUT_glut_LIBRARY})
+-      endif(USE_OPENGLES2)
+-      if (HAVE_FREEIMAGE)
+-         list(APPEND GRAPHICS_OPENGL_LIBRARY freeimage)
+-      endif(HAVE_FREEIMAGE)
+-      set_with_reason(graphics/opengl "Found OpenGL" TRUE ${GRAPHICS_OPENGL_LIBRARY})
++      set(GRAPHICS_OPENGL_LIBRARY ${OPENGL_gl_LIBRARY};${OPENGL_glu_LIBRARY};${GLUT_glut_LIBRARY})
++   elseif (OPENGL_FOUND AND OPENGL_INCLUDE_DIR AND USE_OPENGLES2)
++      message (STATUS "opengl found: ${OPENGLES2_glesv2_LIBRARY}")
++      include_directories(${OPENGLES2_INCLUDE_DIR};${WAYLAND_INCLUDE_DIRS})
++      set(USE_OPENGLES TRUE)
++#     set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY};${WAYLAND_LIBRARIES})
++      set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES2_glesv2_LIBRARY};${OPENGLES_EGL_LIBRARY};${WAYLAND_LIBRARIES})
++   elseif(OPENGL_FOUND AND OPENGL_INCLUDE_DIR AND USE_OPENGLES)
++      message (STATUS "opengl found: ${OPENGLES2_glesv1_LIBRARY}")
++      include_directories(${OPENGLES_INCLUDE_DIR})
++#     set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY};${X11_LIBRARY})
++      set(GRAPHICS_OPENGL_LIBRARY ${OPENGLES_glesv1_CM_LIBRARY};${OPENGLES_EGL_LIBRARY})
+    else()
+       message (STATUS "opengl not found")
+    endif()
++   if (HAVE_FREEIMAGE)
++      list(APPEND GRAPHICS_OPENGL_LIBRARY freeimage)
++   endif(HAVE_FREEIMAGE)
++   set_with_reason(graphics/opengl "Found OpenGL" TRUE ${GRAPHICS_OPENGL_LIBRARY})
+ else()
+    message (STATUS "no Freetype found")
+ endif(FREETYPE_FOUND)
+diff --git a/navit/font/freetype/font_freetype.c b/navit/font/freetype/font_freetype.c
+index 504cc55..0ca6214 100644
+--- a/navit/font/freetype/font_freetype.c
++++ b/navit/font/freetype/font_freetype.c
+@@ -32,7 +32,7 @@
+ #if USE_FRIBIDI
+ #include <fribidi.h>
+ #endif
+-#include <freetype/ftglyph.h>
++#include <freetype2/ftglyph.h>
+ #include "point.h"
+ #include "graphics.h"
+ #include "debug.h"

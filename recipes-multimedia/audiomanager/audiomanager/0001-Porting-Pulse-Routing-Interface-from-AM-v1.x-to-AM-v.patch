@@ -1,0 +1,2097 @@
+From d21f2cc236c96e898c50c92a0a89584053665da7 Mon Sep 17 00:00:00 2001
+From: Adrian Scarlat <adrian.scarlat@windriver.com>
+Date: Mon, 13 Oct 2014 19:42:19 +0300
+Subject: [PATCH] Porting Pulse Routing Interface from AM v1.x to AM v3.0
+
+This Routing Interface is needed for any application that will
+be developed on top of AM and will use PulseAudio Sound Server
+to control the sources and sinks present on the system. It must
+be loaded by AM;
+
+The interface can be built by supplying cmake with the -DWITH_PULSE_ROUTING_PLUGIN=ON;
+After building one configuration file will be available:
+  1. libPluginRoutingInterfacePULSE.conf - configuration file for
+     Pulse Routing Plugin; it will be loaded at runtime by the Pulse Routing Interface;
+
+Changed files:
+  CMakeLists.txt
+
+Added new folders:
+  PluginRoutingInterfacePulse/
+
+Added new files:
+  PluginRoutingInterfacePulse/CMakeLists.txt
+  PluginRoutingInterfacePulse/README
+  PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
+  PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h
+  PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
+  PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
+  PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
+
+Signed-off-by: Adrian Scarlat <adrian.scarlat@windriver.com>
+---
+ CMakeLists.txt                                     |   24 +-
+ PluginRoutingInterfacePulse/CMakeLists.txt         |  103 +++
+ PluginRoutingInterfacePulse/README                 |   50 ++
+ .../data/libPluginRoutingInterfacePULSE.conf       |   55 ++
+ .../include/RoutingSenderMainloopPULSE.h           |   97 +++
+ .../include/RoutingSenderPULSE.h                   |  131 +++
+ .../src/RoutingSenderMainloopPULSE.cpp             |  610 +++++++++++++
+ .../src/RoutingSenderPULSE.cpp                     |  914 ++++++++++++++++++++
+ 8 files changed, 1978 insertions(+), 6 deletions(-)
+ create mode 100644 PluginRoutingInterfacePulse/CMakeLists.txt
+ create mode 100644 PluginRoutingInterfacePulse/README
+ create mode 100755 PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
+ create mode 100644 PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h
+ create mode 100644 PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
+ create mode 100644 PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
+ create mode 100644 PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3e70e4f..48e7ae2 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -95,7 +95,15 @@ OPTION ( WITH_NSM
+  OPTION ( WITH_DATABASE_STORAGE
+     "build with sqlite as in memory storage" OFF)
+ 
++OPTION( WITH_PULSE_ROUTING_PLUGIN
++    "Enable PULSE Audio routing plugin interface" OFF )
++
+ SET (WITH_COMMON_API_GEN ON CACHE INTERNAL "hide this!" FORCE)
++
++IF (WITH_PULSE_ROUTING_PLUGIN)
++    SET (WITH_DBUS_WRAPPER ON CACHE INTERNAL "hide this!" FORCE)
++    SET (WITH_CAPI_WRAPPER OFF CACHE INTERNAL "hide this!" FORCE)
++ENDIF (WITH_PULSE_ROUTING_PLUGIN)
+  
+ IF (WITH_ENABLED_IPC STREQUAL "DBUS")
+     SET (WITH_DBUS_WRAPPER ON CACHE INTERNAL "hide this!" FORCE)
+@@ -239,12 +247,16 @@ if(WITH_PLUGIN_COMMAND)
+ endif(WITH_PLUGIN_COMMAND)
+ 
+ if(WITH_PLUGIN_ROUTING)
+-	add_subdirectory (PluginRoutingInterfaceAsync)
+-    if(WITH_DBUS_WRAPPER)
+-	    add_subdirectory (PluginRoutingInterfaceDbus)
+-	elseif(WITH_CAPI_WRAPPER)  	    
+-    	add_subdirectory (PluginRoutingInterfaceCAPI)    
+-	endif()    
++    if (WITH_PULSE_ROUTING_PLUGIN)
++        add_subdirectory (PluginRoutingInterfacePulse)
++    else ()
++        add_subdirectory (PluginRoutingInterfaceAsync)
++        if(WITH_DBUS_WRAPPER)
++            add_subdirectory (PluginRoutingInterfaceDbus)
++        elseif(WITH_CAPI_WRAPPER)
++            add_subdirectory (PluginRoutingInterfaceCAPI)
++        endif()
++    endif()
+ endif(WITH_PLUGIN_ROUTING)
+ 
+ if(WITH_PLUGIN_CONTROL)
+diff --git a/PluginRoutingInterfacePulse/CMakeLists.txt b/PluginRoutingInterfacePulse/CMakeLists.txt
+new file mode 100644
+index 0000000..1a15b40
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/CMakeLists.txt
+@@ -0,0 +1,103 @@
++############################################################################
++# SPDX license identifier: MPL-2.0
++#
++# Copyright (C) 2012-2014, Wind River Systems
++# Copyright (C) 2014, GENIVI Alliance
++#
++# This file is part of Pulse Audio Interface Routing Plugin.
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++# For further information see http://www.genivi.org/.
++#
++# List of changes:
++#
++# 21.08.2014, Adrian Scarlat, First version of the code;
++#                             Porting code from AM ver1.x to AM ver3.0;
++#                             Added Copyright and License information;
++############################################################################
++
++cmake_minimum_required(VERSION 2.6)
++
++PROJECT(PluginRoutingInterfacePULSE)
++
++set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
++set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
++FILE(GLOB pulseConf "${CMAKE_CURRENT_SOURCE_DIR}/README*")
++FIND_PACKAGE(PkgConfig)
++
++OPTION( WITH_DOCUMENTATION
++        "Build together with Doxygen Documentation" OFF )
++
++SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
++SET(PLUGINS_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/plugins)
++set(LIBRARY_OUTPUT_PATH ${PLUGINS_OUTPUT_PATH}/routing)
++set(DOC_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/doc/RoutingPlugin)
++set(INCLUDES_FOLDER "include")
++SET(LIB_INSTALL_SUFFIX "audioManager")
++
++FIND_PACKAGE(DBUS REQUIRED)
++FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include)
++
++if(DEFINED AUDIO_INCLUDE_FOLDER)
++        message(STATUS "Found AudioManager include: ${AUDIO_INCLUDE_FOLDER}")
++else(DEFINED AUDIO_INCLUDE_FOLDER)
++        message(STATUS "Did not found AudioManager include!")
++endif(DEFINED AUDIO_INCLUDE_FOLDER)
++
++FILE(READ "${AUDIO_INCLUDE_FOLDER}/routing/IAmRoutingSend.h" VERSION_BUFFER LIMIT 6000)
++STRING(REGEX MATCH "RoutingSendVersion*.[^0-9]*[0-9]" LIB_INTERFACE_VERSION_STRING ${VERSION_BUFFER})
++STRING(REGEX REPLACE "[^0-9]" "" LIB_INTERFACE_VERSION ${LIB_INTERFACE_VERSION_STRING})
++MESSAGE(STATUS "Building against routing interface version ${LIB_INTERFACE_VERSION}")
++
++SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
++FIND_PACKAGE(DBUS REQUIRED)
++
++INCLUDE_DIRECTORIES(
++        ${CMAKE_SOURCE_DIR}
++        ${CMAKE_CURRENT_BINARY_DIR}
++        ${DBUS_INCLUDE_DIR}
++        ${DBUS_ARCH_INCLUDE_DIR}
++        ${AUDIO_INCLUDE_FOLDER}
++        ${INCLUDES_FOLDER}
++)
++
++# all source files go here
++file(GLOB PLUGINDBUS_SRCS_CXX "src/*.cpp")
++
++add_library(PluginRoutingInterfacePULSE SHARED ${PLUGINDBUS_SRCS_CXX})
++
++TARGET_LINK_LIBRARIES(PluginRoutingInterfacePULSE
++    pulse
++    ${DLT_LIBRARIES}
++    ${DBUS_LIBRARY}
++)
++
++IF(WITH_DOCUMENTATION)
++        file(MAKE_DIRECTORY ${DOC_OUTPUT_PATH})
++        configure_file(${DOXY_FILE}  ${DOC_OUTPUT_PATH}/Doxyfile  @ONLY IMMEDIATE)
++        add_custom_target (PluginRoutingInterfacePULSEDocs ALL
++                COMMAND ${DOXYGEN_EXECUTABLE} ${DOC_OUTPUT_PATH}/Doxyfile WORKING_DIRECTORY ${DOC_OUTPUT_PATH}
++                SOURCES ${PROJECT_BINARY_DIR} ${DOC_OUTPUT_PATH}/Doxyfile
++        )
++ENDIF(WITH_DOCUMENTATION)
++
++INSTALL(TARGETS PluginRoutingInterfacePULSE
++        DESTINATION "lib/${LIB_INSTALL_SUFFIX}/routing"
++        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
++        COMPONENT sampleplugins
++)
++
++INSTALL(FILES data/libPluginRoutingInterfacePULSE.conf
++        DESTINATION "lib/${LIB_INSTALL_SUFFIX}/routing"
++        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
++        COMPONENT sampleplugins
++)
++
++# Uncomment the following five lines bellow (that start with #CONFIGURE_FILE...)
++# to make those files available in build environment;
++# For meta-ivi deployment purposes leave them commented.
++
++#CONFIGURE_FILE( ${CMAKE_SOURCE_DIR}/PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf ${PLUGINS_OUTPUT_PATH}/routing/libPluginRoutingInterfacePULSE.conf )
+diff --git a/PluginRoutingInterfacePulse/README b/PluginRoutingInterfacePulse/README
+new file mode 100644
+index 0000000..8238b94
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/README
+@@ -0,0 +1,50 @@
++GENIVI_AudioManager_PluginRoutingInterfacePulse
++===============================================
++:Author: Adrian Scarlat <adrian.scarlat@windriver.com>
++:doctitle: GENIVI_AudioManager_PluginRoutingInterfacePulse
++
++SPDX license identifier: MPL-2.0
++
++Copyright (C) 2011-2014, Wind River Systems
++Copyright (C) 2014, GENIVI Alliance
++
++This file is part of AudioManager Pulse Audio Interface Routing Plugin.
++
++This Source Code Form is subject to the terms of the Mozilla Public
++License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++For further information see http://www.genivi.org/.
++
++== Documentation
++Documentation is provided by doxygen. In order to use this, please compile the
++AudioManager like this:
++cmake -DWITH_DOCUMENTATION=ON
++make
++
++== Description of Pulse Routing Plugin
++The PluginRoutingInterfacePulse is used by the AM PoC application to communicate
++with PulseAudio present on the system on which the AM PoC application will be
++deployed.
++
++== Build intstructions
++Execute the following command from audiomanager/ folder:
++mkdir BUILD
++cd BUILD
++cmake -DWITH_ENABLED_IPC=DBUS -DWITH_PULSE_ROUTING_PLUGIN=ON ..
++make  [ add to make command "-j 4" if you have a 4 CPU.
++
++If all goes well a bin/ folder will be made.
++Change to it by executing cd ../bin/
++
++In order to use the AudioManager with the PluginRoutingInterfacePulse, the
++AudioManager must be compiled with PluginRoutingInterfacePulse and with
++PluginControlInterfacePulse.For achieving this please consult the README
++from the PluginControlInterfacePulse Project also.
++
++== Available files after building
++libPluginRoutingInterfacePULSE.conf -- This is Pulse Routing Interface
++configuration files.It is used for configuring Sources and Sinks on the system.
++The contend on this file must be in sync with libPluginControlInterface.conf
++file from the PluginControlInterfacePulse Projec.Also some PulseAudio knowledge
++is advisable.
+diff --git a/PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf b/PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
+new file mode 100755
+index 0000000..d8b9868
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
+@@ -0,0 +1,55 @@
++############################################################################
++# SPDX license identifier: MPL-2.0
++#
++# Copyright (C) 2012-2014, Wind River Systems
++# Copyright (C) 2014, GENIVI Alliance
++#
++# This file is part of Pulse Audio Interface Routing Plugin.
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++# For further information see http://www.genivi.org/.
++#
++# List of changes:
++#
++# 21.08.2014, Adrian Scarlat, First version of the code;
++#                             Porting code from AM ver1.x to AM ver3.0;
++#                             Added Copyright and License information;
++############################################################################
++#
++# config line format:
++#
++# TYPE|PULSE TYPE|CLASS|NAME|PROPERTY_NAME|PROPERTY_VALUE
++#
++# TYPE="Source" or "Sink"
++#
++# PULSE_TYPE="Sink Input" or "Source" for TYPE="Source"
++# PULSE_TYPE="Source Output" or "Sink" for TYPE="Sink"
++#
++# NAME=Any string not containing separator |
++#
++# CLASS=Any string not containing separator | - name should be consistent with Controller config
++#
++# PROPERTY_NAME=a Pulse recognized element property, e.g. "application.process.binary" or "device.class"
++#               for PULSE_TYPE=Source or PULSE_TYPE=Sink, take a look ad device string
++# PROPERTY_VALUE=any string corresponding to the property value
++#
++# TODO: provide support for multiple attributes filtering
++# TODO: comment at eof is mandatory! this looks like a bug for the moment
++####################
++# Sources
++####################
++Source|Sink Input|Entertainment|MediaPlayer|media.role|MEDIA
++Source|Sink Input|Navigation|NaviPlayer|media.role|NAVI
++Source|Sink Input|TTS|TTSPlayer|media.role|TextToSpeach
++Source|Sink Input|Telephony|Skype|media.role|skype
++Source|Sink Input|Analogic|ReverseBeep|media.role|reverse
++####################
++# Sinks
++####################
++Sink|Sink|HifiAudio|AlsaPrimary|na|na
++Sink|Sink|HifiAudio|AlsaSecondary|na|na
++# !END
++
+diff --git a/PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h b/PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h
+new file mode 100644
+index 0000000..ff0c1d8
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h
+@@ -0,0 +1,97 @@
++/**
++ * SPDX license identifier: MPL-2.0
++ *
++ * Copyright (C) 2011-2014, Wind River Systems
++ * Copyright (C) 2014, GENIVI Alliance
++ *
++ * This file is part of Pulse Audio Interface Routing Plugin.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * For further information see http://www.genivi.org/.
++ *
++ * List of changes:
++ *
++ * 21.08.2014, Adrian Scarlat, First version of the code;
++ *                             Porting code from AM ver1.x to AM ver3.0;
++ *                             Added Copyright and License information;
++ */
++
++#ifndef ROUTINGSENDERMAINLOPPPULSE_H_
++#define ROUTINGSENDERMAINLOPPPULSE_H_
++
++/* Defines */
++/* In PulseAudio the volume value range from 0 (silence) to 0x10000U=65536 ("maximum" sensible volume). */
++#define MAX_PULSE_VOLUME    (0x10000U)
++
++bool routing_sender_create_mainloop(void *thiz);
++
++void * routing_sender_start_mainloop(void *thiz);
++
++void routing_sender_get_sink_info_callback(
++        pa_context *c,
++        const pa_sink_info *i,
++        int is_last, void *thiz);
++
++void routing_sender_context_state_callback(pa_context *c, void *thiz);
++
++bool routing_sender_get_source_info(pa_context *c, void *thiz);
++
++void routing_sender_pa_event_callback(
++        pa_context *c,
++        pa_subscription_event_type_t t,
++        uint32_t idx, void *thiz);
++
++void routing_sender_get_sink_input_info_callback(
++        pa_context *c,
++        const pa_sink_input_info *i,
++        int eol,
++        void *thiz);
++
++void routing_sender_get_source_output_info_callback(
++        pa_context *c,
++        const pa_source_output_info *i,
++        int eol,
++        void *userdata);
++
++bool routing_sender_move_sink_input(
++        pa_context *c,
++        uint32_t sink_input_index,
++        uint32_t sink_index,
++        void *thiz);
++
++bool routing_sender_move_source_output(
++        pa_context *c,
++        uint32_t source_output_index,
++        uint32_t source_index,
++        void *thiz);
++
++bool routing_sender_sink_input_volume_ramp(
++        pa_context *c,
++        uint32_t sink_input_index,
++        uint32_t crt_volume,
++        uint32_t volume,
++        uint16_t ramp_time,
++        void *thiz);
++
++bool routing_sender_sink_input_volume(
++        pa_context *c,
++        uint32_t sink_input_index,
++        uint32_t volume,
++        void *thiz);
++
++bool routing_sender_sink_input_mute(
++        pa_context *c,
++        uint32_t sink_input_index,
++        bool mute,
++        void *thiz);
++
++bool routing_sender_sink_volume(
++        pa_context *c,
++        uint32_t sink_index,
++        uint32_t volume,
++        void *thiz);
++
++#endif
+diff --git a/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h b/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
+new file mode 100644
+index 0000000..0fc2197
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
+@@ -0,0 +1,131 @@
++/**
++ * SPDX license identifier: MPL-2.0
++ *
++ * Copyright (C) 2011-2014, Wind River Systems
++ * Copyright (C) 2014, GENIVI Alliance
++ *
++ * This file is part of Pulse Audio Interface Routing Plugin.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * For further information see http://www.genivi.org/.
++ *
++ * List of changes:
++ *
++ * 21.08.2014, Adrian Scarlat, First version of the code;
++ *                             Porting code from AM ver1.x to AM ver3.0;
++ *                             Added Copyright and License information;
++ */
++
++#ifndef ROUTINGSENDERPULSE_H_
++#define ROUTINGSENDERPULSE_H_
++
++/* Includes */
++#include "routing/IAmRoutingSend.h"
++#include <signal.h>
++#include <string.h>
++#include <errno.h>
++#include <unistd.h>
++#include <assert.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <limits.h>
++#include <getopt.h>
++#include <locale.h>
++#include <map>
++#include <pulse/pulseaudio.h>
++
++using namespace am;
++
++struct RoutingSenderPULSEConnection
++{
++    am_connectionID_t   connectionID;
++    am_sourceID_t       sourceID;
++    am_sinkID_t         sinkID;
++    am_Handle_s         handle;
++    bool                pending;
++};
++
++
++struct RoutingSenderPULSESourceSinkConfig
++{
++    am_Source_s source;
++    am_Sink_s   sink;
++
++    std::string name;//e.g. {"gst-launch-0.10",  "mono", "aplay"};
++    std::string clazz;//e.g. {"Entertainment", "Navigation", "TTS"};
++    std::string propertyName;//e.g. {"application.process.binary", "application.process.binary",    "application.process.app"};
++    std::string propertyValue;//
++};
++
++
++/* Prototypes */
++class RoutingSenderPULSE : public IAmRoutingSend
++{
++public:
++    RoutingSenderPULSE(pa_context *p_paContext);
++    ~RoutingSenderPULSE();
++
++    am::am_Error_e startupInterface(am::IAmRoutingReceive* p_routingReceiver);
++    void setRoutingReady(uint16_t handle);
++    void setRoutingRundown(uint16_t handle);
++    am_Error_e asyncAbort(const am_Handle_s handle);
++    am_Error_e asyncConnect(const am_Handle_s handle, const am_connectionID_t connectionID, const am_sourceID_t sourceID, const am_sinkID_t sinkID, const am_CustomConnectionFormat_t connectionFormat);
++    am_Error_e asyncDisconnect(const am_Handle_s handle, const am_connectionID_t connectionID);
++    am_Error_e asyncSetSinkVolume(const am_Handle_s handle, const am_sinkID_t sinkID, const am_volume_t volume, const am_CustomRampType_t ramp, const am_time_t time);
++    am_Error_e asyncSetSourceVolume(const am_Handle_s handle, const am_sourceID_t sourceID, const am_volume_t volume, const am_CustomRampType_t ramp, const am_time_t time);
++    am_Error_e asyncSetSourceState(const am_Handle_s handle, const am_sourceID_t sourceID, const am_SourceState_e state);
++    am_Error_e asyncSetSinkSoundProperties(const am_Handle_s handle, const am_sinkID_t sinkID, const std::vector<am_SoundProperty_s>& listSoundProperties);
++    am_Error_e asyncSetSinkSoundProperty(const am_Handle_s handle, const am_sinkID_t sinkID, const am_SoundProperty_s& soundProperty);
++    am_Error_e asyncSetSourceSoundProperties(const am_Handle_s handle, const am_sourceID_t sourceID, const std::vector<am_SoundProperty_s>& listSoundProperties);
++    am_Error_e asyncSetSourceSoundProperty(const am_Handle_s handle, const am_sourceID_t sourceID, const am_SoundProperty_s& soundProperty);
++    am_Error_e asyncCrossFade(const am_Handle_s handle, const am_crossfaderID_t crossfaderID, const am_HotSink_e hotSink, const am_CustomRampType_t rampType, const am_time_t time);
++    am_Error_e setDomainState(const am_domainID_t domainID, const am_DomainState_e domainState);
++    am_Error_e returnBusName(std::string& BusName) const;
++    void getInterfaceVersion(std::string& out_ver) const;
++
++    void setPAContext(pa_context *p_paContext) {
++        this->m_paContext = p_paContext;
++    }
++    am_Error_e asyncSetVolumes(const am_Handle_s handle, const std::vector<am_Volumes_s>& listVolumes);
++    am_Error_e asyncSetSinkNotificationConfiguration(const am_Handle_s handle, const am_sinkID_t sinkID, const am_NotificationConfiguration_s& notificationConfiguration);
++    am_Error_e asyncSetSourceNotificationConfiguration(const am_Handle_s handle, const am_sourceID_t sourceID, const am_NotificationConfiguration_s& notificationConfiguration);
++//Pulse Audio callbacks
++    void getSinkInfoCallback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata);
++    void getSourceInfoCallback(pa_context *c, const pa_source_info *i, int is_last, void *userdata);
++    void getSinkInputInfoCallback(pa_context *c, const pa_sink_input_info *i, void *userdata);
++    void getSourceOutputInfoCallback(pa_context *c, const pa_source_output_info *i, void *userdata);
++
++private:
++    void loadConfig();
++
++    am_Domain_s                                     m_domain;
++
++    std::vector<RoutingSenderPULSESourceSinkConfig> m_sinks;
++    std::vector<RoutingSenderPULSESourceSinkConfig> m_sources;
++
++    std::map<uint16_t, uint32_t>                    m_sourceToPASinkInput;
++    std::map<uint16_t, uint32_t>                    m_sourceToPASource;
++    std::map<uint16_t, uint32_t>                    m_sinkToPASourceOutput;
++    std::map<uint16_t, uint32_t>                    m_sinkToPASink;
++
++    uint16_t                                        m_paSinkNullIndex;
++    uint16_t                                        m_paSourceNullIndex;
++
++    IAmRoutingReceive                               *m_routingReceiver;
++    pa_context                                      *m_paContext;
++
++/**
++ * Maintain a list of pending actions: there is a high change that the HMI first call connect,
++ * then the audio client start to play, therefore, sink-input is not yet created by the time "connect" method was called.
++ * same for volume? not sure - probably the sink input is created when the user change the volume.
++ * same for disconnect? not sure - probably the sink input was already created by the time the user is calling disconnect
++ */
++    std::vector<RoutingSenderPULSEConnection>       m_activeConnections;
++    std::map<uint16_t, uint16_t>                    m_sinkToVolume;
++    std::map<uint16_t, uint16_t>                    m_sourceToVolume;
++};
++
++#endif
+diff --git a/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp b/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
+new file mode 100644
+index 0000000..5738b42
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
+@@ -0,0 +1,610 @@
++/**
++ * SPDX license identifier: MPL-2.0
++ *
++ * Copyright (C) 2011-2014, Wind River Systems
++ * Copyright (C) 2014, GENIVI Alliance
++ *
++ * This file is part of Pulse Audio Interface Routing Plugin.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * For further information see http://www.genivi.org/.
++ *
++ * List of changes:
++ *
++ * 21.08.2014, Adrian Scarlat, First version of the code;
++ *                             Porting code from AM ver1.x to AM ver3.0;
++ *                             Added Copyright and License information;
++ */
++
++/* Includes */
++
++#include <pthread.h>
++#include "shared/CAmDltWrapper.h"
++#include "RoutingSenderPULSE.h"
++#include "RoutingSenderMainloopPULSE.h"
++
++static pthread_t        *p_thread;
++static pa_mainloop      *main_loop;
++
++/* struct used for ramp_volume changing */
++typedef struct ramp_volume
++{
++    uint32_t sink_input_index;
++    uint32_t volume_ini;
++    uint32_t volume_end;
++    /* max ramp time in ms */
++    uint16_t ramp_max_time;
++    /* current delay between calls in ms */
++    uint16_t ramp_crt_elapsed;
++    /* aux used to calculate delay between calls */
++    timespec start_time;
++};
++/* map used for storing ramp_volume information for sources */
++std::map<uint32_t, ramp_volume> g_sinkInputId2rampVolume;
++
++/* Defines */
++#define QUIT_REASON_PA_DOWN     1
++#define QUIT_REASON_AMGR_DOWN   2
++
++DLT_IMPORT_CONTEXT(routingPulse)
++
++bool routing_sender_create_mainloop(void *thiz)
++{
++    if (!thiz) {
++        logError("Can not create an working thread for Pulse Audio without a Routing plugin\n");
++        return false;
++    }
++    p_thread = (pthread_t *) malloc(sizeof(pthread_t));
++    pthread_create(p_thread, NULL, routing_sender_start_mainloop, thiz);
++    return true;
++}
++
++
++void* routing_sender_start_mainloop(void *thiz)
++{
++    pa_mainloop_api  *mainloop_api;
++    pa_proplist      *proplist;
++    pa_context       *context;
++    int              ret = 0;
++
++    if (!thiz) {
++        logError("Can not create an working thread for Pulse Audio without a Routing plugin\n");
++        return NULL;
++    }
++
++    proplist = pa_proplist_new();
++    if (pa_proplist_sets(proplist, PA_PROP_APPLICATION_NAME, "RoutingPULSE") < 0) {
++        logError("Can not prepare Pulse Audio main loop: pa_proplist_sets\n");
++        goto end;
++    }
++
++    if (!(main_loop = pa_mainloop_new()))
++    {
++        logError("Can not prepare Pulse Audio main loop: pa_mainloop_new\n");
++        goto end;
++    }
++
++    if (!(mainloop_api = pa_mainloop_get_api(main_loop)))
++    {
++        logError("Can not prepare Pulse Audio main loop: pa_mainloop_get_api\n");
++        goto end;
++    }
++
++    if (!(context = pa_context_new_with_proplist(mainloop_api, NULL, proplist)))
++    {
++        logError("Can not prepare Pulse Audio main loop: pa_context_new_with_proplist\n");
++        goto end;
++    }
++
++    pa_context_set_state_callback(context, routing_sender_context_state_callback, thiz);
++
++    if (pa_context_connect(context, NULL, pa_context_flags_t(0), NULL) < 0)
++    {
++        logError("Can not prepare Pulse Audio main loop: pa_context_new_with_proplist\n");
++        goto end;
++    }
++    ((RoutingSenderPULSE *) thiz)->setPAContext(context);
++
++    pa_mainloop_run(main_loop, &ret);
++
++end:
++    if (ret == QUIT_REASON_PA_DOWN)
++    {
++        ret = 0;
++        //mail loop ended
++        if (context)
++        {
++            pa_context_disconnect(context);
++            pa_context_unref(context);
++            context = NULL;
++        }
++
++        if (proplist)
++        {
++            pa_proplist_free(proplist);
++            proplist = NULL;
++        }
++
++        if (main_loop)
++        {
++            //pa_signal_done();
++            pa_signal_done();
++            pa_mainloop_free(main_loop);
++            main_loop = NULL;
++        }
++
++        //... pulse audio is down ... retry to connect
++        usleep(100000);
++        routing_sender_start_mainloop(thiz);
++    }
++    //TDOO: else if -check other value for "ret"
++    else
++    {
++        return thiz;
++    }
++}
++
++
++void routing_sender_pa_event_callback(pa_context *c, pa_subscription_event_type_t t, uint32_t idx, void *thiz)
++{
++    switch(t)
++    {
++        case PA_SUBSCRIPTION_EVENT_SINK_INPUT:
++        {
++            pa_context_get_sink_input_info(
++                    c, idx, routing_sender_get_sink_input_info_callback, thiz);
++            break;
++        }
++        case PA_SUBSCRIPTION_EVENT_SOURCE_OUTPUT:
++        {
++            pa_context_get_sink_input_info(
++                    c, idx, routing_sender_get_sink_input_info_callback, thiz);
++            break;
++        }
++        default:
++        {
++            logInfo("Pulse Audio event", t, "was ignored");
++        }
++    }
++}
++
++
++void routing_sender_get_sink_input_info_callback(pa_context *c, const pa_sink_input_info *i, int eol, void *userdata)
++{
++    (void) eol;
++
++    RoutingSenderPULSE* thiz = (RoutingSenderPULSE*) userdata;
++    if (!thiz)
++    {
++        logError("pa_context_get_sink_input_info was called with wrong params\n");
++        return;
++    }
++
++    /* init map of ramp_volumes, usefull later */
++    if (i != NULL && strcmp(i->name,"null") != 0)
++    {
++        ramp_volume source_ramp_volume;
++        source_ramp_volume.sink_input_index = i->index;
++        source_ramp_volume.ramp_crt_elapsed = 0;
++        g_sinkInputId2rampVolume.insert(std::make_pair(i->index, source_ramp_volume));
++    }
++
++    thiz->getSinkInputInfoCallback(c, i, userdata);
++}
++
++
++void routing_sender_get_source_output_info_callback(pa_context *c, const pa_source_output_info *i, int eol, void *userdata)
++{
++    (void) eol;
++
++    RoutingSenderPULSE* thiz = (RoutingSenderPULSE*) userdata;
++    if (!thiz)
++    {
++        logError("pa_context_get_surce_output_info was called with wrong params\n");
++        return;
++    }
++    thiz->getSourceOutputInfoCallback(c, i, userdata);
++}
++
++
++
++void routing_sender_get_sink_info_callback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata)
++{
++    RoutingSenderPULSE* thiz = (RoutingSenderPULSE*) userdata;
++    if (!thiz)
++    {
++        logError("pa_context_get_sink_info was called with wrong params\n");
++        return;
++    }
++    thiz->getSinkInfoCallback(c, i, is_last, userdata);
++}
++
++
++void routing_sender_get_source_info_callback(pa_context *c, const pa_source_info *i, int is_last, void *userdata)
++{
++    RoutingSenderPULSE* thiz = (RoutingSenderPULSE*) userdata;
++    if (!thiz)
++    {
++        logError("pa_context_get_source_info was called with wrong params\n");
++        return;
++    }
++    thiz->getSourceInfoCallback(c, i, is_last, userdata);
++}
++
++
++void routing_sender_subscriber_callback(pa_context *c, int success, void *thiz) {
++    if (success)
++    {
++        pa_operation *o = pa_context_get_sink_info_list(c, routing_sender_get_sink_info_callback, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_get_sink_info_list");
++        }
++    }
++    else
++    {
++        logError("routing_sender_subscriber_callback: success = false");
++    }
++}
++
++
++void routing_sender_context_state_callback(pa_context *c, void *thiz)
++ {
++
++    if (pa_context_get_state(c) == PA_CONTEXT_FAILED)
++    {
++        pa_mainloop_quit(main_loop, QUIT_REASON_PA_DOWN);
++    }
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        //when context is ready - subscriber for server events (we are mainly interested in sink inputs & source outputs)
++        pa_context_set_subscribe_callback(c, routing_sender_pa_event_callback, thiz);
++        pa_operation *o = pa_context_subscribe(c, PA_SUBSCRIPTION_MASK_ALL, routing_sender_subscriber_callback, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                            "pa_context_subscribe");
++        }
++    }
++    //other states are not relevant
++}
++
++
++bool routing_sender_get_source_info(pa_context *c, void *thiz) {
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_operation *o = pa_context_get_source_info_list(c, routing_sender_get_source_info_callback, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_get_sink_info_list");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not get Pulse Audio sources info - context not ready\n");
++        return false;
++    }
++
++    return true;
++}
++
++
++bool routing_sender_move_sink_input(pa_context *c, uint32_t sink_input_index, uint32_t sink_index, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_operation *o = pa_context_move_sink_input_by_index(c, sink_input_index, sink_index, NULL, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_move_sink_input_by_index");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not move sink input - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++
++bool routing_sender_move_source_output(pa_context *c, uint32_t source_output_index, uint32_t source_index, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_operation *o = pa_context_move_source_output_by_index(c, source_output_index, source_index, NULL, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not move source output - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++static inline uint16_t timespec2mili(const timespec & time)
++{
++    return (uint16_t)((time.tv_nsec == -1 && time.tv_sec == -1) ?
++                      -1 :
++                      time.tv_sec * 1000 + time.tv_nsec / 1000000);
++}
++
++/* Considers that time2 > time1 */
++static inline uint16_t timespec2DeltaMili(const timespec & time1, const timespec & time2)
++{
++    timespec l_deltaTime;
++    l_deltaTime.tv_sec = time2.tv_sec - time1.tv_sec;
++    l_deltaTime.tv_nsec = time2.tv_nsec - time1.tv_nsec;
++    return timespec2mili(l_deltaTime);
++}
++
++static void routing_sender_sink_input_volume_cb(pa_context *c, int success, void *data)
++{
++    logInfo("routing_sender_sink_input_volume_cb: success=", success, " data=", data);
++    if (success)
++    {
++        ramp_volume * l_ramp_volume = (ramp_volume *)data;
++        timespec l_endTime;
++        clock_gettime(0, &l_endTime);
++        l_ramp_volume->ramp_crt_elapsed = timespec2DeltaMili(l_ramp_volume->start_time, l_endTime);
++        if (l_ramp_volume->ramp_crt_elapsed >= l_ramp_volume->ramp_max_time)
++        {
++            return;
++        }
++
++        logInfo("routing_sender_sink_input_volume_cb: ms elapsed=", l_ramp_volume->ramp_crt_elapsed, " of ", l_ramp_volume->ramp_max_time);
++
++        /* ######## Calculate new volume with formula: ##########
++                                crt_time x ( vol_end - vol_ini )
++           new_vol = vol_ini + ----------------------------------
++                                            max_time
++           ###################################################### */
++        uint32_t new_volume =
++                l_ramp_volume->volume_ini +
++                ( ( l_ramp_volume->ramp_crt_elapsed * ( l_ramp_volume->volume_end - l_ramp_volume->volume_ini ) ) / l_ramp_volume->ramp_max_time );
++        logInfo("routing_sender_sink_input_volume_cb: vol_ini=",l_ramp_volume->volume_ini,"vol_crt=",new_volume,"vol_end=",l_ramp_volume->volume_end);
++
++
++        /* ***** Set volume again ***** */
++        pa_cvolume *volumeCh = (pa_cvolume *) malloc(sizeof(pa_cvolume));
++        volumeCh->channels = 1;//TODO: check is stream is mono / stereo
++        volumeCh->values[0] = new_volume;
++
++        pa_operation *o = pa_context_set_sink_input_volume(c, l_ramp_volume->sink_input_index, volumeCh, NULL, NULL);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return ;
++        }
++        usleep(10000);
++
++        volumeCh->channels = 2;//TODO: check is stream is mono / stereo
++        volumeCh->values[0] = new_volume;
++        volumeCh->values[1] = new_volume;
++        logInfo("routing_sender_sink_input_volume_cb: will set vol=", new_volume);
++        o = pa_context_set_sink_input_volume(c, l_ramp_volume->sink_input_index, volumeCh, routing_sender_sink_input_volume_cb, l_ramp_volume);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return ;
++        }
++    }
++
++}
++
++bool routing_sender_sink_input_volume_ramp(pa_context *c, uint32_t sink_input_index, uint32_t crt_volume, uint32_t volume, uint16_t ramp_time, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        /* before everything, check to see if ramp_volume struct exists */
++        std::map<uint32_t, ramp_volume>::iterator iter = g_sinkInputId2rampVolume.find(sink_input_index);
++        std::map<uint32_t, ramp_volume>::iterator iterEnd = g_sinkInputId2rampVolume.end();
++        if (iter != iterEnd)
++        {
++            /* set test volume with only 1 unit more or less, just to see how callback responds */
++            pa_volume_t test_volume = ((crt_volume * MAX_PULSE_VOLUME) / 100);
++            test_volume += volume > crt_volume ? 1 : -1;
++
++            pa_cvolume *volumeCh = (pa_cvolume *) malloc(sizeof(pa_cvolume));
++            volumeCh->channels = 1;//TODO: check is stream is mono / stereo
++            volumeCh->values[0] = test_volume;
++
++            pa_operation *o = pa_context_set_sink_input_volume(c, sink_input_index, volumeCh, NULL, NULL);
++            if (o)
++            {
++                pa_operation_unref(o);
++            }
++            else
++            {
++                logError("Unable to create Pulse Audio operation:",
++                        "pa_context_set_sink_input_volume");
++                return false;
++            }
++
++            volumeCh->channels = 2;//TODO: check is stream is mono / stereo
++            volumeCh->values[0] = test_volume;
++            volumeCh->values[1] = test_volume;
++
++            ramp_volume * l_ramp_volume = (ramp_volume *) &iter->second;
++            logInfo("routing_sender_sink_input_volume_ramp: searching ",sink_input_index,"found ramp_vlume struct with sinkInputId ",l_ramp_volume->sink_input_index," (should be equal) ");
++            l_ramp_volume->volume_ini = (crt_volume * MAX_PULSE_VOLUME) / 100;
++            l_ramp_volume->volume_end = (volume * MAX_PULSE_VOLUME) / 100;
++            l_ramp_volume->ramp_max_time = ramp_time;
++            clock_gettime(0, &l_ramp_volume->start_time);
++            l_ramp_volume->ramp_crt_elapsed = 0;
++            logInfo("routing_sender_sink_input_volume_ramp: will set vol=", test_volume);
++            o = pa_context_set_sink_input_volume(c, sink_input_index, volumeCh, routing_sender_sink_input_volume_cb, l_ramp_volume);
++            if (o)
++            {
++                pa_operation_unref(o);
++            }
++            else
++            {
++                logError("Unable to create Pulse Audio operation:",
++                        "pa_context_set_sink_input_volume");
++                return false;
++            }
++        }
++        else
++        {
++            logInfo("routing_sender_sink_input_volume_ramp: didn't find struct with sinkInputId ", sink_input_index);
++            /* make-it the old traditional way */
++            return routing_sender_sink_input_volume(c, sink_input_index, volume, thiz);
++        }
++
++
++    }
++    else
++    {
++        logError("Can not set sink input volume - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++bool routing_sender_sink_input_volume(pa_context *c, uint32_t sink_input_index, uint32_t volume, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_cvolume *volumeCh = (pa_cvolume *) malloc(sizeof(pa_cvolume));
++        volumeCh->channels = 1;//TODO: check is stream is mono / stereo
++        volumeCh->values[0] = (volume * MAX_PULSE_VOLUME) / 100;
++
++        pa_operation *o = pa_context_set_sink_input_volume(c, sink_input_index, volumeCh, NULL, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return false;
++        }
++
++        volumeCh->channels = 2;//TODO: check is stream is mono / stereo
++        volumeCh->values[0] = (volume * MAX_PULSE_VOLUME) / 100;
++        volumeCh->values[1] = (volume * MAX_PULSE_VOLUME) / 100;
++
++        o = pa_context_set_sink_input_volume(c, sink_input_index, volumeCh, NULL, NULL);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not set sink input volume - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++
++bool routing_sender_sink_input_mute(pa_context *c, uint32_t sink_input_index, bool mute, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_operation *o = pa_context_set_sink_input_mute(
++            c, sink_input_index, mute ? 1 : 0, NULL, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_mute");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not set sink input volume - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++
++bool routing_sender_sink_volume(pa_context *c, uint32_t sink_index, uint32_t volume, void *thiz)
++{
++    if (pa_context_get_state(c) == PA_CONTEXT_READY)
++    {
++        pa_cvolume *volumeCh = (pa_cvolume *) malloc(sizeof(pa_cvolume));
++        volumeCh->channels = 2;//TODO: check is stream is mono / stereo
++        volumeCh->values[0] = (volume * MAX_PULSE_VOLUME) / 100;
++        volumeCh->values[1] = (volume * MAX_PULSE_VOLUME) / 100;
++
++        pa_operation *o = pa_context_set_sink_volume_by_index(c, sink_index, volumeCh, NULL, thiz);
++        if (o)
++        {
++            pa_operation_unref(o);
++        }
++        else
++        {
++            logError("Unable to create Pulse Audio operation:",
++                    "pa_context_set_sink_input_volume");
++            return false;
++        }
++    }
++    else
++    {
++        logError("Can not set sink input volume - context not ready\n");
++        return false;
++    }
++    return true;
++}
++
++//TODO - implements mute/un-mute and sink suspend(pause)
++//TODO - IMPORTANT !! implement volume change for sink input even multiple sink inputs are created during one connection
+diff --git a/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp b/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
+new file mode 100644
+index 0000000..17422e9
+--- /dev/null
++++ b/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
+@@ -0,0 +1,914 @@
++/**
++ * SPDX license identifier: MPL-2.0
++ *
++ * Copyright (C) 2011-2014, Wind River Systems
++ * Copyright (C) 2014, GENIVI Alliance
++ *
++ * This file is part of Pulse Audio Interface Routing Plugin.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License (MPL), v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * For further information see http://www.genivi.org/.
++ *
++ * List of changes:
++ *
++ * 21.08.2014, Adrian Scarlat, First version of the code;
++ *                             Porting code from AM ver1.x to AM ver3.0;
++ *                             Added Copyright and License information;
++ *
++ *
++ * DESCRIPTION
++ *
++ * This module is handling requests form AudioManager daemon and redirect them to Pulse Audio server.
++ * It keeps track of existing audio sink, sources, sink-input, sources-input and performs connection/disconnection
++ * and other operations upon AudioManager daemon request.
++ *
++ * The modul is configured with a static list of sink and sources.
++ *   Sinks are: audio output(e.g. speakers) or recording applications.
++ *   Sources are: playback applications or audio input(e.g. microphone)
++ *
++ * In PulseAudio server those are classified as follows:
++ *  - audio output             - sinks:   identified by name or properties: device.api (e.g = "alsa") & device.class(e.g. = "sound")
++ *  - audio input              - sources: identified by name or properties: device.api (e.g = "alsa") & device.class(e.g. = "sound")
++ *  - playback applications    - sink inputs: identified by application.name (e.g. "ALSA plug-in [chromium-browser]",
++ *  - recording applications   - source outputs: identified by application.name (e.g. "ALSA plug-in [chromium-browser]",
++ *    application.process.user = "popai", application.process.binary = "chromium-browser")
++ *
++ */
++
++#include <stdio.h>
++#include <string.h>
++#include <iostream>
++
++#include "shared/CAmDltWrapper.h"
++
++#include "RoutingSenderPULSE.h"
++#include "RoutingSenderMainloopPULSE.h"
++
++
++
++#define LIBNAME "libPluginRoutingInterfacePULSE.so"
++#define CFGNAME "libPluginRoutingInterfacePULSE.conf"
++
++/* Globals */
++
++
++/* Defines */
++DLT_DECLARE_CONTEXT(routingPulse)
++/* Maximum source volume measured in percentage. Minimum value is 0% */
++#define MAX_SOURCE_VOLUME   (100)
++
++
++/**
++ * Factory function for the plug-in to be used by audio manager daemon with dlopen & dlsym functions.
++ * Pattern "libraryName"FACTORY
++ *
++ * @author  Ionut Popa (ionut.popa@windriver.com)
++ * @return  an instance of RoutingSendInterface or type RoutingSenderPULSE.
++ */
++extern "C" IAmRoutingSend* PluginRoutingInterfacePULSEFactory()
++{
++
++    return (new RoutingSenderPULSE(NULL));
++}
++
++/**
++ * Destructor function for the plug-in to be used by audio manager daemon with dl_open & dl_sym functions.
++ *
++ * @param  routingSendInterface - the instance created by PluginRoutingInterfaceDbusFactory
++ * @author Ionut Popa (ionut.popa@windriver.com)
++ */
++extern "C" void destroyPluginRoutingInterfacePULSE(IAmRoutingSend* routingSendInterface)
++{
++    delete routingSendInterface;//virtual destructor -> our constructor will be called too
++}
++
++
++/**
++ * Constructor.
++ * @param p_paContext - reference to PulseAudio context
++ */
++RoutingSenderPULSE::RoutingSenderPULSE(pa_context *p_paContext)
++{
++    this->m_paSinkNullIndex = -1;
++    this->m_paSourceNullIndex = -1;
++    this->m_paContext = p_paContext;
++}
++
++
++void RoutingSenderPULSE::loadConfig()
++{
++    //get current library path - search: /proc/< getpid() >/maps
++    char proc_maps_file_name[256];
++    char line[256];
++    char lib_name[256];
++    char *tmp;
++    pid_t pid = getpid();
++    snprintf(proc_maps_file_name, 256,  "/proc/%d/maps", pid);
++    FILE *proc_maps = fopen(proc_maps_file_name, "r");
++
++    while (!feof(proc_maps))
++    {
++        char *cnt = fgets(line, 256, proc_maps);
++        if (strlen(line) == 0 || line[0] == '#')
++        {
++            continue;
++        }
++        if (cnt == NULL) continue;
++        //tmp0 tmp1 tmp2 tmp3 tmp4 lib_name);
++        tmp = strtok(line, " ");//address-interval
++        if(tmp == NULL) continue;
++
++        tmp = strtok(NULL, " ");//rights
++        if(tmp == NULL) continue;
++
++        tmp = strtok(NULL, " ");//offset
++        if(tmp == NULL) continue;
++
++        strtok(NULL, " ");//dev
++        if(tmp == NULL) continue;
++
++        tmp = strtok(NULL, " \n");//inode
++        if(tmp == NULL) continue;
++
++        tmp = strtok(NULL, " \n");
++        if(tmp == NULL) continue;
++
++        strcpy(lib_name, tmp);
++        if ((lib_name != NULL) && (strstr(lib_name, LIBNAME) >= lib_name))
++        {
++            strcpy(strrchr(lib_name, '/') + 1, CFGNAME);
++            logInfo("PULSE - config file name: %s\n", lib_name);
++
++            FILE *config = fopen(lib_name, "r");
++
++            while (config && !feof(config))
++            {
++                char *cnt = fgets(line, 256, config);
++                if (!line || strlen(line) == 0) continue;
++                //config format line: TYPE|PULSE TYPE|NAME|CLASS|PROPERTY_NAME|PROPERTY_VALUE
++                //TYPE="Source" or "Sink"
++
++                char *tmp = strtok(line, "|");//type
++                if (strcmp("Sink", tmp) == 0)
++                {
++                    //add sink config
++                    RoutingSenderPULSESourceSinkConfig sinkConfig;
++
++                    tmp = strtok(NULL, "|");//pulse type - not used for the moment
++
++                    tmp = strtok(NULL, "|");//class
++                    sinkConfig.clazz = std::string(tmp);
++
++                    tmp = strtok(NULL, "|");//name
++                    sinkConfig.name = std::string(tmp);
++
++                    tmp = strtok(NULL, "|");//property name
++                    sinkConfig.propertyName = std::string(tmp);
++
++                    tmp = strtok(NULL, "|\n");//property value
++                    sinkConfig.propertyValue = std::string(tmp);
++
++                    m_sinks.push_back(sinkConfig);
++                    logInfo("sinkConfig: sinkConfig.clazz=", sinkConfig.clazz, " sinkConfig.name=", sinkConfig.name, " sinkConfig.propertyName=", sinkConfig.propertyName, " sinkConfig.propertyValue=", sinkConfig.propertyValue);
++                }
++                if (strcmp("Source", tmp) == 0)
++                {
++                    //add source config
++                    RoutingSenderPULSESourceSinkConfig sourceConfig;
++
++                    tmp = strtok(NULL, "|");//pulse type - not used for the moment
++
++                    tmp = strtok(NULL, "|");//class
++                    sourceConfig.clazz = std::string(tmp);
++
++                    tmp = strtok(NULL, "|");//name
++                    sourceConfig.name = std::string(tmp);
++
++                    tmp = strtok(NULL, "|");//property name
++                    sourceConfig.propertyName = std::string(tmp);
++
++                    tmp = strtok(NULL, "|\n");//property value
++                    sourceConfig.propertyValue = std::string(tmp);
++
++                    m_sources.push_back(sourceConfig);
++                    logInfo("sourceConfig: sourceConfig.clazz=", sourceConfig.clazz, " sourceConfig.name=", sourceConfig.name, " sourceConfig.propertyName=", sourceConfig.propertyName, " sourceConfig.propertyValue=", sourceConfig.propertyValue);
++                }
++            }
++
++            if (config)
++                fclose(config);
++            break;
++        }
++    }
++
++    fclose(proc_maps);
++}
++
++
++/**
++ * Destructor.
++ */
++RoutingSenderPULSE::~RoutingSenderPULSE()
++{
++    //TODO: Disconnect from pulse: quit main loop and free the context and stuff
++}
++
++/**
++ * Connecting sender & receiver
++ * @author Ionut Popa (ionut.popa@windriver.com)
++ */
++am_Error_e RoutingSenderPULSE::startupInterface(am::IAmRoutingReceive *p_routingReceiver)
++{
++    this->m_routingReceiver = p_routingReceiver;
++    return am::E_OK;
++}
++
++void RoutingSenderPULSE::setRoutingReady(uint16_t handle)
++{
++    //TODO: do not register sinks with the same name
++
++    int i;
++    this->loadConfig();
++    //first register Domain = PulseAudio
++    this->m_domain.name     = "PulseAudio";
++    this->returnBusName(this->m_domain.busname);//set domain bus name = current interface bus name
++    this->m_domain.nodename = "PulseAudio";
++    this->m_domain.early    = false;
++    this->m_domain.complete = true;
++    this->m_domain.state    = am::DS_CONTROLLED;
++
++    this->m_domain.domainID = 0;
++    this->m_routingReceiver->registerDomain(this->m_domain, this->m_domain.domainID);
++
++    am_SoundProperty_s l_spTreble;
++    l_spTreble.type = SP_GENIVI_BASS;
++    l_spTreble.value = 0;
++
++    am_SoundProperty_s l_spMid;
++    l_spMid.type = SP_GENIVI_MID;
++    l_spMid.value = 0;
++
++    am_SoundProperty_s l_spBass;
++    l_spBass.type = SP_GENIVI_BASS;
++    l_spBass.value = 0;
++
++    //register sources (sink inputs & sinks)
++    for (i = 0; i < m_sources.size(); i++)
++    {
++        am_sourceID_t l_newSourceID = 0;
++        this->m_sources[i].source.sourceID = l_newSourceID;
++        this->m_sources[i].source.name = m_sources[i].name;
++        this->m_sources[i].source.sourceState = am::SS_ON;
++        this->m_sources[i].source.domainID = this->m_domain.domainID;
++        this->m_sources[i].source.visible = true;
++        this->m_sources[i].source.volume = MAX_SOURCE_VOLUME; /* initialize source volume to 100% */
++
++        this->m_sources[i].source.listConnectionFormats.push_back(am::CF_GENIVI_STEREO);
++        this->m_routingReceiver->peekSourceClassID(
++                this->m_sources[i].clazz,
++                this->m_sources[i].source.sourceClassID);
++
++        this->m_routingReceiver->registerSource(this->m_sources[i].source, l_newSourceID);
++
++        this->m_sources[i].source.sourceID = l_newSourceID;
++        m_sourceToPASinkInput[l_newSourceID] = -1;
++        m_sourceToPASource[l_newSourceID] = -1;
++
++        logInfo("PULSE - register source:"
++            ,m_sources[i].name
++            , "(", m_sources[i].propertyName , ", ", m_sources[i].propertyValue, ")");
++        m_sourceToVolume[l_newSourceID] = MAX_SOURCE_VOLUME;//initially all the sources are at 100%
++    }
++
++    //register sinks (source outputs & sources)
++    for (i = 0; i < m_sinks.size(); i++)
++    {
++        am_sinkID_t l_newsinkID = 0;
++        this->m_sinks[i].sink.sinkID = l_newsinkID;
++        this->m_sinks[i].sink.name = this->m_sinks[i].name;
++        this->m_sinks[i].sink.muteState = am::MS_MUTED;
++        this->m_sinks[i].sink.domainID = this->m_domain.domainID;
++        this->m_sinks[i].sink.visible = true;
++
++        this->m_sinks[i].sink.listSoundProperties.push_back(l_spTreble);
++        this->m_sinks[i].sink.listSoundProperties.push_back(l_spMid);
++        this->m_sinks[i].sink.listSoundProperties.push_back(l_spBass);
++        this->m_sinks[i].sink.listConnectionFormats.push_back(am::CF_GENIVI_STEREO);
++
++        this->m_routingReceiver->peekSinkClassID(
++                this->m_sinks[i].clazz,
++                this->m_sinks[i].sink.sinkClassID);
++        this->m_routingReceiver->registerSink(this->m_sinks[i].sink, l_newsinkID);
++        this->m_sinks[i].sink.sinkID = l_newsinkID;
++        m_sinkToPASourceOutput[l_newsinkID] = -1;
++        m_sinkToPASink[l_newsinkID] = -1;
++
++        logInfo("PULSE - register sink:"
++            ,m_sinks[i].name
++            , "(", m_sinks[i].propertyName , ", ", m_sinks[i].propertyValue, ")");
++    }
++
++    logInfo("PULSE - routingInterfacesReady");
++    this->m_routingReceiver->confirmRoutingReady(handle, am::E_OK);
++
++    //register pulse sink & sources, sink inputs & source outputs - > start the main PA loop
++    routing_sender_create_mainloop((void *) this);
++}
++
++void RoutingSenderPULSE::setRoutingRundown(uint16_t handle)
++{
++    this->m_routingReceiver->confirmRoutingRundown(handle, am::E_OK);
++    //TODO: implement this
++}
++
++am_Error_e RoutingSenderPULSE::asyncAbort(const am_Handle_s handle)
++{
++    (void) handle;
++    return E_NOT_USED;
++}
++
++
++am_Error_e RoutingSenderPULSE::asyncConnect(
++        const am_Handle_s handle,
++        const am_connectionID_t connectionID,
++        const am_sourceID_t sourceID,
++        const am_sinkID_t sinkID,
++        const am_CustomConnectionFormat_t connectionFormat)
++{
++    //TODO: check stuff like connectionFormat
++    logInfo("PULSE - asyncConnect() - start");
++    //add source,sink & connectionID to a list of connections maintained by Routing Pulse Engine
++    RoutingSenderPULSEConnection l_newConnection;
++    l_newConnection.sinkID = sinkID;
++    l_newConnection.sourceID = sourceID;
++    l_newConnection.connectionID = connectionID;
++    l_newConnection.handle = handle;
++
++    //by default - sources ar connected at 100% -> controller is responsible to setSourcevolume if needed
++
++    m_sourceToVolume[sourceID] = MAX_SOURCE_VOLUME;
++
++
++    if (m_sinkToPASink[sinkID] != -1)
++    {
++        if (m_sourceToPASinkInput[sourceID] != -1)
++        {
++            if (routing_sender_move_sink_input(
++                    this->m_paContext,
++                    m_sourceToPASinkInput[sourceID],
++                    m_sinkToPASink[sinkID],
++                    this))
++            {
++                //TODO: add callback for pulse move sink input -> to send confirmation; for the moment directly send confirmation
++
++                logInfo("PULSE - asyncConnect() - connectionID:", connectionID,
++                        "move sinkInputIndex:", m_sourceToPASinkInput[sourceID], "to sinkIndex:", m_sinkToPASink[sinkID]);
++            }
++            else
++            {
++                this->m_routingReceiver->ackConnect(handle, connectionID, am::E_NOT_POSSIBLE);
++                return am::E_NOT_POSSIBLE;
++            }
++        }//else move_sink_input will be called later
++    }
++    else if (m_sourceToPASource[sourceID] != -1)
++    {
++        if (m_sinkToPASourceOutput[sinkID] != -1)
++        {
++            if (routing_sender_move_source_output(
++                    this->m_paContext,
++                    m_sinkToPASourceOutput[sinkID],
++                    m_sourceToPASource[sourceID],
++                    this))
++            {
++                //TODO: add callback for pulse move sink input -> to send confirmation; for the moment directly send confirmation
++
++                logInfo("PULSE - asyncConnect() - connectionID:", connectionID,
++                        "move sourceOutputIndex:", m_sinkToPASourceOutput[sinkID], "to sourceIndex:", m_sourceToPASource[sourceID]);
++
++            }
++            else
++            {
++                this->m_routingReceiver->ackConnect(handle, connectionID, am::E_NOT_POSSIBLE);
++                return am::E_NOT_POSSIBLE;
++            }
++        }//else move_sink_input will be called later
++    }
++    else
++    {
++        logError("Sink and source for connection not identified:",
++                sinkID, sourceID, connectionID);
++        return am::E_NOT_POSSIBLE;
++    }
++
++    m_activeConnections.push_back(l_newConnection);
++
++    this->m_routingReceiver->ackConnect(handle, connectionID, am::E_OK);
++
++/**
++ * TODO: connection is always possible ? check that
++*/
++
++    return am::E_OK;
++}
++
++
++am_Error_e RoutingSenderPULSE::asyncDisconnect(const am_Handle_s handle, const am_connectionID_t connectionID)
++{
++    //get connection by ID ... not to many connections, therefore linear search is fast enough
++    std::vector<RoutingSenderPULSEConnection>::iterator iter    = m_activeConnections.begin();
++    std::vector<RoutingSenderPULSEConnection>::iterator iterEnd = m_activeConnections.end();
++    for (; iter < iterEnd; ++iter)
++    {
++        if (iter->connectionID == connectionID)
++        {
++            if (m_sourceToPASinkInput[iter->sourceID] != -1)
++            {
++                if (this->m_paSinkNullIndex >= 0)
++                {
++                    //if null sink is defined - disconnect = move sink input to null
++                    logInfo("PULSE - asyncDisconnect() - connection found - move sinkInputIndex:",
++                            m_sourceToPASinkInput[iter->sourceID], "to NULL sinkIndex:", this->m_paSinkNullIndex);
++
++                    routing_sender_move_sink_input(
++                            this->m_paContext,
++                            this->m_sourceToPASinkInput[iter->sourceID],
++                            this->m_paSinkNullIndex,
++                            this);
++                    //TODO: add callback for pulse move sink input -> to send confirmation; for the moment directly send confirmation
++                    this->m_routingReceiver->ackDisconnect(handle, connectionID, am::E_OK);
++
++                }
++            }
++            else if (m_sinkToPASourceOutput[iter->sinkID] != -1)
++            {
++                if (this->m_paSourceNullIndex >= 0)
++                {
++                    //if null source is defined - disconnect = move source output to null
++                    logInfo("PULSE - asyncDisconnect() - connection found - move sourceOutputIndex:",
++                            m_sinkToPASourceOutput[iter->sinkID], "to NULL sourceIndex:", this->m_paSourceNullIndex);
++
++                    routing_sender_move_source_output(
++                            this->m_paContext,
++                            m_sourceToPASinkInput[iter->sourceID],
++                            this->m_paSinkNullIndex,
++                            this);
++                    //TODO: add callback for pulse move sink input -> to send confirmation; for the moment directly send confirmation
++                    this->m_routingReceiver->ackDisconnect(handle, connectionID, am::E_OK);
++
++                    //remove connection from the list of active connections
++                    iter = m_activeConnections.erase(iter);
++
++                    break;
++                }
++            }
++            else
++            {
++                logInfo("PULSE - asyncDisconnect() - connection found - but no sink input or source");
++                this->m_routingReceiver->ackDisconnect(handle, connectionID, am::E_OK);
++            }
++            //remove connection from the list of active connections
++            iter = m_activeConnections.erase(iter);
++
++            break;
++        }
++    }
++    return am::E_OK;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSinkVolume(
++        const am_Handle_s handle,
++        const am_sinkID_t sinkID,
++        const am_volume_t volume,
++        const am_CustomRampType_t ramp,
++        const am_time_t time)
++{
++    (void) ramp;
++    (void) time;
++
++    logInfo("PULSE - asyncSetSinkVolume() - volume:", volume, "sink index:", this->m_sinkToPASink[sinkID]);
++
++    routing_sender_sink_volume(
++            this->m_paContext,
++            this->m_sinkToPASink[sinkID],
++            volume,
++            this);
++    this->m_routingReceiver->ackSetSinkVolumeChange(handle, volume, E_OK);
++    return E_OK;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSourceVolume(
++        const am_Handle_s handle,
++        const am_sourceID_t sourceID,
++        const am_volume_t volume,
++        const am_CustomRampType_t ramp,
++        const am_time_t time)
++{
++    (void) ramp;
++    (void) time;
++
++    am_volume_t crt_volume = this->m_sourceToVolume[sourceID];
++    this->m_sourceToVolume[sourceID] = volume;
++
++    logInfo("PULSE - asyncSetSourceVolume() - volume:", volume, "sink input index:", this->m_sourceToPASinkInput[sourceID]);
++    if (m_sourceToPASinkInput[sourceID] != -1)
++    {
++        if (time == 0)
++        {/* without ramp time */
++            routing_sender_sink_input_volume(
++                    this->m_paContext,
++                    this->m_sourceToPASinkInput[sourceID],
++                    volume,
++                    this);
++        }
++        else
++        {/* with ramp time */
++            routing_sender_sink_input_volume_ramp(
++                    this->m_paContext,
++                    this->m_sourceToPASinkInput[sourceID],
++                    crt_volume,
++                    volume,
++                    (uint16_t)time,
++                    this);
++        }
++    }
++    else
++    {
++        logInfo("PULSE - sink input not registered yet - should wait for registration before update the volume");
++    }
++    this->m_routingReceiver->ackSetSourceVolumeChange(handle, volume, E_OK);
++
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSourceState(
++        const am_Handle_s handle,
++        const am_sourceID_t sourceID,
++        const am_SourceState_e state)
++{
++    logInfo("PULSE - asyncSetSourceState", state);
++    switch (state)
++    {
++        case SS_ON:
++        {
++            routing_sender_sink_input_mute(
++                    this->m_paContext,
++                    this->m_sourceToPASinkInput[sourceID],
++                    false,
++                    this
++            );
++            break;
++        }
++        case SS_OFF:
++        case SS_PAUSED:
++        {
++            //TODO: mute source in case of PAUSE or OFF - is there a better way to pause ? maybe suspending the associated sink?
++            routing_sender_sink_input_mute(
++                    this->m_paContext,
++                    this->m_sourceToPASinkInput[sourceID],
++                    true,
++                    this
++            );
++            break;
++        }
++        default:
++        {
++            logError("RoutingSenderPULSE::asyncSetSourceState - wrong source state\n");
++            this->m_routingReceiver->ackSetSourceState(handle, E_NOT_POSSIBLE);
++            return E_NOT_POSSIBLE;
++        }
++    }
++    this->m_routingReceiver->ackSetSourceState(handle, E_OK);
++    return E_OK;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSinkSoundProperties(
++        const am_Handle_s handle,
++        const am_sinkID_t sinkID,
++        const std::vector<am_SoundProperty_s>& listSoundProperties)
++{
++    (void) handle;
++    (void) sinkID;
++    (void) listSoundProperties;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSinkSoundProperty(
++        const am_Handle_s handle,
++        const am_sinkID_t sinkID,
++        const am_SoundProperty_s& soundProperty)
++{
++    (void) handle;
++    (void) sinkID;
++    (void) soundProperty;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSourceSoundProperties(
++        const am_Handle_s handle,
++        const am_sourceID_t sourceID,
++        const std::vector<am_SoundProperty_s>& listSoundProperties)
++{
++    (void) handle;
++    (void) sourceID;
++    (void) listSoundProperties;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSourceSoundProperty(
++        const am_Handle_s handle,
++        const am_sourceID_t sourceID,
++        const am_SoundProperty_s& soundProperty)
++{
++    (void) handle;
++    (void) sourceID;
++    (void) soundProperty;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::asyncCrossFade(
++        const am_Handle_s handle,
++        const am_crossfaderID_t crossfaderID,
++        const am_HotSink_e hotSink,
++        const am_CustomRampType_t rampType,
++        const am_time_t time)
++{
++    (void) handle;
++    (void) crossfaderID;
++    (void) hotSink;
++    (void) rampType;
++    (void) time;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::setDomainState(
++        const am_domainID_t domainID,
++        const am_DomainState_e domainState)
++{
++    (void) domainID;
++    (void) domainState;
++    return E_NOT_USED;
++}
++
++am_Error_e RoutingSenderPULSE::returnBusName(std::string& BusName) const {
++    BusName = "RoutingPULSE";
++    return E_OK;
++}
++
++void RoutingSenderPULSE::getInterfaceVersion(std::string& out_ver) const
++{
++    out_ver = "3.0";
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetVolumes(const am_Handle_s handle, const std::vector<am_Volumes_s>& listVolumes)
++{
++    (void) handle;
++    (void) listVolumes;
++    //todo: implement asyncSetVolumes;
++    return (E_NOT_USED);
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSinkNotificationConfiguration(const am_Handle_s handle, const am_sinkID_t sinkID, const am_NotificationConfiguration_s& notificationConfiguration)
++{
++    (void) handle;
++    (void) sinkID;
++    (void) notificationConfiguration;
++    //todo: implement asyncSetSinkNotificationConfiguration;
++    return (E_NOT_USED);
++}
++
++am_Error_e RoutingSenderPULSE::asyncSetSourceNotificationConfiguration(const am_Handle_s handle, const am_sourceID_t sourceID, const am_NotificationConfiguration_s& notificationConfiguration)
++{
++    (void) handle;
++    (void) sourceID;
++    (void) notificationConfiguration;
++    //todo: implement asyncSetSourceNotificationConfiguration;
++    return (E_NOT_USED);
++}
++/*******************************************************************************
++ * Private methods
++ ******************************************************************************/
++
++
++void RoutingSenderPULSE::getSinkInputInfoCallback(pa_context *c, const pa_sink_input_info *i, void *userdata)
++{
++    if (i == NULL)
++    {
++        return;
++    }
++
++    //search for corresponding Source
++    std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iter    = m_sources.begin();
++    std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iterEnd = m_sources.end();
++    for (; iter < iterEnd; ++iter)
++    {
++        //try to match source PulseAudio properties against config properties
++        const char *property_value = pa_proplist_gets(i->proplist, iter->propertyName.c_str());
++
++        if (property_value &&
++            ( std::string::npos != std::string(property_value).find(iter->propertyValue) ||
++              std::string::npos != iter->propertyValue.find(property_value)) )
++        {
++            logInfo("PULSE - sink input registered:"
++                , " sinkInputIndex:", i->index, "sourceID:", iter->source.sourceID);
++
++            logInfo("PULSE - sink input details:"
++                    , " prop_val: ", property_value, " iter->prop_val: ", iter->propertyValue);
++
++            m_sourceToPASinkInput[iter->source.sourceID] = i->index;
++
++            //iterate pending connection request
++            // -> if there is a connection pending such that sink input "i" matches source from Connect() - create the connection in pulse
++            std::vector<RoutingSenderPULSEConnection>::iterator iterConn    = m_activeConnections.begin();
++            std::vector<RoutingSenderPULSEConnection>::iterator iterConnEnd = m_activeConnections.end();
++            for (; iterConn < iterConnEnd; ++iterConn)
++            {
++                if (iterConn->sourceID == iter->source.sourceID)
++                {
++                    logInfo("PULSE - asyncConnect() - connectionID:", iterConn->connectionID,
++                            "move sinkInputIndex:", m_sourceToPASinkInput[iterConn->sourceID], "to sinkIndex:", m_sinkToPASink[iterConn->sinkID]);
++
++                    routing_sender_move_sink_input(
++                            this->m_paContext,
++                            m_sourceToPASinkInput[iterConn->sourceID],
++                            m_sinkToPASink[iterConn->sinkID],
++                            this);
++
++                    //TODO: add callback for pulse move sink input -> to send confirmation; for the moment directly send confirmation
++                    this->m_routingReceiver->ackConnect(iterConn->handle, iterConn->connectionID, am::E_OK);
++                }
++            }
++            //check of controller already requested vol adjustment  for this source
++            bool requiresVolUpdate = false;
++            for (int j = 0; j < i->volume.channels; j++)
++            {
++                if ((i->volume.values[j]*MAX_SOURCE_VOLUME / MAX_PULSE_VOLUME) != m_sourceToVolume[iter->source.sourceID])
++                {
++                    requiresVolUpdate = true;
++                    logInfo("PULSE - sink registerd with vol:", (i->volume.values[j]*MAX_SOURCE_VOLUME / MAX_PULSE_VOLUME),
++                            "; should be changed to:",
++                            m_sourceToVolume[iter->source.sourceID]);
++                    break;
++                }
++            }
++            if (requiresVolUpdate)
++            {
++                routing_sender_sink_input_volume(
++                        this->m_paContext,
++                        m_sourceToPASinkInput[iter->source.sourceID],
++                        m_sourceToVolume[iter->source.sourceID],
++                        this);
++            }
++            //TODO: check mute state was requested by controller.
++            break;
++        }
++    }
++}
++
++
++void RoutingSenderPULSE::getSourceOutputInfoCallback(pa_context *c, const pa_source_output_info *i, void *userdata)
++{
++    if (i == NULL)
++    {
++        return;
++    }
++
++    //search for corresponding Source
++    std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iter    = m_sinks.begin();
++    std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iterEnd = m_sinks.end();
++    for (; iter < iterEnd; ++iter)
++    {
++        //try to match source PulseAudio properties agains config properties
++        const char *property_value = pa_proplist_gets(i->proplist, iter->propertyName.c_str());
++
++        if (property_value &&
++            ( std::string::npos != std::string(property_value).find(iter->propertyValue) ||
++              std::string::npos != iter->propertyValue.find(property_value)) )
++        {
++            logInfo("PULSE - source output registered:"
++                , " sourceOutputIndex:", i->index, "sinkID:", iter->sink.sinkID);
++
++            m_sinkToPASourceOutput[iter->sink.sinkID] = i->index;
++
++            //iterate pending connection request
++            // -> if there is a connection pending such that sink input "i" matches source from Connect() - create the connection in pulse
++            std::vector<RoutingSenderPULSEConnection>::iterator iterConn    = m_activeConnections.begin();
++            std::vector<RoutingSenderPULSEConnection>::iterator iterConnEnd = m_activeConnections.end();
++            for (; iterConn < iterConnEnd; ++iterConn)
++            {
++                if (iterConn->sinkID == iter->sink.sinkID)
++                {
++                    logInfo("PULSE - asyncConnect() - connectionID:", iterConn->connectionID,
++                            "move sourceOutputIndex:", m_sinkToPASourceOutput[iterConn->sinkID], "to sourceIndex:", m_sourceToPASource[iterConn->sourceID]);
++
++                    routing_sender_move_source_output(
++                            this->m_paContext,
++                            m_sinkToPASourceOutput[iterConn->sinkID],
++                            m_sourceToPASource[iterConn->sourceID],
++                            this);
++
++                    //TODO: add callback for pulse move source output -> to send confirmation; for the moment directly send confirmation
++                    this->m_routingReceiver->ackConnect(iterConn->handle, iterConn->connectionID, am::E_OK);
++                }
++            }
++
++            break;
++        }
++    }
++}
++
++
++void RoutingSenderPULSE::getSinkInfoCallback(pa_context *c, const pa_sink_info *i, int is_last, void *userdata)
++{
++    if (i != NULL)
++    {
++        if (strcmp("null", i->name) == 0)
++        {
++            this->m_paSinkNullIndex = i->index;
++        }
++
++        //search for corresponding (already registered) Sink
++        std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iter    = m_sinks.begin();
++        std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iterEnd = m_sinks.end();
++        for (; iter < iterEnd; ++iter)
++        {
++            //first try to match the sink name from pulse audio sink name
++            if (iter->sink.name == std::string(i->name))
++            {
++                logInfo("PULSE sink name PA:", i->name, "config name:" ,iter->sink.name);
++                logInfo("PULSE - PA sink:", i->index,
++                        "corresponding to AMGR sink:", iter->sink.sinkID, " - found");
++                m_sinkToPASink[iter->sink.sinkID] = i->index;
++            }
++            else
++            {
++                //try to match sink PulseAudio properties against config properties
++                const char *property_value = pa_proplist_gets(i->proplist, iter->propertyName.c_str());
++
++                if (!property_value) continue;
++
++                if (std::string::npos != iter->propertyValue.find(property_value))
++                {
++                    logInfo("PULSE - PA sink:", i->index,
++                            "corresponding to AMGR sink:", iter->sink.sinkID, " - found");
++
++                    m_sinkToPASink[iter->sink.sinkID] = i->index;
++                }
++            }
++        }
++    }
++    else if (is_last)
++    {
++        routing_sender_get_source_info(this->m_paContext, this);
++        logInfo("PULSE - PA sinks registration completed");
++    }
++}
++
++void RoutingSenderPULSE::getSourceInfoCallback(pa_context *c, const pa_source_info *i, int is_last, void *userdata)
++{
++    if (i != NULL)
++    {
++        if (strcmp("null", i->name) == 0)
++        {
++            this->m_paSourceNullIndex = i->index;
++        }
++
++        //search for corresponding (already registered) Source
++        std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iter    = m_sources.begin();
++        std::vector<RoutingSenderPULSESourceSinkConfig>::iterator iterEnd = m_sources.end();
++        for (; iter < iterEnd; ++iter)
++        {
++            //first try to match the sink name from pulse audio sink name
++            if (iter->sink.name == std::string(i->name))
++            {
++                logInfo("PULSE - PA source:", i->index,
++                        "corresponding to AMGR source:", iter->source.sourceID, " - found");
++                m_sourceToPASource[iter->source.sourceID] = i->index;
++            }
++            else
++            {
++                //try to match source PulseAudio properties against config properties
++                const char *property_value = pa_proplist_gets(i->proplist, iter->propertyName.c_str());
++
++                if (!property_value) continue;
++
++                if (std::string::npos != iter->propertyValue.find(property_value))
++                {
++                    logInfo("PULSE - PA source:", i->index,
++                            "corresponding to AMGR source:", iter->source.sourceID, " - found");
++
++                    m_sourceToPASource[iter->source.sourceID] = i->index;
++                }
++            }
++
++        }
++    }
++    else if (is_last)
++    {
++        this->m_routingReceiver->hookDomainRegistrationComplete(this->m_domain.domainID);
++        logInfo("PULSE - PA sinks and source registration completed");
++        //TODO: - search for existing sink inputs & sources outputs
++    }
++}
+-- 
+1.7.9.5
+

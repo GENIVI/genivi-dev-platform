@@ -1,0 +1,539 @@
+From 1ddfa43692cabae0f552351cfbc09377e479471e Mon Sep 17 00:00:00 2001
+From: Manuel Bachmann <manuel.bachmann@open.eurogiciel.org>
+Date: Mon, 8 Sep 2014 11:38:01 +0200
+Subject: [PATCH 21/21] Implement initial IVI-Shell support
+
+IVI-Shell provides a shell interface for Weston, which maps the GENIVI API (http://www.genivi.org) for In-Vehicle Infotainment.
+
+This patch enables detecting the IVI-Shell interface at runtime, and creating compatible surfaces if found.
+
+Task-number: QTBUG-XXXXX/part/2of2
+
+Change-Id: I1f6c11bf56b727a54fb48faab9c076b61d635440
+Signed-off-by: Manuel Bachmann <manuel.bachmann@open.eurogiciel.org>
+---
+ src/client/client.pro             |   5 ++
+ src/client/qwaylanddisplay.cpp    |   9 ++++
+ src/client/qwaylanddisplay_p.h    |   5 ++
+ src/client/qwaylandivishell.cpp   |  69 +++++++++++++++++++++++++
+ src/client/qwaylandivishell_p.h   |  70 +++++++++++++++++++++++++
+ src/client/qwaylandivisurface.cpp | 105 ++++++++++++++++++++++++++++++++++++++
+ src/client/qwaylandivisurface_p.h |  90 ++++++++++++++++++++++++++++++++
+ src/client/qwaylandwindow.cpp     |   8 ++-
+ 8 files changed, 360 insertions(+), 1 deletion(-)
+ create mode 100644 src/client/qwaylandivishell.cpp
+ create mode 100644 src/client/qwaylandivishell_p.h
+ create mode 100644 src/client/qwaylandivisurface.cpp
+ create mode 100644 src/client/qwaylandivisurface_p.h
+
+diff --git a/src/client/client.pro b/src/client/client.pro
+index 73e3b7f..adb526d 100644
+--- a/src/client/client.pro
++++ b/src/client/client.pro
+@@ -42,6 +42,7 @@ WAYLANDCLIENTSOURCES += \
+             ../extensions/windowmanager.xml \
+             ../3rdparty/protocol/text.xml \
+             ../3rdparty/protocol/xdg-shell.xml \
++            ../3rdparty/protocol/ivi-application.xml \
+ 
+ SOURCES +=  qwaylandintegration.cpp \
+             qwaylandnativeinterface.cpp \
+@@ -61,6 +62,8 @@ SOURCES +=  qwaylandintegration.cpp \
+             qwaylandwlshellsurface.cpp \
+             qwaylandxdgshell.cpp \
+             qwaylandxdgsurface.cpp \
++            qwaylandivishell.cpp \
++            qwaylandivisurface.cpp \
+             qwaylandextendedoutput.cpp \
+             qwaylandextendedsurface.cpp \
+             qwaylandsubsurface.cpp \
+@@ -92,6 +95,8 @@ HEADERS +=  qwaylandintegration_p.h \
+             qwaylandwlshellsurface_p.h \
+             qwaylandxdgshell_p.h \
+             qwaylandxdgsurface_p.h \
++            qwaylandivishell_p.h \
++            qwaylandivisurface_p.h \
+             qwaylandextendedoutput_p.h \
+             qwaylandextendedsurface_p.h \
+             qwaylandsubsurface_p.h \
+diff --git a/src/client/qwaylanddisplay.cpp b/src/client/qwaylanddisplay.cpp
+index 2e25672..2a93db7 100644
+--- a/src/client/qwaylanddisplay.cpp
++++ b/src/client/qwaylanddisplay.cpp
+@@ -51,6 +51,7 @@
+ #include "qwaylanddatadevicemanager_p.h"
+ #include "qwaylandhardwareintegration_p.h"
+ #include "qwaylandxdgshell_p.h"
++#include "qwaylandivishell_p.h"
+ 
+ #include "qwaylandwindowmanagerintegration_p.h"
+ 
+@@ -62,6 +63,7 @@
+ 
+ #include <QtWaylandClient/private/qwayland-text.h>
+ #include <QtWaylandClient/private/qwayland-xdg-shell.h>
++#include <QtWaylandClient/private/qwayland-ivi-application.h>
+ 
+ #include <QtCore/QAbstractEventDispatcher>
+ #include <QtGui/private/qguiapplication_p.h>
+@@ -207,6 +209,8 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
+         mCompositor.init(registry, id);
+     } else if (interface == QStringLiteral("wl_shm")) {
+         mShm = static_cast<struct wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface,1));
++    } else if (interface == QStringLiteral("ivi_application")) {
++        mShellIvi.reset(new QWaylandIviShell(registry,id));
+     } else if (interface == QStringLiteral("xdg_shell")
+                && qEnvironmentVariableIsSet("QT_WAYLAND_USE_XDG_SHELL")) {
+         mShellXdg.reset(new QWaylandXdgShell(registry,id));
+@@ -279,4 +283,9 @@ QtWayland::xdg_shell *QWaylandDisplay::shellXdg()
+     return mShellXdg.data();
+ }
+ 
++QtWayland::ivi_application *QWaylandDisplay::shellIvi()
++{
++    return mShellIvi.data();
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/client/qwaylanddisplay_p.h b/src/client/qwaylanddisplay_p.h
+index f1b35a7..b9c686c 100644
+--- a/src/client/qwaylanddisplay_p.h
++++ b/src/client/qwaylanddisplay_p.h
+@@ -52,6 +52,7 @@
+ #include <QtWaylandClient/private/qwayland-wayland.h>
+ #include <QtWaylandClient/private/qwaylandclientexport_p.h>
+ #include <QtWaylandClient/private/qwayland-xdg-shell.h>
++#include <QtWaylandClient/private/qwayland-ivi-application.h>
+ 
+ struct wl_cursor_image;
+ 
+@@ -72,6 +73,7 @@ class QWaylandWindow;
+ class QWaylandEventThread;
+ class QWaylandIntegration;
+ class QWaylandHardwareIntegration;
++class QWaylandIviShell;
+ class QWaylandXdgShell;
+ 
+ namespace QtWayland {
+@@ -81,6 +83,7 @@ namespace QtWayland {
+     class qt_surface_extension;
+     class wl_text_input_manager;
+     class xdg_shell;
++    class ivi_application;
+ }
+ 
+ typedef void (*RegistryListener)(void *data,
+@@ -117,6 +120,7 @@ public:
+ 
+     QtWayland::wl_shell *shell() { return mShell.data(); }
+     QtWayland::xdg_shell *shellXdg();
++    QtWayland::ivi_application *shellIvi();
+ 
+     QList<QWaylandInputDevice *> inputDevices() const { return mInputDevices; }
+     QWaylandInputDevice *defaultInputDevice() const;
+@@ -173,6 +177,7 @@ private:
+     QWaylandEventThread *mEventThreadObject;
+     QScopedPointer<QtWayland::wl_shell> mShell;
+     QScopedPointer<QWaylandXdgShell> mShellXdg;
++    QScopedPointer<QWaylandIviShell> mShellIvi;
+     QList<QPlatformScreen *> mScreens;
+     QList<QWaylandInputDevice *> mInputDevices;
+     QList<Listener> mRegistryListeners;
+diff --git a/src/client/qwaylandivishell.cpp b/src/client/qwaylandivishell.cpp
+new file mode 100644
+index 0000000..9d63d0d
+--- /dev/null
++++ b/src/client/qwaylandivishell.cpp
+@@ -0,0 +1,69 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Eurogiciel, author: <manuel.bachmann@open.eurogiciel.org>
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qwaylandivishell_p.h"
++
++#include "qwaylanddisplay_p.h"
++#include "qwaylandwindow_p.h"
++#include "qwaylandinputdevice_p.h"
++#include "qwaylanddecoration_p.h"
++#include "qwaylandscreen_p.h"
++
++#include <QtCore/QDebug>
++
++QT_BEGIN_NAMESPACE
++
++QWaylandIviShell::QWaylandIviShell(struct ::ivi_application *shell)
++    : QtWayland::ivi_application(shell)
++{
++}
++
++QWaylandIviShell::QWaylandIviShell(struct ::wl_registry *registry, uint32_t id)
++    : QtWayland::ivi_application(registry, id)
++{
++}
++
++QWaylandIviShell::~QWaylandIviShell()
++{
++    ivi_application_destroy(object());
++}
++
++QT_END_NAMESPACE
+diff --git a/src/client/qwaylandivishell_p.h b/src/client/qwaylandivishell_p.h
+new file mode 100644
+index 0000000..f9f6983
+--- /dev/null
++++ b/src/client/qwaylandivishell_p.h
+@@ -0,0 +1,70 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Eurogiciel, author: <manuel.bachmann@open.eurogiciel.org>
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QWAYLANDIVISHELL_H
++#define QWAYLANDIVISHELL_H
++
++#include <QtCore/QSize>
++
++#include <wayland-client.h>
++
++#include <QtWaylandClient/private/qwayland-ivi-application.h>
++#include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include "qwaylandshellsurface_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QWaylandWindow;
++class QWaylandInputDevice;
++class QWindow;
++
++class Q_WAYLAND_CLIENT_EXPORT QWaylandIviShell : public QtWayland::ivi_application
++{
++public:
++    QWaylandIviShell(struct ::ivi_application *shell);
++    QWaylandIviShell(struct ::wl_registry *registry, uint32_t id);
++
++    virtual ~QWaylandIviShell();
++};
++
++QT_END_NAMESPACE
++
++#endif // QWAYLANDIVISHELL_H
+diff --git a/src/client/qwaylandivisurface.cpp b/src/client/qwaylandivisurface.cpp
+new file mode 100644
+index 0000000..a12309e
+--- /dev/null
++++ b/src/client/qwaylandivisurface.cpp
+@@ -0,0 +1,105 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qwaylandivisurface_p.h"
++
++#include "qwaylanddisplay_p.h"
++#include "qwaylandwindow_p.h"
++#include "qwaylandinputdevice_p.h"
++#include "qwaylanddecoration_p.h"
++#include "qwaylandscreen_p.h"
++
++#include <QtCore/QDebug>
++
++QT_BEGIN_NAMESPACE
++
++QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window)
++    : QtWayland::ivi_surface(ivi_surface)
++    , m_window(window)
++{
++}
++
++QWaylandIviSurface::~QWaylandIviSurface()
++{
++    ivi_surface_destroy(object());
++}
++
++void QWaylandIviSurface::resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges)
++{
++}
++
++void QWaylandIviSurface::move(QWaylandInputDevice *inputDevice)
++{
++}
++
++void QWaylandIviSurface::setMaximized()
++{
++}
++
++void QWaylandIviSurface::setFullscreen()
++{
++}
++
++void QWaylandIviSurface::setNormal()
++{
++}
++
++void QWaylandIviSurface::setMinimized()
++{
++}
++
++void QWaylandIviSurface::setTopLevel()
++{
++}
++
++void QWaylandIviSurface::updateTransientParent(QWindow *parent)
++{
++}
++
++void QWaylandIviSurface::setTitle(const QString & title)
++{
++}
++
++void QWaylandIviSurface::setAppId(const QString & appId)
++{
++}
++
++QT_END_NAMESPACE
+diff --git a/src/client/qwaylandivisurface_p.h b/src/client/qwaylandivisurface_p.h
+new file mode 100644
+index 0000000..c6a7ce6
+--- /dev/null
++++ b/src/client/qwaylandivisurface_p.h
+@@ -0,0 +1,90 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QWAYLANDIVISURFACE_H
++#define QWAYLANDIVISURFACE_H
++
++#include <QtCore/QSize>
++
++#include <wayland-client.h>
++
++#include <QtWaylandClient/private/qwayland-ivi-application.h>
++#include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include "qwaylandshellsurface_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QWaylandWindow;
++class QWaylandInputDevice;
++class QWindow;
++class QWaylandExtendedSurface;
++
++class Q_WAYLAND_CLIENT_EXPORT QWaylandIviSurface : public QtWayland::ivi_surface
++        , public QWaylandShellSurface
++{
++public:
++    QWaylandIviSurface(struct ::ivi_surface *shell_surface, QWaylandWindow *window);
++    virtual ~QWaylandIviSurface();
++
++    void resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges) Q_DECL_OVERRIDE;
++    void move(QWaylandInputDevice *inputDevice) Q_DECL_OVERRIDE;
++
++    void setTitle(const QString &title) Q_DECL_OVERRIDE;
++    void setAppId(const QString &appId) Q_DECL_OVERRIDE;
++
++private:
++    void setMaximized() Q_DECL_OVERRIDE;
++    void setFullscreen() Q_DECL_OVERRIDE;
++    void setNormal() Q_DECL_OVERRIDE;
++    void setMinimized() Q_DECL_OVERRIDE;
++
++    void setTopLevel() Q_DECL_OVERRIDE;
++    void updateTransientParent(QWindow *parent) Q_DECL_OVERRIDE;
++
++private:
++    QWaylandWindow *m_window;
++
++    friend class QWaylandWindow;
++};
++
++QT_END_NAMESPACE
++
++#endif // QWAYLANDIVISURFACE_H
+diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
+index 3fb3a49..45a58f2 100644
+--- a/src/client/qwaylandwindow.cpp
++++ b/src/client/qwaylandwindow.cpp
+@@ -39,6 +39,8 @@
+ **
+ ****************************************************************************/
+ 
++#include <unistd.h>
++
+ #include "qwaylandwindow_p.h"
+ 
+ #include "qwaylandbuffer_p.h"
+@@ -48,10 +50,12 @@
+ #include "qwaylandshellsurface_p.h"
+ #include "qwaylandwlshellsurface_p.h"
+ #include "qwaylandxdgsurface_p.h"
++#include "qwaylandivisurface_p.h"
+ #include "qwaylandextendedsurface_p.h"
+ #include "qwaylandsubsurface_p.h"
+ #include "qwaylanddecoration_p.h"
+ #include "qwaylandwindowmanagerintegration_p.h"
++#define IVI_SURFACE_ID 8000
+ 
+ #include <QtCore/QFileInfo>
+ #include <QtGui/QWindow>
+@@ -95,7 +99,9 @@ QWaylandWindow::QWaylandWindow(QWindow *window)
+     mWindowId = id++;
+ 
+     if (!(window->flags() & Qt::BypassWindowManagerHint)) {
+-        if (mDisplay->shellXdg()) {
++        if (mDisplay->shellIvi()) {
++                mShellSurface = new QWaylandIviSurface(mDisplay->shellIvi()->surface_create(IVI_SURFACE_ID + getpid(), object()), this);
++        } else if (mDisplay->shellXdg()) {
+            if (window->type() & Qt::Window) {
+                 mShellSurface = new QWaylandXdgSurface(mDisplay->shellXdg()->get_xdg_surface(object()), this);
+             }
+-- 
+1.9.1
+

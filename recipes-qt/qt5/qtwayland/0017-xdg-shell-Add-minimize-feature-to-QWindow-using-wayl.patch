@@ -1,0 +1,1029 @@
+From 0edba039247ce888dbb7ff0a93c7b9ec01bac46e Mon Sep 17 00:00:00 2001
+From: Philippe Coval <philippe.coval@open.eurogiciel.org>
+Date: Wed, 26 Mar 2014 10:16:01 +0100
+Subject: [PATCH 17/21] xdg-shell: Add minimize feature to QWindow using
+ wayland's xdg-shell
+
+The feature is disabled by default,
+and can be enabled at runtime
+by exporting QT_WAYLAND_USE_XDG_SHELL env variable.
+
+This patch relies on presence of protocol file
+which has been imported from weston-1.4.0 sources,
+until the xdg-shell is merge into wayland itself.
+
+Because xdg-shell is experimental,
+code fallback to WaylandShell if no XdgShell
+but keep in mind those shells are exclusive.
+
+Since xdg-shell and wayland-shell share most of the API,
+some factorization is done by an (empty) abstraction class
+to keep the code more readable.
+
+Despite xdg-shell introduces new popups concept,
+they're not used on this change for maitainance purpose.
+
+Notes:
+
+* This change depends on presence of xdg-shell protocol file.
+
+* You can check a demo video
+  (qt-tizen-cinematic-experience-20140430-rzr)
+  of the test case at :
+  https://www.youtube.com/watch?v=pY_XXvKc_0E#
+
+* Use Super+Tab to show window again if hidden
+
+Task-number: QTBUG-38633/part/2of2
+Change-Id: I2d7ed85bea1847d82439fdfc893a3dbb2581ffff
+Reviewed-by: Giulio Camuffo <giulio.camuffo@jollamobile.com>
+Origin: https://www.qt.gitorious.org/qt/qtwayland/commit/768484daaa64bea965bef981a16f59be8db0c190
+Bug-Tizen: TIVI-3113/part
+Signed-off-by: Philippe Coval <philippe.coval@open.eurogiciel.org>
+---
+ src/client/client.pro                 |   5 +
+ src/client/qwaylanddisplay.cpp        |   5 +
+ src/client/qwaylanddisplay_p.h        |   4 +
+ src/client/qwaylandshellsurface.cpp   | 134 ------------------------
+ src/client/qwaylandshellsurface_p.h   |  40 +++-----
+ src/client/qwaylandwindow.cpp         |  40 ++++++--
+ src/client/qwaylandwlshellsurface.cpp | 186 ++++++++++++++++++++++++++++++++++
+ src/client/qwaylandwlshellsurface_p.h | 101 ++++++++++++++++++
+ src/client/qwaylandxdgsurface.cpp     | 173 +++++++++++++++++++++++++++++++
+ src/client/qwaylandxdgsurface_p.h     | 105 +++++++++++++++++++
+ 10 files changed, 625 insertions(+), 168 deletions(-)
+ create mode 100644 src/client/qwaylandwlshellsurface.cpp
+ create mode 100644 src/client/qwaylandwlshellsurface_p.h
+ create mode 100644 src/client/qwaylandxdgsurface.cpp
+ create mode 100644 src/client/qwaylandxdgsurface_p.h
+
+diff --git a/src/client/client.pro b/src/client/client.pro
+index 10cbd31..9ecf82f 100644
+--- a/src/client/client.pro
++++ b/src/client/client.pro
+@@ -41,6 +41,7 @@ WAYLANDCLIENTSOURCES += \
+             ../extensions/qtkey-extension.xml \
+             ../extensions/windowmanager.xml \
+             ../3rdparty/protocol/text.xml \
++            ../3rdparty/protocol/xdg-shell.xml \
+ 
+ SOURCES +=  qwaylandintegration.cpp \
+             qwaylandnativeinterface.cpp \
+@@ -57,6 +58,8 @@ SOURCES +=  qwaylandintegration.cpp \
+             qwaylanddatadevicemanager.cpp \
+             qwaylanddatasource.cpp \
+             qwaylandshellsurface.cpp \
++            qwaylandwlshellsurface.cpp \
++            qwaylandxdgsurface.cpp \
+             qwaylandextendedoutput.cpp \
+             qwaylandextendedsurface.cpp \
+             qwaylandsubsurface.cpp \
+@@ -85,6 +88,8 @@ HEADERS +=  qwaylandintegration_p.h \
+             qwaylanddatadevicemanager_p.h \
+             qwaylanddatasource_p.h \
+             qwaylandshellsurface_p.h \
++            qwaylandwlshellsurface_p.h \
++            qwaylandxdgsurface_p.h \
+             qwaylandextendedoutput_p.h \
+             qwaylandextendedsurface_p.h \
+             qwaylandsubsurface_p.h \
+diff --git a/src/client/qwaylanddisplay.cpp b/src/client/qwaylanddisplay.cpp
+index 0b715c0..7f953ad 100644
+--- a/src/client/qwaylanddisplay.cpp
++++ b/src/client/qwaylanddisplay.cpp
+@@ -61,6 +61,7 @@
+ #include "qwaylandqtkey_p.h"
+ 
+ #include <QtWaylandClient/private/qwayland-text.h>
++#include <QtWaylandClient/private/qwayland-xdg-shell.h>
+ 
+ #include <QtCore/QAbstractEventDispatcher>
+ #include <QtGui/private/qguiapplication_p.h>
+@@ -206,6 +207,10 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
+         mCompositor.init(registry, id);
+     } else if (interface == QStringLiteral("wl_shm")) {
+         mShm = static_cast<struct wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface,1));
++    } else if (interface == QStringLiteral("xdg_shell")
++               && qEnvironmentVariableIsSet("QT_WAYLAND_USE_XDG_SHELL")) {
++        mShellXdg.reset(new QtWayland::xdg_shell(registry, id));
++        mShellXdg->use_unstable_version(QtWayland::xdg_shell::version_current);
+     } else if (interface == QStringLiteral("wl_shell")){
+         mShell.reset(new QtWayland::wl_shell(registry, id));
+     } else if (interface == QStringLiteral("wl_seat")) {
+diff --git a/src/client/qwaylanddisplay_p.h b/src/client/qwaylanddisplay_p.h
+index 40cb2b2..cf5dfc2 100644
+--- a/src/client/qwaylanddisplay_p.h
++++ b/src/client/qwaylanddisplay_p.h
+@@ -51,6 +51,7 @@
+ 
+ #include <QtWaylandClient/private/qwayland-wayland.h>
+ #include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include <QtWaylandClient/private/qwayland-xdg-shell.h>
+ 
+ struct wl_cursor_image;
+ 
+@@ -78,6 +79,7 @@ namespace QtWayland {
+     class qt_sub_surface_extension;
+     class qt_surface_extension;
+     class wl_text_input_manager;
++    class xdg_shell;
+ }
+ 
+ typedef void (*RegistryListener)(void *data,
+@@ -113,6 +115,7 @@ public:
+     QtWayland::wl_compositor *compositor() { return &mCompositor; }
+ 
+     QtWayland::wl_shell *shell() { return mShell.data(); }
++    QtWayland::xdg_shell *shellXdg() { return mShellXdg.data(); }
+ 
+     QList<QWaylandInputDevice *> inputDevices() const { return mInputDevices; }
+     QWaylandInputDevice *defaultInputDevice() const;
+@@ -168,6 +171,7 @@ private:
+     QThread *mEventThread;
+     QWaylandEventThread *mEventThreadObject;
+     QScopedPointer<QtWayland::wl_shell> mShell;
++    QScopedPointer<QtWayland::xdg_shell> mShellXdg;
+     QList<QPlatformScreen *> mScreens;
+     QList<QWaylandInputDevice *> mInputDevices;
+     QList<Listener> mRegistryListeners;
+diff --git a/src/client/qwaylandshellsurface.cpp b/src/client/qwaylandshellsurface.cpp
+index b7a819f..80e509b 100644
+--- a/src/client/qwaylandshellsurface.cpp
++++ b/src/client/qwaylandshellsurface.cpp
+@@ -40,137 +40,3 @@
+ ****************************************************************************/
+ 
+ #include "qwaylandshellsurface_p.h"
+-
+-#include "qwaylanddisplay_p.h"
+-#include "qwaylandwindow_p.h"
+-#include "qwaylandinputdevice_p.h"
+-#include "qwaylanddecoration_p.h"
+-#include "qwaylandscreen_p.h"
+-
+-#include <QtCore/QDebug>
+-
+-QT_BEGIN_NAMESPACE
+-
+-QWaylandShellSurface::QWaylandShellSurface(struct ::wl_shell_surface *shell_surface, QWaylandWindow *window)
+-    : QtWayland::wl_shell_surface(shell_surface)
+-    , m_window(window)
+-    , m_maximized(false)
+-    , m_fullscreen(false)
+-{
+-}
+-
+-QWaylandShellSurface::~QWaylandShellSurface()
+-{
+-    wl_shell_surface_destroy(object());
+-}
+-
+-void QWaylandShellSurface::resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges)
+-{
+-    resize(inputDevice->wl_seat(),
+-           inputDevice->serial(),
+-           edges);
+-}
+-
+-void QWaylandShellSurface::move(QWaylandInputDevice *inputDevice)
+-{
+-    move(inputDevice->wl_seat(),
+-         inputDevice->serial());
+-}
+-
+-void QWaylandShellSurface::setMaximized()
+-{
+-    m_maximized = true;
+-    m_size = m_window->window()->geometry().size();
+-    set_maximized(0);
+-}
+-
+-void QWaylandShellSurface::setFullscreen()
+-{
+-    m_fullscreen = true;
+-    m_size = m_window->window()->geometry().size();
+-    set_fullscreen(WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, 0);
+-}
+-
+-void QWaylandShellSurface::setNormal()
+-{
+-    if (m_fullscreen || m_maximized) {
+-        m_fullscreen = m_maximized = false;
+-        setTopLevel();
+-        QMargins m = m_window->frameMargins();
+-        m_window->configure(0, m_size.width() + m.left() + m.right(), m_size.height() + m.top() + m.bottom());
+-    }
+-}
+-
+-void QWaylandShellSurface::setMinimized()
+-{
+-    // TODO: There's no wl_shell_surface API for this
+-}
+-
+-void QWaylandShellSurface::setTopLevel()
+-{
+-    set_toplevel();
+-}
+-
+-void QWaylandShellSurface::updateTransientParent(QWindow *parent)
+-{
+-    QWaylandWindow *parent_wayland_window = static_cast<QWaylandWindow *>(parent->handle());
+-    if (!parent_wayland_window)
+-        return;
+-
+-    // set_transient expects a position relative to the parent
+-    QPoint transientPos = m_window->geometry().topLeft(); // this is absolute
+-    QWindow *parentWin = m_window->window()->transientParent();
+-    transientPos -= parentWin->geometry().topLeft();
+-    if (parent_wayland_window->decoration()) {
+-        transientPos.setX(transientPos.x() + parent_wayland_window->decoration()->margins().left());
+-        transientPos.setY(transientPos.y() + parent_wayland_window->decoration()->margins().top());
+-    }
+-
+-    uint32_t flags = 0;
+-    Qt::WindowFlags wf = m_window->window()->flags();
+-    if (wf.testFlag(Qt::ToolTip)
+-            || wf.testFlag(Qt::WindowTransparentForInput))
+-        flags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
+-
+-    set_transient(parent_wayland_window->object(),
+-                  transientPos.x(),
+-                  transientPos.y(),
+-                  flags);
+-}
+-
+-void QWaylandShellSurface::setPopup(QWaylandWindow *parent, QWaylandInputDevice *device, int serial)
+-{
+-    QWaylandWindow *parent_wayland_window = parent;
+-    if (!parent_wayland_window)
+-        return;
+-
+-    // set_popup expects a position relative to the parent
+-    QPoint transientPos = m_window->geometry().topLeft(); // this is absolute
+-    transientPos -= parent_wayland_window->geometry().topLeft();
+-    if (parent_wayland_window->decoration()) {
+-        transientPos.setX(transientPos.x() + parent_wayland_window->decoration()->margins().left());
+-        transientPos.setY(transientPos.y() + parent_wayland_window->decoration()->margins().top());
+-    }
+-
+-    set_popup(device->wl_seat(), serial, parent_wayland_window->object(),
+-              transientPos.x(), transientPos.y(), 0);
+-}
+-
+-void QWaylandShellSurface::shell_surface_ping(uint32_t serial)
+-{
+-    pong(serial);
+-}
+-
+-void QWaylandShellSurface::shell_surface_configure(uint32_t edges,
+-                                                   int32_t width,
+-                                                   int32_t height)
+-{
+-    m_window->configure(edges, width, height);
+-}
+-
+-void QWaylandShellSurface::shell_surface_popup_done()
+-{
+-    QCoreApplication::postEvent(m_window->window(), new QCloseEvent());
+-}
+-
+-QT_END_NAMESPACE
+diff --git a/src/client/qwaylandshellsurface_p.h b/src/client/qwaylandshellsurface_p.h
+index 2477c3f..2f59f60 100644
+--- a/src/client/qwaylandshellsurface_p.h
++++ b/src/client/qwaylandshellsurface_p.h
+@@ -55,39 +55,25 @@ class QWaylandWindow;
+ class QWaylandInputDevice;
+ class QWindow;
+ 
+-class Q_WAYLAND_CLIENT_EXPORT QWaylandShellSurface : public QtWayland::wl_shell_surface
++class Q_WAYLAND_CLIENT_EXPORT QWaylandShellSurface
+ {
+ public:
+-    QWaylandShellSurface(struct ::wl_shell_surface *shell_surface, QWaylandWindow *window);
+-    ~QWaylandShellSurface();
++    virtual ~QWaylandShellSurface() {}
++    virtual void resize(QWaylandInputDevice * /*inputDevice*/, enum wl_shell_surface_resize /*edges*/)
++    {}
+ 
+-    using QtWayland::wl_shell_surface::resize;
+-    void resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges);
+-
+-    using QtWayland::wl_shell_surface::move;
+-    void move(QWaylandInputDevice *inputDevice);
++    virtual void move(QWaylandInputDevice * /*inputDevice*/) {}
++    virtual void setTitle(const QString & /*title*/) {}
++    virtual void setAppId(const QString & /*appId*/) {}
+ 
+ private:
+-    void setMaximized();
+-    void setFullscreen();
+-    void setNormal();
+-    void setMinimized();
+-
+-    void setTopLevel();
+-    void updateTransientParent(QWindow *parent);
+-    void setPopup(QWaylandWindow *parent, QWaylandInputDevice *device, int serial);
+-
+-    QWaylandWindow *m_window;
+-    bool m_maximized;
+-    bool m_fullscreen;
+-    QSize m_size;
+-
+-    void shell_surface_ping(uint32_t serial) Q_DECL_OVERRIDE;
+-    void shell_surface_configure(uint32_t edges,
+-                                 int32_t width,
+-                                 int32_t height) Q_DECL_OVERRIDE;
+-    void shell_surface_popup_done() Q_DECL_OVERRIDE;
++    virtual void setMaximized() {}
++    virtual void setFullscreen() {}
++    virtual void setNormal() {}
++    virtual void setMinimized() {}
+ 
++    virtual void setTopLevel() {}
++    virtual void updateTransientParent(QWindow * /*parent*/) {}
+     friend class QWaylandWindow;
+ };
+ 
+diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
+index 920c977..3fb3a49 100644
+--- a/src/client/qwaylandwindow.cpp
++++ b/src/client/qwaylandwindow.cpp
+@@ -46,6 +46,8 @@
+ #include "qwaylandinputdevice_p.h"
+ #include "qwaylandscreen_p.h"
+ #include "qwaylandshellsurface_p.h"
++#include "qwaylandwlshellsurface_p.h"
++#include "qwaylandxdgsurface_p.h"
+ #include "qwaylandextendedsurface_p.h"
+ #include "qwaylandsubsurface_p.h"
+ #include "qwaylanddecoration_p.h"
+@@ -92,8 +94,16 @@ QWaylandWindow::QWaylandWindow(QWindow *window)
+     static WId id = 1;
+     mWindowId = id++;
+ 
+-    if (mDisplay->shell() && window->type() & Qt::Window && !(window->flags() & Qt::BypassWindowManagerHint))
+-        mShellSurface = new QWaylandShellSurface(mDisplay->shell()->get_shell_surface(object()), this);
++    if (!(window->flags() & Qt::BypassWindowManagerHint)) {
++        if (mDisplay->shellXdg()) {
++           if (window->type() & Qt::Window) {
++                mShellSurface = new QWaylandXdgSurface(mDisplay->shellXdg()->get_xdg_surface(object()), this);
++            }
++        } else if (mDisplay->shell() && window->type() & Qt::Window) {
++            mShellSurface = new QWaylandWlShellSurface(mDisplay->shell()->get_shell_surface(object()), this);
++        }
++    }
++
+     if (mDisplay->windowExtension())
+         mExtendedWindow = new QWaylandExtendedSurface(this, mDisplay->windowExtension()->get_extended_surface(object()));
+     if (mDisplay->subSurfaceExtension())
+@@ -101,12 +111,12 @@ QWaylandWindow::QWaylandWindow(QWindow *window)
+ 
+     if (mShellSurface) {
+         // Set initial surface title
+-        mShellSurface->set_title(window->title());
++        mShellSurface->setTitle(window->title());
+ 
+         // Set surface class to the .desktop file name (obtained from executable name)
+         QFileInfo exeFileInfo(qApp->applicationFilePath());
+         QString className = exeFileInfo.baseName() + QLatin1String(".desktop");
+-        mShellSurface->set_class(className);
++        mShellSurface->setAppId(className);
+     }
+ 
+     if (QPlatformWindow::parent() && mSubSurfaceWindow) {
+@@ -170,7 +180,7 @@ void QWaylandWindow::setParent(const QPlatformWindow *parent)
+ void QWaylandWindow::setWindowTitle(const QString &title)
+ {
+     if (mShellSurface) {
+-        mShellSurface->set_title(title);
++        mShellSurface->setTitle(title);
+     }
+ 
+     if (mWindowDecoration && window()->isVisible())
+@@ -212,8 +222,10 @@ void QWaylandWindow::setVisible(bool visible)
+             mMouseDevice = parent->mMouseDevice;
+             mMouseSerial = parent->mMouseSerial;
+ 
+-            if (mMouseDevice)
+-                mShellSurface->setPopup(transientParent(), mMouseDevice, mMouseSerial);
++            QWaylandWlShellSurface *wlshellSurface = dynamic_cast<QWaylandWlShellSurface*>(mShellSurface);
++            if (mMouseDevice && wlshellSurface) {
++                wlshellSurface->setPopup(transientParent(), mMouseDevice, mMouseSerial);
++            }
+         }
+ 
+         if (!mSentInitialResize) {
+@@ -428,6 +440,20 @@ void QWaylandWindow::setWindowFlags(Qt::WindowFlags flags)
+ 
+ bool QWaylandWindow::createDecoration()
+ {
++    // so far only xdg-shell support this "unminimize" trick, may be moved elsewhere
++    if (mState == Qt::WindowMinimized) {
++        QWaylandXdgSurface *xdgSurface = dynamic_cast<QWaylandXdgSurface *>(mShellSurface);
++        if ( xdgSurface ) {
++            if (xdgSurface->isFullscreen()) {
++                setWindowStateInternal(Qt::WindowFullScreen);
++            } else if (xdgSurface->isMaximized()) {
++                setWindowStateInternal(Qt::WindowMaximized);
++            } else {
++                setWindowStateInternal(Qt::WindowNoState);
++            }
++        }
++    }
++
+     static bool disableWaylandDecorations = !qgetenv("QT_WAYLAND_DISABLE_WINDOWDECORATION").isEmpty();
+     if (disableWaylandDecorations)
+         return false;
+diff --git a/src/client/qwaylandwlshellsurface.cpp b/src/client/qwaylandwlshellsurface.cpp
+new file mode 100644
+index 0000000..4b73ec2
+--- /dev/null
++++ b/src/client/qwaylandwlshellsurface.cpp
+@@ -0,0 +1,186 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qwaylandwlshellsurface_p.h"
++
++#include "qwaylanddisplay_p.h"
++#include "qwaylandwindow_p.h"
++#include "qwaylandinputdevice_p.h"
++#include "qwaylanddecoration_p.h"
++#include "qwaylandscreen_p.h"
++
++#include <QtCore/QDebug>
++
++QT_BEGIN_NAMESPACE
++
++QWaylandWlShellSurface::QWaylandWlShellSurface(struct ::wl_shell_surface *shell_surface, QWaylandWindow *window)
++    : QtWayland::wl_shell_surface(shell_surface)
++    , m_window(window)
++    , m_maximized(false)
++    , m_fullscreen(false)
++{
++}
++
++QWaylandWlShellSurface::~QWaylandWlShellSurface()
++{
++    wl_shell_surface_destroy(object());
++}
++
++void QWaylandWlShellSurface::resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges)
++{
++    resize(inputDevice->wl_seat(),
++           inputDevice->serial(),
++           edges);
++}
++
++void QWaylandWlShellSurface::move(QWaylandInputDevice *inputDevice)
++{
++    move(inputDevice->wl_seat(),
++         inputDevice->serial());
++}
++
++void QWaylandWlShellSurface::setTitle(const QString & title)
++{
++    return QtWayland::wl_shell_surface::set_title(title);
++}
++
++void QWaylandWlShellSurface::setAppId(const QString & appId)
++{
++    return QtWayland::wl_shell_surface::set_class(appId);
++}
++
++void QWaylandWlShellSurface::setMaximized()
++{
++    m_maximized = true;
++    m_size = m_window->window()->geometry().size();
++    set_maximized(0);
++}
++
++void QWaylandWlShellSurface::setFullscreen()
++{
++    m_fullscreen = true;
++    m_size = m_window->window()->geometry().size();
++    set_fullscreen(WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, 0);
++}
++
++void QWaylandWlShellSurface::setNormal()
++{
++    if (m_fullscreen || m_maximized) {
++        m_fullscreen = m_maximized = false;
++        setTopLevel();
++        QMargins m = m_window->frameMargins();
++        m_window->configure(0, m_size.width() + m.left() + m.right(), m_size.height() + m.top() + m.bottom());
++    }
++}
++
++void QWaylandWlShellSurface::setMinimized()
++{
++    // TODO: There's no wl_shell_surface API for this
++}
++
++void QWaylandWlShellSurface::setTopLevel()
++{
++    set_toplevel();
++}
++
++void QWaylandWlShellSurface::updateTransientParent(QWindow *parent)
++{
++    QWaylandWindow *parent_wayland_window = static_cast<QWaylandWindow *>(parent->handle());
++    if (!parent_wayland_window)
++        return;
++
++    // set_transient expects a position relative to the parent
++    QPoint transientPos = m_window->geometry().topLeft(); // this is absolute
++    QWindow *parentWin = m_window->window()->transientParent();
++    transientPos -= parentWin->geometry().topLeft();
++    if (parent_wayland_window->decoration()) {
++        transientPos.setX(transientPos.x() + parent_wayland_window->decoration()->margins().left());
++        transientPos.setY(transientPos.y() + parent_wayland_window->decoration()->margins().top());
++    }
++
++    uint32_t flags = 0;
++    Qt::WindowFlags wf = m_window->window()->flags();
++    if (wf.testFlag(Qt::ToolTip)
++            || wf.testFlag(Qt::WindowTransparentForInput))
++        flags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
++
++    set_transient(parent_wayland_window->object(),
++                  transientPos.x(),
++                  transientPos.y(),
++                  flags);
++}
++
++void QWaylandWlShellSurface::setPopup(QWaylandWindow *parent, QWaylandInputDevice *device, int serial)
++{
++    QWaylandWindow *parent_wayland_window = parent;
++    if (!parent_wayland_window)
++        return;
++
++    // set_popup expects a position relative to the parent
++    QPoint transientPos = m_window->geometry().topLeft(); // this is absolute
++    transientPos -= parent_wayland_window->geometry().topLeft();
++    if (parent_wayland_window->decoration()) {
++        transientPos.setX(transientPos.x() + parent_wayland_window->decoration()->margins().left());
++        transientPos.setY(transientPos.y() + parent_wayland_window->decoration()->margins().top());
++    }
++
++    set_popup(device->wl_seat(), serial, parent_wayland_window->object(),
++              transientPos.x(), transientPos.y(), 0);
++}
++
++void QWaylandWlShellSurface::shell_surface_ping(uint32_t serial)
++{
++    pong(serial);
++}
++
++void QWaylandWlShellSurface::shell_surface_configure(uint32_t edges,
++                                                     int32_t width,
++                                                     int32_t height)
++{
++    m_window->configure(edges, width, height);
++}
++
++void QWaylandWlShellSurface::shell_surface_popup_done()
++{
++    QCoreApplication::postEvent(m_window->window(), new QCloseEvent());
++}
++
++QT_END_NAMESPACE
+diff --git a/src/client/qwaylandwlshellsurface_p.h b/src/client/qwaylandwlshellsurface_p.h
+new file mode 100644
+index 0000000..d02bb7b
+--- /dev/null
++++ b/src/client/qwaylandwlshellsurface_p.h
+@@ -0,0 +1,101 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QWAYLANDWLSHELLSURFACE_H
++#define QWAYLANDWLSHELLSURFACE_H
++
++#include <QtCore/QSize>
++
++#include <wayland-client.h>
++
++#include <QtWaylandClient/private/qwayland-wayland.h>
++#include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include "qwaylandshellsurface_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QWaylandWindow;
++class QWaylandInputDevice;
++class QWindow;
++
++class Q_WAYLAND_CLIENT_EXPORT QWaylandWlShellSurface : public QtWayland::wl_shell_surface
++        , public QWaylandShellSurface
++{
++public:
++    QWaylandWlShellSurface(struct ::wl_shell_surface *shell_surface, QWaylandWindow *window);
++    virtual ~QWaylandWlShellSurface();
++
++    using QtWayland::wl_shell_surface::resize;
++    void resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges) Q_DECL_OVERRIDE;
++
++    using QtWayland::wl_shell_surface::move;
++    void move(QWaylandInputDevice *inputDevice) Q_DECL_OVERRIDE;
++
++    void setTitle(const QString & title) Q_DECL_OVERRIDE;
++    void setAppId(const QString &appId) Q_DECL_OVERRIDE;
++
++private:
++    void setMaximized() Q_DECL_OVERRIDE;
++    void setFullscreen() Q_DECL_OVERRIDE;
++    void setNormal() Q_DECL_OVERRIDE;
++    void setMinimized() Q_DECL_OVERRIDE;
++
++    void setTopLevel() Q_DECL_OVERRIDE;
++    void updateTransientParent(QWindow *parent) Q_DECL_OVERRIDE;
++    void setPopup(QWaylandWindow *parent, QWaylandInputDevice *device, int serial);
++
++    QWaylandWindow *m_window;
++    bool m_maximized;
++    bool m_fullscreen;
++    QSize m_size;
++
++    void shell_surface_ping(uint32_t serial) Q_DECL_OVERRIDE;
++    void shell_surface_configure(uint32_t edges,
++                                 int32_t width,
++                                 int32_t height) Q_DECL_OVERRIDE;
++    void shell_surface_popup_done() Q_DECL_OVERRIDE;
++
++    friend class QWaylandWindow;
++};
++
++QT_END_NAMESPACE
++
++#endif // QWAYLANDSHELLSURFACE_H
+diff --git a/src/client/qwaylandxdgsurface.cpp b/src/client/qwaylandxdgsurface.cpp
+new file mode 100644
+index 0000000..1b8affa
+--- /dev/null
++++ b/src/client/qwaylandxdgsurface.cpp
+@@ -0,0 +1,173 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qwaylandxdgsurface_p.h"
++
++#include "qwaylanddisplay_p.h"
++#include "qwaylandwindow_p.h"
++#include "qwaylandinputdevice_p.h"
++#include "qwaylanddecoration_p.h"
++#include "qwaylandscreen_p.h"
++
++#include <QtCore/QDebug>
++
++QT_BEGIN_NAMESPACE
++
++QWaylandXdgSurface::QWaylandXdgSurface(struct ::xdg_surface *xdg_surface, QWaylandWindow *window)
++    : QtWayland::xdg_surface(xdg_surface)
++    , m_window(window)
++    , m_maximized(false)
++    , m_minimized(false)
++    , m_fullscreen(false)
++{
++}
++
++QWaylandXdgSurface::~QWaylandXdgSurface()
++{
++    xdg_surface_destroy(object());
++}
++
++void QWaylandXdgSurface::resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges)
++{
++    // May need some conversion if types get incompatibles, ATM they're identical
++    enum resize_edge const * const arg = reinterpret_cast<enum resize_edge const * const>(&edges);
++    resize(inputDevice, *arg);
++}
++
++void QWaylandXdgSurface::resize(QWaylandInputDevice *inputDevice, enum resize_edge edges)
++{
++    resize(inputDevice->wl_seat(),
++           inputDevice->serial(),
++           edges);
++}
++
++void QWaylandXdgSurface::move(QWaylandInputDevice *inputDevice)
++{
++    move(inputDevice->wl_seat(),
++         inputDevice->serial());
++}
++
++void QWaylandXdgSurface::setMaximized()
++{
++    m_maximized = true;
++    m_size = m_window->window()->geometry().size();
++    set_maximized();
++}
++
++void QWaylandXdgSurface::setFullscreen()
++{
++    m_fullscreen = true;
++    m_size = m_window->window()->geometry().size();
++    set_fullscreen();
++}
++
++void QWaylandXdgSurface::setNormal()
++{
++    if (m_fullscreen || m_maximized  || m_minimized) {
++        if (m_maximized) { unset_maximized(); }
++        if (m_fullscreen) { unset_fullscreen(); }
++
++        m_fullscreen = m_maximized = m_minimized = false;
++        setTopLevel();
++        QMargins m = m_window->frameMargins();
++        m_window->configure(0, m_size.width() + m.left() + m.right(), m_size.height() + m.top() + m.bottom());
++    }
++}
++
++void QWaylandXdgSurface::setMinimized()
++{
++    m_minimized = true;
++    m_size = m_window->window()->geometry().size();
++    set_minimized();
++}
++
++void QWaylandXdgSurface::setTopLevel()
++{
++    // There's no xdg_shell_surface API for this, ignoring
++}
++
++void QWaylandXdgSurface::updateTransientParent(QWindow *parent)
++{
++    QWaylandWindow *parent_wayland_window = static_cast<QWaylandWindow *>(parent->handle());
++    if (!parent_wayland_window)
++        return;
++
++    // set_transient expects a position relative to the parent
++    QPoint transientPos = m_window->geometry().topLeft(); // this is absolute
++    QWindow *parentWin = m_window->window()->transientParent();
++    transientPos -= parentWin->geometry().topLeft();
++    if (parent_wayland_window->decoration()) {
++        transientPos.setX(transientPos.x() + parent_wayland_window->decoration()->margins().left());
++        transientPos.setY(transientPos.y() + parent_wayland_window->decoration()->margins().top());
++    }
++
++    uint32_t flags = 0;
++    Qt::WindowFlags wf = m_window->window()->flags();
++    if (wf.testFlag(Qt::ToolTip)
++            || wf.testFlag(Qt::WindowTransparentForInput))
++        flags |= XDG_SURFACE_SET_TRANSIENT_FOR;
++
++    set_transient_for(parent_wayland_window->object());
++}
++
++void QWaylandXdgSurface::setTitle(const QString & title)
++{
++    return QtWayland::xdg_surface::set_title(title);
++}
++
++void QWaylandXdgSurface::setAppId(const QString & appId)
++{
++    return QtWayland::xdg_surface::set_app_id(appId);
++}
++
++void QWaylandXdgSurface::xdg_surface_ping(uint32_t serial)
++{
++    pong(serial);
++}
++
++void QWaylandXdgSurface::xdg_surface_configure(uint32_t edges, int32_t width,
++                                               int32_t height)
++{
++    m_window->configure(edges, width, height);
++}
++
++
++QT_END_NAMESPACE
+diff --git a/src/client/qwaylandxdgsurface_p.h b/src/client/qwaylandxdgsurface_p.h
+new file mode 100644
+index 0000000..744d3f3
+--- /dev/null
++++ b/src/client/qwaylandxdgsurface_p.h
+@@ -0,0 +1,105 @@
++/****************************************************************************
++**
++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the config.tests of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QWAYLANDXDGSURFACE_H
++#define QWAYLANDXDGSURFACE_H
++
++#include <QtCore/QSize>
++
++#include <wayland-client.h>
++
++#include <QtWaylandClient/private/qwayland-xdg-shell.h>
++#include <QtWaylandClient/private/qwaylandclientexport_p.h>
++#include "qwaylandshellsurface_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QWaylandWindow;
++class QWaylandInputDevice;
++class QWindow;
++
++class Q_WAYLAND_CLIENT_EXPORT QWaylandXdgSurface : public QtWayland::xdg_surface
++        , public QWaylandShellSurface
++{
++public:
++    QWaylandXdgSurface(struct ::xdg_surface *shell_surface, QWaylandWindow *window);
++    virtual ~QWaylandXdgSurface();
++
++    using QtWayland::xdg_surface::resize;
++    void resize(QWaylandInputDevice *inputDevice, enum resize_edge edges);
++
++    void resize(QWaylandInputDevice *inputDevice, enum wl_shell_surface_resize edges) Q_DECL_OVERRIDE;
++
++    using QtWayland::xdg_surface::move;
++    void move(QWaylandInputDevice *inputDevice) Q_DECL_OVERRIDE;
++
++    void setTitle(const QString &title) Q_DECL_OVERRIDE;
++    void setAppId(const QString &appId) Q_DECL_OVERRIDE;
++
++    bool isFullscreen() const { return m_fullscreen; }
++    bool isMaximized() const { return m_maximized; }
++
++private:
++    void setMaximized() Q_DECL_OVERRIDE;
++    void setFullscreen() Q_DECL_OVERRIDE;
++    void setNormal() Q_DECL_OVERRIDE;
++    void setMinimized() Q_DECL_OVERRIDE;
++
++    void setTopLevel() Q_DECL_OVERRIDE;
++    void updateTransientParent(QWindow *parent) Q_DECL_OVERRIDE;
++
++private:
++    QWaylandWindow *m_window;
++    bool m_maximized;
++    bool m_minimized;
++    bool m_fullscreen;
++    QSize m_size;
++
++    void xdg_surface_ping(uint32_t serial) Q_DECL_OVERRIDE;
++    void xdg_surface_configure(uint32_t edges,
++                               int32_t width,
++                               int32_t height) Q_DECL_OVERRIDE;
++    friend class QWaylandWindow;
++};
++
++QT_END_NAMESPACE
++
++#endif // QWAYLANDXDGSURFACE_H
+-- 
+1.9.1
+

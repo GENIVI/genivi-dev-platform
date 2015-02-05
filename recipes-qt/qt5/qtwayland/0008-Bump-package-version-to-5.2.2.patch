@@ -1,0 +1,28 @@
+From 2e6134b160911e8744956f556438ad9226022587 Mon Sep 17 00:00:00 2001
+From: Tomasz Olszak <olszak.tomasz@gmail.com>
+Date: Fri, 17 Jan 2014 23:01:02 +0100
+Subject: [PATCH 08/21] Bump package version to 5.2.2
+
+Change-Id: I4b99fcbd20072e98c5de1dd81e0c34c439156bd8
+Tizen-Bug: TIVI-2416
+Signed-off-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+---
+ packaging/qt5-qtwayland.spec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packaging/qt5-qtwayland.spec b/packaging/qt5-qtwayland.spec
+index 0033da2..42bf117 100644
+--- a/packaging/qt5-qtwayland.spec
++++ b/packaging/qt5-qtwayland.spec
+@@ -27,7 +27,7 @@
+ 
+ Name:       qt5-qtwayland
+ Summary:    Qt Wayland compositor
+-Version:    5.2.1
++Version:    5.2.2
+ Release:    0
+ Group:      Base/Libraries
+ License:    LGPL-2.1+ or GPL-3.0
+-- 
+1.9.1
+

@@ -1,0 +1,10 @@
+Index: git/Makefile.am
+===================================================================
+--- git.orig/Makefile.am
++++ git/Makefile.am
+@@ -1,4 +1,4 @@
+-SUBDIRS = src tools data doc examples  test 
++SUBDIRS = src data doc
+ 
+ if ENABLE_GLIB
+ PKG_CONFIG_GLIB = dbus-c++-glib-1.pc

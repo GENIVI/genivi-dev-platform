@@ -1,0 +1,7 @@
+[Unit]
+Description=Genivi Browser PoC demoui
+Requires=browser.service
+
+[Service]
+Environment=LD_PRELOAD=/usr/lib/libEGL.so
+ExecStart=/opt/demoui/bin/demoui

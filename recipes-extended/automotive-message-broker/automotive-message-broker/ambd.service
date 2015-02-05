@@ -1,0 +1,15 @@
+#
+# ambd systemd service unit file
+#
+
+[Unit]
+Description=Automotive Message Broker
+After=syslog.target
+
+[Service]
+Type=dbus
+BusName=org.automotive.message.broker
+ExecStart=/usr/bin/ambd
+
+[Install]
+WantedBy=multi-user.target
