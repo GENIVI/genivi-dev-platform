@@ -1,9 +1,9 @@
 [Unit]
-Description=Weston service
+Description=Weston reference Wayland compositor
 After=dbus.service
 
 [Service]
-ExecStart=/usr/bin/weston-launch -u root
+ExecStart=/usr/bin/weston-launch -u root -- --idle-time=4294967
 ExecStop=/usr/bin/killall -s KILL weston
 Type=simple
 
