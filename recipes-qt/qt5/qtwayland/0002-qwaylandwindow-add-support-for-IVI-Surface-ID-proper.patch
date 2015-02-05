@@ -1,0 +1,34 @@
+From 31c60aedf415fd06b5c1aa16fdcef1504b67b96d Mon Sep 17 00:00:00 2001
+From: Holger Behrens <holger.behrens@windriver.com>
+Date: Tue, 3 Feb 2015 09:53:43 +0100
+Subject: [meta-ivi-demo][PATCH 2/2] qwaylandwindow: add support for
+ IVI-Surface-ID property
+
+Signed-off-by: Holger Behrens <holger.behrens@windriver.com>
+---
+ src/client/qwaylandwindow.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
+index 45a58f2..781081a 100644
+--- a/src/client/qwaylandwindow.cpp
++++ b/src/client/qwaylandwindow.cpp
+@@ -100,7 +100,14 @@ QWaylandWindow::QWaylandWindow(QWindow *window)
+ 
+     if (!(window->flags() & Qt::BypassWindowManagerHint)) {
+         if (mDisplay->shellIvi()) {
+-                mShellSurface = new QWaylandIviSurface(mDisplay->shellIvi()->surface_create(IVI_SURFACE_ID + getpid(), object()), this);
++                unsigned int id = 0;
++                QVariant value = window->property("IVI-Surface-ID");
++                if (value.isValid()) {
++                    id = value.toUInt();
++                } else {
++                    id = IVI_SURFACE_ID + getpid();
++                }
++                mShellSurface = new QWaylandIviSurface(mDisplay->shellIvi()->surface_create(id, object()), this);
+         } else if (mDisplay->shellXdg()) {
+            if (window->type() & Qt::Window) {
+                 mShellSurface = new QWaylandXdgSurface(mDisplay->shellXdg()->get_xdg_surface(object()), this);
+-- 
+2.2.1
+
