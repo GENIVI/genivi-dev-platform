@@ -11,10 +11,10 @@ BBLAYERS ?= " \
   ##OEROOT##/meta-yocto-bsp \
   ##OEROOT##/../meta-ivi/meta-ivi \
   ##OEROOT##/../meta-ivi/meta-ivi-bsp \
-  ##OEROOT##/../meta-ivi/meta-ivi-demo \
   ##OEROOT##/../meta-openembedded/meta-oe \
-  ##OEROOT##/../meta-qt5 \
   ##OEROOT##/../meta-openembedded/meta-ruby \
+  ##OEROOT##/../meta-qt5 \
+  ##OEROOT##/../meta-genivi-demo \
   "
 BBLAYERS_NON_REMOVABLE ?= " \
   ##OEROOT##/meta \
