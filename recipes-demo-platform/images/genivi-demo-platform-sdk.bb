@@ -1,8 +1,8 @@
-require ivi-image-demo.bb
+require genivi-demo-platform.bb
 
 DESCRIPTION = "GENIVI Demo Platform image that includes everything within \
-ivi-image-demo plus meta-toolchain, development headers and libraries to \
-form a standalone SDK."
+genivi-demo-platform plus meta-toolchain, development headers and libraries \
+to form a standalone SDK."
 
 inherit populate_sdk populate_sdk_qt5
 
