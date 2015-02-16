@@ -1,11 +1,14 @@
+# Copyright (C) 2014-2015 GENIVI Alliance
+# Released under the MIT license (see COPYING.MIT for the terms)
+
 # Base this image on generic IVI image
 require recipes-yocto-ivi/images/ivi-image.inc
 
-DESCRIPTION = "GENIVI Demo Platform image which includes currently \
-three proof-of-concepts (PoC's), the GENIVI Browser PoC, the Fuel- \
-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) PoC."
+DESCRIPTION = "GENIVI Demo Platform image which includes currently a simple \
+HMI and three proof-of-concepts (PoC's) and demos.  The GENIVI Browser PoC, \
+the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
 
-PV = "1.2+snapshot-${DATE}"
+PV = "1.3+snapshot-${DATE}"
 
 IMAGE_FEATURES_append = " \
     ssh-server-openssh    \
@@ -20,8 +23,9 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-am-poc \
     packagegroup-gdp-browser \
     packagegroup-gdp-fsa \
-    packagegroup-gdp-qt5 \
     packagegroup-gdp-gps \
+    packagegroup-gdp-hmi \
+    packagegroup-gdp-qt5 \
     boost \
     "
 
