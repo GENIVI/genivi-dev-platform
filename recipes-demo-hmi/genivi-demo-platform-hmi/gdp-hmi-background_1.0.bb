@@ -6,15 +6,23 @@ include genivi-demo-platform-hmi.inc
 SUMMARY = "GENIVI Demo Platform Background Image"
 DEPENDS = "qtbase qtdeclarative"
 
+SRC_URI_append ="\
+    file://gdp-hmi-background.service \
+    "
+
 S = "${WORKDIR}/git/app/gdp-hmi-background"
 
 inherit qmake5
 
 FILES_${PN} += "\
     ${datadir}/gdp/* \
+    ${libdir}/systemd/user/* \
     "
 
 do_install_append() {
+	install -d ${D}${libdir}/systemd/user
+	install -m 0444 ${WORKDIR}/gdp-hmi-background.service \
+	                ${D}${libdir}/systemd/user
 	install -d ${D}${datadir}/gdp
 	install -m 0444 ${S}/assets/GDP_Background.png \
 	                ${D}${datadir}/gdp/GDP_Background.png

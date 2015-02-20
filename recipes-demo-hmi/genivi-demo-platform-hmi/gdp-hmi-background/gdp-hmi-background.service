@@ -1,0 +1,6 @@
+[Unit]
+Description=GENIVI Demo Platform HMI - Background
+
+[Service]
+Environment=LD_PRELOAD=/usr/lib/libEGL.so
+ExecStart=/usr/bin/gdp-hmi-background
