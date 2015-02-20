@@ -1,0 +1,5 @@
+[Unit]
+Description=EGL Wayland Input Event Example
+
+[Service]
+ExecStart=/usr/bin/EGLWLInputEventExample

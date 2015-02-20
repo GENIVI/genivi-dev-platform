@@ -1,0 +1,5 @@
+[Unit]
+Description=EGL Wayland Mock Navigation
+
+[Service]
+ExecStart=/usr/bin/EGLWLMockNavigation
