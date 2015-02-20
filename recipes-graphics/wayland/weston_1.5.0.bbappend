@@ -8,6 +8,7 @@ SRC_URI_append = "\
      file://start_am-poc.sh \
      file://start_browser-poc.sh \
      file://browser_poc_hack.patch \
+     file://0001-configure.ac-check-for-libsystemd-instead-of-compat-.patch \
      "
 
 # GDP specific weston.ini
@@ -15,15 +16,18 @@ SRC_URI_append = " \
     file://weston.ini \
     "
 
+inherit systemd
+DEPENDS_append = " systemd"
+
 do_install_append() {
     install -m644 ${WORKDIR}/GDP*.png ${D}/usr/share/weston
     mkdir -p ${D}/${bindir}/
     cp ${WORKDIR}/start_am-poc.sh ${D}/${bindir}
     cp ${WORKDIR}/start_browser-poc.sh ${D}/${bindir}
-    mkdir -p ${D}/lib/systemd/system/
-    cp ${WORKDIR}/weston.service ${D}/lib/systemd/system/
-    mkdir -p ${D}/${sysconfdir}/systemd/system/multi-user.target.wants/
-    ln -sf /lib/systemd/system/weston.service ${D}/${sysconfdir}/systemd/system/multi-user.target.wants/weston.service
+    mkdir -p ${D}${systemd_unitdir}/system/
+    cp ${WORKDIR}/weston.service ${D}${systemd_unitdir}/system/
+    mkdir -p ${D}${systemd_unitdir}/system/multi-user.target.wants/
+    ln -sf /lib/systemd/system/weston.service ${D}/${systemd_unitdir}/system/multi-user.target.wants/weston.service
 
     WESTON_INI_CONFIG=${sysconfdir}/xdg/weston
     install -d ${D}${WESTON_INI_CONFIG}
@@ -31,6 +35,5 @@ do_install_append() {
 }
 
 FILES_${PN} += " \
-                /lib/systemd/system/weston.service \
-                /etc/systemd/system/multi-user.target.wants/weston.service \
+                ${systemd_unitdir}/system/* \
                "
