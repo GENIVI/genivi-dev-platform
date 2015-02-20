@@ -20,7 +20,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-specific-component-p2 \
     packagegroup-abstract-component-p2 \
     packagegroup-specific-component-p1 \
-    packagegroup-gdp-am-poc \
+    packagegroup-gdp-am-demo \
     packagegroup-gdp-browser \
     packagegroup-gdp-fsa \
     packagegroup-gdp-gps \

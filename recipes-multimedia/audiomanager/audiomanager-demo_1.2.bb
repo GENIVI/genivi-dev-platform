@@ -1,5 +1,5 @@
-SUMMARY = "GENIVI AudioManager PoC"
-DESCRIPTION = "Proof-of-Concept of the GENIVI AudioManager"
+SUMMARY = "GENIVI AudioManager Demo"
+DESCRIPTION = "Demo of the GENIVI AudioManager"
 
 LICENSE = "MPLv2"
 LIC_FILES_CHKSUM = "file://AudioManagerPoC/README;md5=be0fe05c89ff7a2632eb080f72e8c129"
