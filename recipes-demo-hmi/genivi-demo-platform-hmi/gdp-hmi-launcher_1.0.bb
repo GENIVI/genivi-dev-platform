@@ -28,4 +28,15 @@ do_install_append() {
 		${D}${datadir}/gdp/car-purple-icon.png
 	install -m 0444 ${S}/assets/power-icon_red.png \
 		${D}${datadir}/gdp/power-icon_red.png
+
+	install -m 0444 ${S}/assets/1424451154_fuel-128.png \
+		${D}${datadir}/gdp/1424451154_fuel-128.png
+	install -m 0444 ${S}/assets/App-xeyes-icon.png \
+		${D}${datadir}/gdp/App-xeyes-icon.png
+	install -m 0444 ${S}/assets/GDP_AM_Button.png \
+		${D}${datadir}/gdp/GDP_AM_Button.png
+	install -m 0444 ${S}/assets/GDP_Browser_Button.png \
+		${D}${datadir}/gdp/GDP_Browser_Button.png
+	install -m 0444 ${S}/assets/maps-icon.png \
+		${D}${datadir}/gdp/maps-icon.png
 }
