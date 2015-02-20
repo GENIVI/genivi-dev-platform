@@ -1,0 +1,6 @@
+[Unit]
+Description=Simple QML (ivi-shell) Application
+
+[Service]
+Environment=LD_PRELOAD=/usr/lib/libEGL.so
+ExecStart=/usr/bin/qml-example
