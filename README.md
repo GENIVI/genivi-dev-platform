@@ -5,13 +5,13 @@ This layer's purpose is to provide a GENIVI Demo Platform (GDP) reference
 image build. The layer supports cross-architecture application development
 using QEMU emulation and a SDK.
 
-Please see the
-[MAINTAINERS](http://git.yoctoproject.org/cgit/cgit.cgi/meta-ivi/tree/MAINTAINERS)
-file for information on contacting the maintainers
-of this layer, as well as instructions for submitting patches.
+Please see the  
+[MAINTAINERS](http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob;f=MAINTAINERS)
+file for information on contacting the maintainers of this layer, as well as
+instructions for submitting patches.
 
-The GENIVI Demo Platform project welcomes contributions. You can contribute code,
-submit patches, report bugs, answer questions on our mailing lists and
+The GENIVI Demo Platform project welcomes contributions. You can contribute
+code, submit patches, report bugs, answer questions on our mailing lists and
 review and edit our documentation and much more.
 
 Subscribe to the mailing list
@@ -32,51 +32,26 @@ Layer Dependencies
 
 URI: git://git.yoctoproject.org/meta-ivi
 > branch:   7.0  
-> revision: 
+> revision: 0d780d0cfd38694ae5e6f0198adcb72684b01acc
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 > branch:   dizzy  
-> revision: 0732e184acef5e0200f46d7f95702774e5de1904
+> revision: 1cec680ca9bcd00caaede8fa3d0ff3a4317550dc
 
 URI: git://git.openembedded.org/meta-openembedded
 > layers:   meta-oe, meta-ruby  
 > branch:   dizzy  
-> revision: 9efaed99125b1c4324663d9a1b2d3319c74e7278
+> revision: 6413cdb66acf43059f94d0076ec9b8ad6a475b35
 
 URI: git://git.yoctoproject.org/poky
 > branch:   dizzy  
-> revision: 9e8bb322154e67e521e8c982d20d46dda20c024b
+> revision: b630f2f53645fa8f5890b4732f251c354ad525a7
 
-## The Renesas R-Car Gen2 (Koelsch) board depends on: ##
-
-URI: git://git.yoctoproject.org/meta-ivi
-> branch:   GDP-koelsch  
-> revision: 1c52c69968ff02f3d72f67ab5f965ec439eabdb3
-
-URI: https://github.com/meta-qt5/meta-qt5.git
-> branch:   master  
-> revision: 02861e677ab95b537efb331fb7faea4e5851d2ea
-
-URI: git://git.openembedded.org/meta-openembedded
-> layers:   meta-oe, meta-ruby  
-> branch:   master  
-> revision: 1513d0e31f609ffcde9a116a50bfb0360b9e7ecf
-
-URI: git://git.yoctoproject.org/poky
-> branch:   master  
-> revision: fd0398f2c1355597a95242e6c8400eae6ad60fa4
-
-URI: git://git.linaro.org/openembedded/meta-linaro.git
-> branch: master  
-> revision: 7345c6089b2afbf65baf64224c14bbb9d38e2241
+## The Renesas R-Car Gen2 (Koelsch) board depends in addition on: ##
 
 URI: git://github.com/slawr/meta-renesas.git
-> branch:   genivi-gdp  
-> revision: e398b9fcacbad2f19ec673adda0f8dfda014fa12
-
-URI: git://github.com/slawr/meta-renesas-proprietary.git
-> branch:   genivi-gdp  
-> revision: 4e276c8236d5daea7db4917f79ccd20086150009
+> branch:   genivi-7.0-bsp-1.5.0  
+> revision: 0991fba7024ab57634390813b0aa92d5e330345b
 
 Supported Machines
 ------------------
@@ -92,15 +67,24 @@ Miscellaneous
 
 When building for koelsch, add the following to your local.conf:
 
-> WAYLAND_ENABLE = "1"  
-> GLES_ENABLE = "1"  
-> WAYLAND_GFX_ENABLE = "1"
+> MACHINE = "koelsch"
+> USE_GSTREAMER_1_00="1"
+> LICENSE_FLAGS_WHITELIST = "commercial"
+> MACHINE_FEATURES_append = " sgx"
+> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
+> PREFERRED_PROVIDER_virtual/libgles1 = ""
+> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
+> PREFERRED_PROVIDER_virtual/egl = "libegl"
+> PREFERRED_PROVIDER_virtual/libgl = ""
+> PREFERRED_PROVIDER_virtual/mesa = ""
+> PREFERRED_PROVIDER_libgbm = "libgbm"
+> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
 
 
 For the QEMU machine, in order to have audio, the emulation should be done like:
 (please adjust to your own paths)
 
-$ QEMU_AUDIO_DRV=alsa ../../poky/scripts/runqemu ivi-image-demo qemux86-64 audio
+$ QEMU_AUDIO_DRV=pa ../../poky/scripts/runqemu ivi-image-demo qemux86-64 audio
 
 
 For the Fuel Stop Advisor Proof of Concept (FSA PoC), a navigation map
