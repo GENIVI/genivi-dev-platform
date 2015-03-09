@@ -14,6 +14,7 @@ SRC_URI = "git://git.projects.genivi.org/browser-poc.git \
            file://browser.service \
            file://demoui.service \
            file://COPYING \
+           file://layer_manager_surface_id.patch \
           "
 
 S = "${WORKDIR}/git"
