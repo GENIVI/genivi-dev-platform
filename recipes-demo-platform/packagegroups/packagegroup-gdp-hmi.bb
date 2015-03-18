@@ -17,6 +17,7 @@ PACKAGES = "\
 RDEPENDS_${PN} += "\
     gdp-hmi-background \
     gdp-hmi-launcher \
+    gdp-hmi-launcher2 \
     gdp-hmi-panel \
     genivi-demo-platform-hmi \
     qml-example \

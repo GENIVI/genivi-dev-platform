@@ -40,4 +40,5 @@ RDEPENDS_${PN} += "\
     qtwayland-tools \
     qtwebkit \
     qtwebkit-qmlplugins \
+    qtgraphicaleffects-qmlplugins \
     "
