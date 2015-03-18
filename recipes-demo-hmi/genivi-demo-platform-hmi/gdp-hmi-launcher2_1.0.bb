@@ -4,7 +4,7 @@
 include genivi-demo-platform-hmi.inc
 
 SUMMARY = "GENIVI Demo Platform HMI - Launcher 2"
-DEPENDS = "qtbase qtdeclarative gdp-hmi-panel"
+DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon"
 
 SRC_URI_append ="\
     file://gdp-hmi-launcher2.service \
