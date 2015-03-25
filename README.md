@@ -36,7 +36,7 @@ URI: git://git.yoctoproject.org/meta-ivi
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 > branch:   dizzy  
-> revision: 1cec680ca9bcd00caaede8fa3d0ff3a4317550dc
+> revision: adeca0db212d61a933d7952ad44ea1064cfca747
 
 URI: git://git.openembedded.org/meta-openembedded
 > layers:   meta-oe, meta-ruby  
