@@ -15,6 +15,10 @@ SRC_URI = "git://git.projects.genivi.org/browser-poc.git \
            file://demoui.service \
            file://COPYING \
            file://layer_manager_surface_id.patch \
+           file://0001-browser-missing-method-for-connect.patch \
+           file://0002-browser-fix-error-reported-on-bad-cache-policy.patch \
+           file://0003-demoui-the-UI-is-stretched.patch \
+           file://0004-demoui-use-QML-WebView-instead-of-browser-service.patch \
           "
 
 S = "${WORKDIR}/git"
