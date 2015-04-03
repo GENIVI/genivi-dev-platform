@@ -1,0 +1,7 @@
+[Unit]
+Description=Genivi Start Launcher service on boot
+Requires=dbus.service
+After=AudioManager.service pulseaudio.service
+
+[Service]
+ExecStart=/usr/bin/start_launcher.sh

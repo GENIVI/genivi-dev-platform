@@ -4,3 +4,5 @@ Requires=dbus.service
 
 [Service]
 ExecStart=/usr/bin/gdp-hmi-controller
+Restart=always
+TimeoutStopSec=1

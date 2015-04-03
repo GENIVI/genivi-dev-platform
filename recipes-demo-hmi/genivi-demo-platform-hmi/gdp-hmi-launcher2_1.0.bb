@@ -8,6 +8,8 @@ DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon"
 
 SRC_URI_append ="\
     file://gdp-hmi-launcher2.service \
+    file://StartLauncher.service \
+    file://start_launcher.sh \
     "
 
 S = "${WORKDIR}/git/app/gdp-hmi-launcher2"
@@ -17,6 +19,8 @@ inherit qmake5
 FILES_${PN} += "\
     ${datadir}/gdp/* \
     ${libdir}/systemd/user/* \
+    ${bindir} \
+    /etc/systemd/user/* \
     "
 
 do_install_append() {
@@ -71,4 +75,13 @@ do_install_append() {
 		${D}${datadir}/gdp/spot.png
 	install -m 0444 ${S}/content/images/powerOff.png \
 		${D}${datadir}/gdp/powerOff.png
+
+	install -d ${D}/etc/systemd/user
+	install -m 0444 ${WORKDIR}/StartLauncher.service \
+		${D}/etc/systemd/user
+	install -d ${D}/etc/systemd/user/default.target.wants
+	ln -sf /etc/systemd/user/StartLauncher.service \
+		${D}/etc/systemd/user/default.target.wants/StartLauncher.service
+	install install -d ${D}${bindir}
+	install -m 0755 ${WORKDIR}/start_launcher.sh ${D}/${bindir}
 }
