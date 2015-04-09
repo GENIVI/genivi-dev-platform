@@ -1,6 +1,7 @@
 [Unit]
 Description=GENIVI Demo Platform HMI - Launcher 2
 Requires=gdp-hmi-controller.service gdp-hmi-background.service gdp-hmi-panel.service
+After= gdp-hmi-controller.service gdp-hmi-background.service gdp-hmi-panel.service
 
 [Service]
 Environment=LD_PRELOAD=/usr/lib/libEGL.so

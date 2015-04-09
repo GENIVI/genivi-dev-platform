@@ -1,8 +1,10 @@
 [Unit]
 Description=GENIVI Demo Platform HMI - Controller
 Requires=dbus.service
+After=weston.service
 
 [Service]
 ExecStart=/usr/bin/gdp-hmi-controller
 Restart=always
+RestartSec=2
 TimeoutStopSec=1
