@@ -53,6 +53,12 @@ URI: git://github.com/slawr/meta-renesas.git
 > branch:   genivi-7.0-bsp-1.5.0  
 > revision: 0991fba7024ab57634390813b0aa92d5e330345b
 
+## The Renesas R-Car Gen2 (Porter) board depends in addition on: ##
+
+URI: git://github.com/slawr/meta-renesas.git
+> branch:   genivi-7.0-bsp-1.8.0
+> revision: 6e829fe6e422793bbb05ec563c8544154c0e9bd8
+
 Supported Machines
 ------------------
 
@@ -60,7 +66,7 @@ We do support the builds for currently two machines:
 
 * QEMU (x86-64) - emulated machine: qemux86-64
 * Renesas R-Car Gen2 (R-Car M2) - machine: koelsch
-
+* Renesas R-Car Gen2 (R-Car M2) - machine: porter
 
 Miscellaneous
 -------------
@@ -70,6 +76,22 @@ When building for koelsch, add the following to your local.conf:
 > MACHINE = "koelsch"
 > USE_GSTREAMER_1_00="1"
 > LICENSE_FLAGS_WHITELIST = "commercial"
+> MACHINE_FEATURES_append = " sgx"
+> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
+> PREFERRED_PROVIDER_virtual/libgles1 = ""
+> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
+> PREFERRED_PROVIDER_virtual/egl = "libegl"
+> PREFERRED_PROVIDER_virtual/libgl = ""
+> PREFERRED_PROVIDER_virtual/mesa = ""
+> PREFERRED_PROVIDER_libgbm = "libgbm"
+> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
+
+
+When building for porter, add the following to your local.conf:
+
+> MACHINE = "porter"
+> LICENSE_FLAGS_WHITELIST = "commercial"
+> SDKIMAGE_FEATURES_append = " staticdev-pkgs"
 > MACHINE_FEATURES_append = " sgx"
 > MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
 > PREFERRED_PROVIDER_virtual/libgles1 = ""

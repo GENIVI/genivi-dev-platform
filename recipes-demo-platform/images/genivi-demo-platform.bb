@@ -35,3 +35,10 @@ IMAGE_INSTALL_append_koelsch = " \
     libegl-dev \
     libgbm-dev \
     "
+
+IMAGE_INSTALL_append_porter = " \
+    gles-kernel-module \
+    libegl \
+    libegl-dev \
+    libgbm-dev \
+    "
