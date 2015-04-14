@@ -1,4 +1,4 @@
-state.SSI01AK4643 {
+state.rsnddai0ak4642h {
 	control.1 {
 		iface MIXER
 		name 'Digital Playback Volume'
