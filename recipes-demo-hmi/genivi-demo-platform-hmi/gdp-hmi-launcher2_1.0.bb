@@ -10,6 +10,7 @@ SRC_URI_append ="\
     file://gdp-hmi-launcher2.service \
     file://StartLauncher.service \
     file://start_launcher.sh \
+    file://0001-gdp-hmi-launcher2-Change-the-name-of-Audiomanager-Mo.patch \
     "
 
 S = "${WORKDIR}/git/app/gdp-hmi-launcher2"

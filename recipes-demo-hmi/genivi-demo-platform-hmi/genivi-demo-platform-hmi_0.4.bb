@@ -7,10 +7,13 @@ SUMMARY = "Simple HMI for the GENIVI Demo Platform (GDP)"
 DEPENDS = "dbus-c++ systemd wayland-ivi-extension"
 
 SRC_URI_append ="\
+    file://0001-gdp-hmi-launcher-replace-audiomanager-demo-name.patch \
     file://gdp-hmi-controller.service \
     "
 
 S = "${WORKDIR}/git"
+
+PATCHTOOL = "git"
 
 inherit autotools pkgconfig
 

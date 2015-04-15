@@ -1,0 +1,35 @@
+From 488aab8b61d44e88947c21f2d095da4a9bb840e4 Mon Sep 17 00:00:00 2001
+From: "Daewon.Park" <Daewon.Park@windriver.com>
+Date: Wed, 15 Apr 2015 21:11:01 +0900
+Subject: [PATCH] gdp-hmi-launcher: replace audiomanager demo name
+
+replace audiomanager demo name
+
+Signed-off-by: Daewon.Park <Daewon.Park@windriver.com>
+---
+ include/gdp-hmi-apps.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/gdp-hmi-apps.h b/include/gdp-hmi-apps.h
+index 07e8626..ab409f7 100644
+--- a/include/gdp-hmi-apps.h
++++ b/include/gdp-hmi-apps.h
+@@ -43,7 +43,7 @@
+ #define AM_DEMO                         4
+ #define AM_DEMO_SURFACE_ID              20
+ #define AM_DEMO_LAYER_ID                400
+-#define AM_DEMO_UNIT                    "AudioManager_PoC.service"
++#define AM_DEMO_UNIT                    "AudioManager_Monitor.service"
+ 
+ #define BROWSER_POC                     5
+ #define BROWSER_POC_SURFACE_ID          30
+@@ -68,4 +68,4 @@
+ #define GDP_MAX_LAYER_ID                900
+ #define GDP_LAYER_ID_INCR               100
+ 
+-#endif // GDP_HMI_APP_H
+\ No newline at end of file
++#endif // GDP_HMI_APP_H
+-- 
+1.9.1
+

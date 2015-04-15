@@ -15,7 +15,7 @@ ALLOW_EMPTY_${PN} = "1"
 
 RDEPENDS_${PN} += "\
     alsa-state \
-    audiomanager-demo \
+    gdp-audiomanager-monitor \
     libasound-module-conf-pulse \
     libasound-module-ctl-pulse \
     libasound-module-pcm-pulse \
