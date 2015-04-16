@@ -6,4 +6,4 @@ LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
 
 SRC_URI = "git://git.projects.genivi.org/genivi-demo-platform-hmi.git"
-SRCREV  = "3955d0dd4a544577f812854ef333ddb80dbc177f"
+SRCREV  = "f03f6810c1860a9dc945a2fb3e0f2921a855fa42"
