@@ -2,7 +2,7 @@ SUMMARY = "GENIVI AudioManager Monitor"
 DESCRIPTION = "Monitor APP of the GENIVI AudioManager"
 
 LICENSE = "MPLv2"
-LIC_FILES_CHKSUM = "file://README;md5=46736f88cb8ceb22cfab5d6007bd0cea"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
 DEPENDS = "qtbase qtdeclarative pulseaudio audiomanager"
 
 BRANCH="master"
@@ -11,7 +11,7 @@ SRC_URI = "\
     git://git.projects.genivi.org/AudioManagerDemo.git;branch=${BRANCH} \
     file://AudioManager_Monitor.service \
     "
-SRCREV = "7d989b3024428e47a7514d224d65e5209cdb7241"
+SRCREV = "1036480253ede59809d466a536974f9ca3cb2f61"
 
 S = "${WORKDIR}/git"
 
