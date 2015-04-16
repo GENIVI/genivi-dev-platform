@@ -8,8 +8,10 @@ DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon persistence-client-libr
 
 SRC_URI_append ="\
     file://gdp-hmi-launcher2.service \
+    file://PowerOff.service \
     file://StartLauncher.service \
     file://start_launcher.sh \
+    file://power_off.sh \
     file://0001-gdp-hmi-launcher2-Change-the-name-of-Audiomanager-Mo.patch \
     "
 
@@ -27,6 +29,8 @@ FILES_${PN} += "\
 do_install_append() {
 	install -d ${D}${libdir}/systemd/user
 	install -m 0444 ${WORKDIR}/gdp-hmi-launcher2.service \
+	                ${D}${libdir}/systemd/user
+	install -m 0444 ${WORKDIR}/PowerOff.service \
 	                ${D}${libdir}/systemd/user
 	install -d ${D}${datadir}/gdp
 	install -m 0444 ${S}/content/images/hmi_icons_033115-1.png \
@@ -85,4 +89,5 @@ do_install_append() {
 		${D}/etc/systemd/user/default.target.wants/StartLauncher.service
 	install install -d ${D}${bindir}
 	install -m 0755 ${WORKDIR}/start_launcher.sh ${D}/${bindir}
+	install -m 0755 ${WORKDIR}/power_off.sh ${D}/${bindir}
 }
