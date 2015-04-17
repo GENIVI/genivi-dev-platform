@@ -1,6 +1,6 @@
 [Unit]
 Description=Weston reference Wayland compositor
-After=dbus.service
+After=dbus.service rc.pvr.service
 
 [Service]
 ExecStart=/usr/bin/weston-launch -u root -- --idle-time=4294967
