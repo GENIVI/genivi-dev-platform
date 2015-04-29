@@ -15,6 +15,11 @@ SRC_URI_append ="\
     file://0001-gdp-hmi-launcher2-Change-the-name-of-Audiomanager-Mo.patch \
     "
 
+SRC_URI_append_qemux86-64 ="\
+    file://0005-Launcher2-Make-Graphic-working-on-Qemu-machine.patch \
+    file://0006-Launcher2-Simplify-the-OpenGLes-part.patch \
+    "
+
 S = "${WORKDIR}/git/app/gdp-hmi-launcher2"
 
 inherit qmake5

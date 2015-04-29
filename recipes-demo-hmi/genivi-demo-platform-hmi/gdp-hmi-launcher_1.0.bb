@@ -10,6 +10,10 @@ SRC_URI_append ="\
     file://gdp-hmi-launcher.service \
     "
 
+SRC_URI_append_qemux86-64 ="\
+    file://0002-launcher-Make-Graphic-working-on-Qemu-machine.patch \
+    "
+
 S = "${WORKDIR}/git/app/gdp-hmi-launcher"
 
 inherit qmake5

@@ -10,6 +10,9 @@ SRC_URI_append ="\
     file://qml-example.service \
     "
 
+SRC_URI_append_qemux86-64 ="\
+    file://0004-qml_example-Make-Graphic-working-on-Qemu-machine.patch \
+    "
 S = "${WORKDIR}/git/app/qml-example"
 
 inherit qmake5

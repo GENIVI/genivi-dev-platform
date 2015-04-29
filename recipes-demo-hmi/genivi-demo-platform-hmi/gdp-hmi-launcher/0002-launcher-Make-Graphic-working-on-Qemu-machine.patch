@@ -1,0 +1,46 @@
+From 0ed8cab8401325ab6e114d90f2d659b763e53ffe Mon Sep 17 00:00:00 2001
+From: sebastien baudouin <sebastien.baudouin@windriver.com>
+Date: Sat, 25 Apr 2015 08:54:06 +0200
+Subject: [PATCH 2/6] launcher: Make Graphic working on Qemu machine
+
+Those modifications are in theory not needed. But unfortunately without it
+Graphic is not working.
+---
+ main.cpp | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/main.cpp b/main.cpp
+index 412b094..ee61efd 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -19,6 +19,13 @@
+ #include <QApplication>
+ #include <QQuickView>
+ #include <QtDBus>
++
++//For QEMU
++#include <QScreen>
++#include <QQuickWindow>
++#include <QQuickItem>
++
++
+ #include <systemd/sd-journal.h>
+ 
+ #include "gdp-hmi-launcher.h"
+@@ -45,6 +52,13 @@ int main(int argc, char *argv[])
+                      &launcher, SLOT(hmiRequestOffSlot()));
+ 
+     view.setProperty("IVI-Surface-ID", GDP_LAUNCHER_SURFACE_ID);
++
++    //For QEMU only
++    QSize size = app.primaryScreen()->size();
++    view.showFullScreen();
++    view.rootObject()->setWidth(size.width());
++    view.rootObject()->setHeight(size.height());
++
+     view.show();
+     return app.exec();
+ }
+-- 
+1.9.1
+

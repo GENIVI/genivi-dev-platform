@@ -1,0 +1,43 @@
+From 0aaf5a51d8e5e018858e577bc3984dc563f3606f Mon Sep 17 00:00:00 2001
+From: sebastien baudouin <sebastien.baudouin@windriver.com>
+Date: Sat, 25 Apr 2015 08:55:13 +0200
+Subject: [PATCH 3/6] panel: Make Graphic working on Qemu machine
+
+Those modifications are in thoery not needed but unfortunately without it the
+Graphic is not working.
+---
+ main.cpp | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/main.cpp b/main.cpp
+index c274931..02ec615 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -18,6 +18,11 @@
+ 
+ #include <QApplication>
+ #include <QQuickView>
++//For QEMU
++#include <QScreen>
++#include <QQuickWindow>
++#include <QQuickItem>
++
+ #include <systemd/sd-journal.h>
+ 
+ #include "gdp-hmi-panel.h"
+@@ -41,6 +46,12 @@ int main(int argc, char *argv[])
+     QObject::connect(object, SIGNAL(homeSignal()), &panel, SLOT(homeSlot()));
+ 
+     view.setProperty("IVI-Surface-ID", GDP_PANEL_SURFACE_ID);
++
++    //For QEMU only
++    view.showFullScreen();
++    view.rootObject()->setWidth(1024);
++    view.rootObject()->setHeight(68);
++
+     view.show();
+     return app.exec();
+ }
+-- 
+1.9.1
+

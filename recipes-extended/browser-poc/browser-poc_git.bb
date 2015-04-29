@@ -21,6 +21,10 @@ SRC_URI = "git://git.projects.genivi.org/browser-poc.git \
            file://0004-demoui-use-QML-WebView-instead-of-browser-service.patch \
           "
 
+SRC_URI_append_qemux86-64 = "\
+           file://0001-Demoui-Make-Graphic-working-for-Qemu-machine.patch \
+         "
+
 S = "${WORKDIR}/git"
 inherit qmake5
 

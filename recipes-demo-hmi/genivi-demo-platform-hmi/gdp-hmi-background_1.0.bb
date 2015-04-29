@@ -9,6 +9,10 @@ DEPENDS = "qtbase qtdeclarative"
 SRC_URI_append ="\
     file://gdp-hmi-background.service \
     "
+SRC_URI_append_qemux86-64 ="\
+    file://0001-Background-Make-Graphic-working-on-Qemu-machine.patch \
+"
+
 
 S = "${WORKDIR}/git/app/gdp-hmi-background"
 

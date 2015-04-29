@@ -10,6 +10,10 @@ SRC_URI_append ="\
     file://gdp-hmi-panel.service \
     "
 
+SRC_URI_append_qemux86-64 ="\
+    file://0003-panel-Make-Graphic-working-on-Qemu-machine.patch \
+    "
+
 S = "${WORKDIR}/git/app/gdp-hmi-panel"
 
 inherit qmake5
