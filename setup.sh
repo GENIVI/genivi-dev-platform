@@ -32,3 +32,12 @@ cd ..
 #git checkout 6e829fe6e422793bbb05ec563c8544154c0e9bd8
 cd ..
 
+cd meta-genivi-demo/conf
+export TEMPLATECONF=`pwd`
+cd -
+
+source poky/oe-init-build-env gdp-src-build
+
+
+echo "Common targets are: genivi-demo-platform"
+
