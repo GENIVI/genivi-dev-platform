@@ -1,4 +1,5 @@
 git submodule add http://git.projects.genivi.org/meta-genivi-demo.git
+echo "NOTE: Consider git pull in meta-genivi-demo to update"
 
 git submodule add git://git.yoctoproject.org/meta-ivi
 cd meta-ivi
@@ -26,11 +27,11 @@ cd meta-renesas
 git checkout 0991fba7024ab57634390813b0aa92d5e330345b
 cd ..
 
-# Porter:
+# For Porter:
 #git submodule add git://github.com/slawr/meta-renesas.git
 #cd meta-renesas
 #git checkout 6e829fe6e422793bbb05ec563c8544154c0e9bd8
-cd ..
+#cd ..
 
 cd meta-genivi-demo/conf
 export TEMPLATECONF=`pwd`
