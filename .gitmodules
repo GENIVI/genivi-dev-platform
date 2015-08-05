@@ -13,3 +13,6 @@
 [submodule "poky"]
 	path = poky
 	url = git://git.yoctoproject.org/poky
+[submodule "meta-intel"]
+	path = meta-intel
+	url = git://git.yoctoproject.org/meta-intel
