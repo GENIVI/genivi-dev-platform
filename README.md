@@ -15,7 +15,7 @@ It is therefore recommended to :
 git clone --recursive <thisrepo>
 ```
 
-If you forgot that, try:
+If you forgot the recursive option, try:
 ```
 git submodule init
 git submodule update
