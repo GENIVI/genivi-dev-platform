@@ -17,7 +17,7 @@ review and edit our documentation and much more.
 Subscribe to the mailing list
     [here](https://lists.genivi.org/mailman/listinfo/genivi-meta-ivi).  
 View or Report bugs
-    [here](https://bugs.genivi.org/buglist.cgi?product=meta-ivi).  
+    [here](https://bugs.genivi.org/buglist.cgi?product=Yocto%20baseline&component=GENIVI%20Demo%20Platform).  
 Read or Edit the wiki
     [here](http://wiki.projects.genivi.org/index.php/meta-ivi).  
 For information about the Yocto Project, see the
