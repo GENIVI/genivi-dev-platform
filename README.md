@@ -1,9 +1,9 @@
-meta-ivi-demo, the Yocto layer for the GENIVI Demo Platform
+meta-ivi-demo: the Yocto layer for the GENIVI Demo Platform
 ===========================================================
 
-This layer's purpose is to provide a GENIVI Demo Platform (GDP) reference
-image build. The layer supports cross-architecture application development
-using QEMU emulation and a SDK.
+This layer provides a GENIVI Demo Platform (GDP)image build. The layer
+supports cross-architecture application development using QEMU
+emulation and an SDK.
 
 Please see the  
 [MAINTAINERS](http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob;f=MAINTAINERS)
@@ -15,9 +15,9 @@ code, submit patches, report bugs, answer questions on our mailing lists and
 review and edit our documentation and much more.
 
 Subscribe to the mailing list
-    [here](https://lists.genivi.org/mailman/listinfo/genivi-meta-ivi).  
+    [here](https://lists.genivi.org/mailman/listinfo/genivi-projects).  
 View or Report bugs
-    [here](https://bugs.genivi.org/buglist.cgi?product=Yocto%20baseline&component=GENIVI%20Demo%20Platform).  
+    [here](http://bugs.genivi.org/describecomponents.cgi?product=GENIVI%20Demonstration%20Platform).  
 Read or Edit the wiki
     [here](http://wiki.projects.genivi.org/index.php/meta-ivi).  
 For information about the Yocto Project, see the
@@ -25,7 +25,7 @@ For information about the Yocto Project, see the
 For information about the Yocto GENIVI Baseline, see the
     [Yocto GENIVI Baseline website](http://projects.genivi.org/GENIVI_Baselines/meta-ivi).  
 For information about the Yocto GENIVI Demo Platform, see the
-    [Yocto GENIVI Demo Platform website](http://wiki.projects.genivi.org/index.php/Intrepid_-_Yocto_GENIVI_Demo_Platform).
+    [Yocto GENIVI Demo Platform website](http://wiki.projects.genivi.org/index.php/GENIVI_Demo_Platform).
 
 Layer Dependencies
 ------------------
