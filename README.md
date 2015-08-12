@@ -15,9 +15,9 @@ code, submit patches, report bugs, answer questions on our mailing lists and
 review and edit our documentation and much more.
 
 Subscribe to the mailing list
-    [here](https://lists.genivi.org/mailman/listinfo/genivi-projects).  
+    [here](https://lists.genivi.org/mailman/listinfo/genivi-projects). 
 View or Report bugs
-    [here](http://bugs.genivi.org/describecomponents.cgi?product=GENIVI%20Demonstration%20Platform).  
+    [here](http://bugs.genivi.org/describecomponents.cgi?product=GENIVI%20Demonstration%20Platform). 
 Read or Edit the wiki
     [here](http://wiki.projects.genivi.org/index.php/meta-ivi).  
 For information about the Yocto Project, see the
@@ -50,14 +50,14 @@ URI: git://git.yoctoproject.org/poky
 ## The Renesas R-Car Gen2 (Koelsch) board depends in addition on: ##
 
 URI: git://github.com/slawr/meta-renesas.git
-> branch:   genivi-7.0-bsp-1.5.0  
-> revision: 0991fba7024ab57634390813b0aa92d5e330345b
+> branch:   genivi-7.0-bsp-1.8.0
+> revision: b42c0c82d628cc3e7af728df668cf4459a50621f
 
 ## The Renesas R-Car Gen2 (Porter) board depends in addition on: ##
 
 URI: git://github.com/slawr/meta-renesas.git
 > branch:   genivi-7.0-bsp-1.8.0
-> revision: 6e829fe6e422793bbb05ec563c8544154c0e9bd8
+> revision: b42c0c82d628cc3e7af728df668cf4459a50621f
 
 Supported Machines
 ------------------
