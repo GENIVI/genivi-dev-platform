@@ -18,12 +18,18 @@ where branch is (for example) koelsch or minnowboard
 (you must check which branches exist)
 
 If you forgot the recursive option, try:
-```
+```bash
 git checkout <branch>
 git submodule init
 git submodule update
 ```
 
+
 If you do anything more advanced you probably need to study
 information on git submodules - they are a bit special to
 work with...
+
+One recommendation to improve usability a little: 
+```bash
+git config diff.submodule=log
+```
