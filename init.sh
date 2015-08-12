@@ -19,7 +19,6 @@ cmd=$(basename "$0")
 
 source poky/oe-init-build-env gdp-src-build
 
-echo "Now run:"
 echo
-echo "bitbake genivi-demo-platform"
+echo "Now run:  bitbake genivi-demo-platform"
 
