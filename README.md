@@ -3,7 +3,7 @@ GDP setup using git submodules
 
 --- 
 
-This is *not* ready for public usage :-)
+This is pretty close to ready for public usage :-)
 
 ---- 
 
@@ -14,8 +14,10 @@ It is therefore recommended to :
 ```bash
 git clone --recursive <thisrepo> -b <branch>
 ```
-where branch is (for example) koelsch or minnowboard
+where branch is (for example) koelsch, porter or minnowboard
 (you must check which branches exist)
+
+The master branch is no longer maintained
 
 If you forgot the recursive option, try:
 ```bash
@@ -24,6 +26,11 @@ git submodule init
 git submodule update
 ```
 
+To build:
+```
+source init.sh
+```
+and then follow instructions
 
 If you do anything more advanced you probably need to study
 information on git submodules - they are a bit special to
