@@ -1,0 +1,32 @@
+# Need to state something, to avoid Travis initiating a default ruby environment:
+language: bash
+
+# Build prerequisites:
+addons:
+ apt:
+  packages:
+   - gawk 
+   - gcc
+   - gawk
+   - wget
+   - git-core
+   - diffstat
+   - unzip
+   - texinfo
+   - build-essential
+   - chrpath
+   - libsdl1.2-dev
+   - xterm
+   - makeinfo
+   - chrpath
+
+
+# Initialize and start build
+# The log is filtered from all the repeated printouts that only make sense when
+# running in an interactive terminal.
+
+script: 
+ - echo "You are here, the universe"
+ - . init.sh
+ - bitbake genivi-demo-platform >the_log-file
+ - cat the_log-file
