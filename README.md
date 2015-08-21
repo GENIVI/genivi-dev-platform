@@ -47,13 +47,7 @@ URI: git://git.yoctoproject.org/poky
 > branch:   dizzy  
 > revision: b630f2f53645fa8f5890b4732f251c354ad525a7
 
-## The Renesas R-Car Gen2 (Koelsch) board depends in addition on: ##
-
-URI: git://github.com/slawr/meta-renesas.git
-> branch:   genivi-7.0-bsp-1.8.0
-> revision: b42c0c82d628cc3e7af728df668cf4459a50621f
-
-## The Renesas R-Car Gen2 (Porter) board depends in addition on: ##
+## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 
 URI: git://github.com/slawr/meta-renesas.git
 > branch:   genivi-7.0-bsp-1.8.0
