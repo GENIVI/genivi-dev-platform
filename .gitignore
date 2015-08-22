@@ -1,6 +1,8 @@
 gdp-src-build/bitbake.lock
 gdp-src-build/cache/
 gdp-src-build/conf/sanity_info
+gdp-src-build/conf/templateconf.cfg
 gdp-src-build/downloads
 gdp-src-build/sstate-cache
 gdp-src-build/tmp/
+gdp-src-build/logs
