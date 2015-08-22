@@ -3,7 +3,7 @@
 	url = http://git.projects.genivi.org/meta-genivi-demo.git
 [submodule "meta-ivi"]
 	path = meta-ivi
-	url = http://github.com/johnnytk/meta-ivi.git
+	url = http://git.yoctoproject.org/git/meta-ivi
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = git://github.com/meta-qt5/meta-qt5.git
