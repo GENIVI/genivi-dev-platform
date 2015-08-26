@@ -1,0 +1,7 @@
+[Unit]
+Description=GENIVI Start Launcher when weston is ready
+Requires=weston.service
+After=weston.service
+
+[Path]
+PathExists=/var/run/user/0/wayland-0

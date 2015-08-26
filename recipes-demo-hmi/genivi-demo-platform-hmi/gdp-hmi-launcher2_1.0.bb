@@ -10,6 +10,7 @@ SRC_URI_append ="\
     file://gdp-hmi-launcher2.service \
     file://PowerOff.service \
     file://StartLauncher.service \
+    file://StartLauncher.path \
     file://start_launcher.sh \
     file://power_off.sh \
     file://0001-gdp-hmi-launcher2-Change-the-name-of-Audiomanager-Mo.patch \
@@ -90,8 +91,10 @@ do_install_append() {
 	install -m 0444 ${WORKDIR}/StartLauncher.service \
 		${D}/etc/systemd/user
 	install -d ${D}/etc/systemd/user/default.target.wants
-	ln -sf /etc/systemd/user/StartLauncher.service \
-		${D}/etc/systemd/user/default.target.wants/StartLauncher.service
+	ln -sf /etc/systemd/user/StartLauncher.path \
+		${D}/etc/systemd/user/default.target.wants/StartLauncher.path
+	install -m 0444 ${WORKDIR}/StartLauncher.path \
+		${D}/etc/systemd/user
 	install install -d ${D}${bindir}
 	install -m 0755 ${WORKDIR}/start_launcher.sh ${D}/${bindir}
 	install -m 0755 ${WORKDIR}/power_off.sh ${D}/${bindir}

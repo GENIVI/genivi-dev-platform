@@ -1,5 +1,5 @@
 [Unit]
-Description=Genivi Start Launcher service on boot
+Description=Genivi Start Launcher service
 Requires=dbus.service
 After=AudioManager.service pulseaudio.service
 
