@@ -1,5 +1,6 @@
 [Unit]
 Description=GENIVI Demo Platform HMI - Panel
+Requires=gdp-hmi-controller.service
 After=gdp-hmi-controller.service
 
 [Service]
