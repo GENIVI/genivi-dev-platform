@@ -13,6 +13,3 @@
 [submodule "poky"]
 	path = poky
 	url = git://git.yoctoproject.org/poky
-[submodule "meta-renesas"]
-	path = meta-renesas
-	url = git://github.com/slawr/meta-renesas.git
