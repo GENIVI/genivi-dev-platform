@@ -32,7 +32,7 @@ Layer Dependencies
 
 URI: git://git.yoctoproject.org/meta-ivi
 > branch:   7.0  
-> revision: 0d780d0cfd38694ae5e6f0198adcb72684b01acc
+> revision: 5376b25bd586f76ef3733e171ae4935cf02595b8
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 > branch:   dizzy  
