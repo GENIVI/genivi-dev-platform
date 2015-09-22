@@ -5,7 +5,7 @@ usability and quality of a web browser that uses the D-Bus interface."
 LICENSE = "MPLv2"
 LIC_FILES_CHKSUM = "file://../COPYING;md5=815ca599c9df247a0c7f619bab123dad"
 
-SRCREV = "531bd41d00509840cf5dfc767995549c27211341"
+SRCREV = "231265ba9cc7581f8fb36d9e7f862f211d43564a"
 
 DEPENDS = "qtbase qtwebkit"
 
