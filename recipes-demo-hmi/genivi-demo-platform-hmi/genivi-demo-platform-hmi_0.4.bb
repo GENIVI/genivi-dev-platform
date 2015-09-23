@@ -8,6 +8,7 @@ DEPENDS = "dbus-c++ systemd wayland-ivi-extension"
 
 SRC_URI_append ="\
     file://0001-gdp-hmi-launcher-replace-audiomanager-demo-name.patch \
+    file://0002-TESTING-Sleep-for-500ms-before-processing-newly-disc.patch \
     file://gdp-hmi-controller.service \
     "
 

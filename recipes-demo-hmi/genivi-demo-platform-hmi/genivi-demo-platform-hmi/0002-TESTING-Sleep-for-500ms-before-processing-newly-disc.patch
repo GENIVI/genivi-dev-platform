@@ -1,0 +1,29 @@
+From dd81f53b470ae687eb4e90886b617a6a83f0887e Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Tue, 4 Aug 2015 16:10:27 +0900
+Subject: [PATCH] TESTING: Sleep for 500ms before processing newly discovered
+ surfaces
+
+Attempt to avoid a race condition with client applications by waiting for
+500ms before updating the controller state and ivi-layout.
+---
+ src/gdp-hmi-controller.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/gdp-hmi-controller.cpp b/src/gdp-hmi-controller.cpp
+index 63afa7d..be4db7e 100644
+--- a/src/gdp-hmi-controller.cpp
++++ b/src/gdp-hmi-controller.cpp
+@@ -519,6 +519,9 @@ static void surfaces_appear_check(t_ilm_int length, t_ilm_surface* pArray)
+                     "Debug: new surface id: %i (for layer: %i)\n",
+                     gdp_surfaces[count].id_surface,
+                     gdp_surfaces[count].id_layer);
++                sd_journal_print(LOG_DEBUG,
++                    "Debug: sleeping for say...500ms?\n");
++		usleep(500000);
+                 surface_control(count);
+             }
+         } // inner for-loop
+-- 
+1.9.1
+
