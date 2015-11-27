@@ -2,7 +2,7 @@ SUMMARY = "uinput binding for python"
 SECTION = "devel/python"
 LICENSE = "GPLv3"
 LIC_FILES_CHKSUM = "file://COPYING;md5=f27defe1e96c2e1ecd4e0c9be8967949"
-DEPENDS = "python"
+DEPENDS = "python udev"
 RDEPENDS_${PN} = "python-core python-ctypes python-distutils"
 
 SRC_URI = "git://github.com/tuomasjjrasanen/python-uinput;branch=master;protocol=git"
