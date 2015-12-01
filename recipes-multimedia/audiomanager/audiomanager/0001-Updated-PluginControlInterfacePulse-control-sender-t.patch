@@ -1,0 +1,97 @@
+From 9073395a5aba1b566edcdcf6159b82eb976edf8b Mon Sep 17 00:00:00 2001
+From: Tom Pollard <tom.pollard@codethink.co.uk>
+Date: Thu, 26 Nov 2015 15:18:42 +0000
+Subject: [PATCH 1/1] Updated PluginControlInterfacePulse control sender to
+ AM6.2 IAmControlSend.h spec
+
+---
+ .../include/ControlSender.h                        | 12 +++++++++++
+ PluginControlInterfacePulse/src/ControlSender.cpp  | 23 +++++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/PluginControlInterfacePulse/include/ControlSender.h b/PluginControlInterfacePulse/include/ControlSender.h
+index 94b84af..24bfc93 100644
+--- a/PluginControlInterfacePulse/include/ControlSender.h
++++ b/PluginControlInterfacePulse/include/ControlSender.h
+@@ -93,8 +93,14 @@ public:
+         const am_Gateway_s& gatewayData,
+         am_gatewayID_t& gatewayID);
+ 
++    am_Error_e hookSystemRegisterConverter(
++        const am_Converter_s& converterData,
++        am_converterID_t& converterID);
++
+     am_Error_e hookSystemDeregisterGateway(const am_gatewayID_t gatewayID);
+ 
++    am_Error_e hookSystemDeregisterConverter(const am_converterID_t converterID);
++
+     am_Error_e hookSystemRegisterCrossfader(
+         const am_Crossfader_s& crossfaderData,
+         am_crossfaderID_t& crossfaderID);
+@@ -212,6 +218,12 @@ public:
+         const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats,
+         const std::vector<bool>& convertionMatrix);
+ 
++    am_Error_e hookSystemUpdateConverter(
++        const am_converterID_t converterID,
++        const std::vector<am_CustomConnectionFormat_t>& listSourceConnectionFormats,
++        const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats,
++        const std::vector<bool>& convertionMatrix);
++
+     void cbAckSetVolumes(
+         const am_Handle_s handle,
+         const std::vector<am_Volumes_s>& listVolumes,
+diff --git a/PluginControlInterfacePulse/src/ControlSender.cpp b/PluginControlInterfacePulse/src/ControlSender.cpp
+index f82dfd1..976bcd8 100644
+--- a/PluginControlInterfacePulse/src/ControlSender.cpp
++++ b/PluginControlInterfacePulse/src/ControlSender.cpp
+@@ -917,12 +917,25 @@ am_Error_e ControlSenderPlugin::hookSystemRegisterGateway(const am_Gateway_s & g
+     return E_NOT_USED;
+ }
+ 
++am_Error_e ControlSenderPlugin::hookSystemRegisterConverter(const am_Converter_s & converterData, am_converterID_t & converterID)
++{
++    (void) converterData;
++    (void) converterID;
++    return E_NOT_USED;
++}
++
+ am_Error_e ControlSenderPlugin::hookSystemDeregisterGateway(const am_gatewayID_t gatewayID)
+ {
+     (void) gatewayID;
+     return E_NOT_USED;
+ }
+ 
++am_Error_e ControlSenderPlugin::hookSystemDeregisterConverter(const am_converterID_t converterID)
++{
++    (void) converterID;
++    return E_NOT_USED;
++}
++
+ am_Error_e ControlSenderPlugin::hookSystemRegisterCrossfader(const am_Crossfader_s & crossfaderData, am_crossfaderID_t & crossfaderID)
+ {
+     (void) crossfaderData;
+@@ -1687,6 +1700,15 @@ am_Error_e ControlSenderPlugin::hookSystemUpdateGateway(const am_gatewayID_t gat
+     return (E_NOT_USED);
+ }
+ 
++am_Error_e ControlSenderPlugin::hookSystemUpdateConverter(const am_converterID_t converterID, const std::vector<am_CustomConnectionFormat_t>& listSourceConnectionFormats, const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats, const std::vector<bool>& convertionMatrix)
++{
++    (void) converterID;
++    (void) listSourceConnectionFormats;
++    (void) listSinkConnectionFormats;
++    (void) convertionMatrix;
++    return (E_NOT_USED);
++}
++
+ void ControlSenderPlugin::cbAckSetVolumes(const am_Handle_s handle, const std::vector<am_Volumes_s>& listVolumes, const am_Error_e error)
+ {
+     (void) handle;
+@@ -1759,4 +1781,3 @@ NsmErrorStatus_e ControlSenderPlugin::hookSystemLifecycleRequest(const uint32_t
+     logInfo("CAmControlSenderBase::hookSystemLifecycleRequest request=",Request," requestID=",RequestId);
+     return (NsmErrorStatus_Error);
+ }
+-
+-- 
+2.1.4
+
