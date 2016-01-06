@@ -9,6 +9,7 @@ SRC_URI_append = "\
      file://start_browser-poc.sh \
      file://browser_poc_hack.patch \
      file://0001-configure.ac-check-for-libsystemd-instead-of-compat-.patch \
+     file://0002-evdev-touch-frame-emission.patch \
      "
 
 # GDP specific weston.ini

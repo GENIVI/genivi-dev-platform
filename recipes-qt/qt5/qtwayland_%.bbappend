@@ -24,6 +24,7 @@ SRC_URI_append = "\
     file://0019-xdg-shell-upgrade-to-support-current-version-weston-.patch \
     file://0020-Add-IVI-Shell-protocol-file-version-patch-v6.patch \
     file://0021-Implement-initial-IVI-Shell-support.patch \
+    file://0022-qt-touch-workaround.patch \
     file://disable_xcomposite_egl_qt_wayland_client_buffer_integration.patch \
     file://0001-protocol-update-3rd-party-ivi-application-protocol.patch \
     file://0002-qwaylandwindow-add-support-for-IVI-Surface-ID-proper.patch \
