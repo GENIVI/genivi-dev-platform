@@ -29,14 +29,7 @@ IMAGE_INSTALL_append = " \
     boost \
     "
 
-IMAGE_INSTALL_append_koelsch = " \
-    gles-kernel-module \
-    libegl \
-    libegl-dev \
-    libgbm-dev \
-    "
-
-IMAGE_INSTALL_append_porter = " \
+IMAGE_INSTALL_append_rcar-gen2 = " \
     gles-kernel-module \
     libegl \
     libegl-dev \
