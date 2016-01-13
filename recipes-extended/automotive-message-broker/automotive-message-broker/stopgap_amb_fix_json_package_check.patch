@@ -1,0 +1,34 @@
+ CMakeLists.txt          | 5 ++++-
+ lib/mappropertytype.hpp | 2 +-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3867dbd..fcbdc77 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -78,8 +78,11 @@ find_package(Boost REQUIRED)
+ 
+ 
+ pkg_check_modules(glib REQUIRED glib-2.0 gobject-2.0)
+-pkg_check_modules(json REQUIRED json)
++pkg_check_modules(json QUIET json)
+ 
++if(NOT json_FOUND)
++ pkg_check_modules(json REQUIRED json-c)
++endif(NOT json_FOUND)
+ 
+ add_definitions(-std=c++11)
+ add_definitions(-DDBusServiceName="org.automotive.message.broker")
+diff --git a/lib/mappropertytype.hpp b/lib/mappropertytype.hpp
+index ff0cc0a..dee4794 100644
+--- a/lib/mappropertytype.hpp
++++ b/lib/mappropertytype.hpp
+@@ -6,7 +6,7 @@
+ 
+ #include <map>
+ #include <debugout.h>
+-#include <json/json.h>
++#include <json-c/json.h>
+ 
+ template <class T, class N>
+ class MapPropertyType: public AbstractPropertyType
