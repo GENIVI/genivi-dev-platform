@@ -7,7 +7,6 @@ SRC_URI_append = "\
      file://GDP_Browser_Button.png \
      file://start_am-poc.sh \
      file://start_browser-poc.sh \
-     file://browser_poc_hack.patch \
      file://0001-configure.ac-check-for-libsystemd-instead-of-compat-.patch \
      "
 
