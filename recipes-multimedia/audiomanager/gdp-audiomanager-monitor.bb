@@ -10,8 +10,9 @@ BRANCH="master"
 SRC_URI = "\
     git://git.projects.genivi.org/AudioManagerDemo.git;branch=${BRANCH} \
     file://AudioManager_Monitor.service \
+    file://0001-gdp-audio-monitor-include-fix.patch \
     "
-SRCREV = "1036480253ede59809d466a536974f9ca3cb2f61"
+SRCREV = "eea896440e5ad49622c7b1a4095f0d63c3465aa2"
 
 S = "${WORKDIR}/git"
 
