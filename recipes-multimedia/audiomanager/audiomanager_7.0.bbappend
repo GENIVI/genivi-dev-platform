@@ -2,7 +2,8 @@ FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 
 DEPENDS_append = " pulseaudio"
 
-SRC_URI_append = " file://0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch \
+SRC_URI_append = " git://git.projects.genivi.org/AudioManagerPlugins.git;destsuffix=git/Plugins;branch=${BRANCH};tag=${PV} \
+                   file://0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch \
                    file://0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch \
                    file://sqlite_database_handler_change_mainVolume_to_volume.patch \
                    file://AudioManager_user.service \
