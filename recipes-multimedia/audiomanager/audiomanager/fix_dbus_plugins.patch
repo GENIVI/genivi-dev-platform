@@ -1,0 +1,39 @@
+Index: git/Plugins/CMakeLists.txt
+===================================================================
+--- git.orig/Plugins/CMakeLists.txt	2016-01-21 15:26:55.176924999 +0000
++++ git/Plugins/CMakeLists.txt	2016-01-21 15:28:57.224924999 +0000
+@@ -54,7 +54,7 @@
+ ENDIF(WITH_ROUTING_INTERFACE_CAPI)
+ 
+ IF(WITH_ROUTING_INTERFACE_DBUS) 
+-		add_subdirectory(PluginRoutingInterfaceDbus)
++		add_subdirectory(PluginRoutingInterfaceDBus)
+ ENDIF(WITH_ROUTING_INTERFACE_DBUS) 
+         
+ add_custom_target(plugins-install
+Index: git/Plugins/PluginCommandInterfaceDbus/src/CAmCommandSenderDbus.cpp
+===================================================================
+--- git.orig/Plugins/PluginCommandInterfaceDbus/src/CAmCommandSenderDbus.cpp	2016-01-21 16:01:51.848924999 +0000
++++ git/Plugins/PluginCommandInterfaceDbus/src/CAmCommandSenderDbus.cpp	2016-01-21 16:02:48.628924999 +0000
+@@ -317,7 +317,7 @@
+ 
+ void CAmCommandSenderDbus::getInterfaceVersion(std::string & version) const
+ {
+-    version = CommandSendVersion;
++    version = CommandVersion;
+ }
+ 
+ void am::CAmCommandSenderDbus::cbSinkUpdated(const am_sinkID_t sinkID, const am_sinkClass_t sinkClassID, const std::vector<am_MainSoundProperty_s>& listMainSoundProperties)
+Index: git/Plugins/PluginRoutingInterfaceDBus/src/CAmRoutingSenderDbus.cpp
+===================================================================
+--- git.orig/Plugins/PluginRoutingInterfaceDBus/src/CAmRoutingSenderDbus.cpp	2016-01-21 16:01:51.848924999 +0000
++++ git/Plugins/PluginRoutingInterfaceDBus/src/CAmRoutingSenderDbus.cpp	2016-01-21 16:03:28.616924999 +0000
+@@ -71,7 +71,7 @@
+ 
+ void CAmRoutingSenderDbus::getInterfaceVersion(std::string & version) const
+ {
+-    version = RoutingSendVersion;
++    version = RoutingVersion;
+ }
+ 
+ void CAmRoutingSenderDbus::setRoutingReady(const uint16_t handle)

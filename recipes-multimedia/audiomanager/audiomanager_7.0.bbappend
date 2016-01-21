@@ -8,8 +8,19 @@ SRC_URI_append = " git://git.projects.genivi.org/AudioManagerPlugins.git;destsuf
                    file://sqlite_database_handler_change_mainVolume_to_volume.patch \
                    file://AudioManager_user.service \
                    file://0001-Updated-PluginControlInterfacePulse-control-sender-t.patch \
+                   file://fix_dbus_plugins.patch \
                  "
-EXTRA_OECMAKE += "-DWITH_PULSE_ROUTING_PLUGIN=ON -DWITH_PULSE_CONTROL_PLUGIN=ON -DWITH_ENABLED_IPC=DBUS -DWITH_DATABASE_STORAGE=OFF"
+
+EXTRA_OECMAKE += " \
+    -DWITH_PULSE_ROUTING_PLUGIN=ON \
+    -DWITH_PULSE_CONTROL_PLUGIN=ON \
+    -DWITH_ENABLED_IPC=DBUS \
+    -DWITH_DATABASE_STORAGE=OFF \
+    -DWITH_COMMAND_INTERFACE_CAPI=OFF \
+    -DWITH_COMMAND_INTERFACE_DBUS=ON \
+    -DWITH_ROUTING_INTERFACE_CAPI=OFF \
+    -DWITH_ROUTING_INTERFACE_DBUS=ON \
+    "
 
 do_install_append() {
     mkdir -p ${D}/etc/systemd/user
