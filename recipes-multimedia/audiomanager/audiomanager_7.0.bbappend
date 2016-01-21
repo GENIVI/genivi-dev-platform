@@ -18,6 +18,18 @@ do_install_append() {
     ln -sf /etc/systemd/user/AudioManager.service ${D}/etc/systemd/user/default.target.wants/AudioManager.service
 }
 
-FILES_${PN} += "${libdir}/audioManager/control/* \
-                ${libdir}/audioManager/routing/* \
-               "
+FILES_${PN} += " \
+    ${libdir}/audiomanager/command/*.so* \
+    ${libdir}/audiomanager/control/*.conf \
+    ${libdir}/audiomanager/control/*.so* \
+    ${libdir}/audiomanager/routing/*.conf \
+    ${libdir}/audiomanager/routing/*.so* \
+    ${systemd_unitdir}/AudioManager.service \
+    ${systemd_unitdir}/scripts/setup_amgr.sh \
+    "
+
+FILES_${PN}-dbg += " \
+    ${libdir}/audiomanager/command/.debug/* \
+    ${libdir}/audiomanager/control/.debug/* \
+    ${libdir}/audiomanager/routing/.debug/* \
+    "
