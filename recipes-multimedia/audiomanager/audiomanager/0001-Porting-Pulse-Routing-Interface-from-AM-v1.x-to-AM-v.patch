@@ -1,6 +1,6 @@
-From d21f2cc236c96e898c50c92a0a89584053665da7 Mon Sep 17 00:00:00 2001
-From: Adrian Scarlat <adrian.scarlat@windriver.com>
-Date: Mon, 13 Oct 2014 19:42:19 +0300
+From 1acad653234dde177ab86fe720591693d6d23622 Mon Sep 17 00:00:00 2001
+From: Jonathan Maw <jonathan.maw@codethink.co.uk>
+Date: Mon, 25 Jan 2016 16:40:15 +0000
 Subject: [PATCH] Porting Pulse Routing Interface from AM v1.x to AM v3.0
 
 This Routing Interface is needed for any application that will
@@ -8,37 +8,24 @@ be developed on top of AM and will use PulseAudio Sound Server
 to control the sources and sinks present on the system. It must
 be loaded by AM;
 
-The interface can be built by supplying cmake with the -DWITH_PULSE_ROUTING_PLUGIN=ON;
+The interface can be built by supplying cmake with the -DWITH_ROUTING_INTERFACE_PULSE=ON;
 After building one configuration file will be available:
   1. libPluginRoutingInterfacePULSE.conf - configuration file for
      Pulse Routing Plugin; it will be loaded at runtime by the Pulse Routing Interface;
 
-Changed files:
-  CMakeLists.txt
+This commit is based off a patch by Adrian Scarlat <adrian.scarlat@windriver.com>
 
-Added new folders:
-  PluginRoutingInterfacePulse/
-
-Added new files:
-  PluginRoutingInterfacePulse/CMakeLists.txt
-  PluginRoutingInterfacePulse/README
-  PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
-  PluginRoutingInterfacePulse/include/RoutingSenderMainloopPULSE.h
-  PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
-  PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
-  PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
-
-Signed-off-by: Adrian Scarlat <adrian.scarlat@windriver.com>
+Signed-off-by: Jonathan Maw <jonathan.maw@codethink.co.uk>
 ---
- CMakeLists.txt                                     |   24 +-
- PluginRoutingInterfacePulse/CMakeLists.txt         |  103 +++
- PluginRoutingInterfacePulse/README                 |   50 ++
- .../data/libPluginRoutingInterfacePULSE.conf       |   55 ++
- .../include/RoutingSenderMainloopPULSE.h           |   97 +++
- .../include/RoutingSenderPULSE.h                   |  131 +++
- .../src/RoutingSenderMainloopPULSE.cpp             |  610 +++++++++++++
- .../src/RoutingSenderPULSE.cpp                     |  914 ++++++++++++++++++++
- 8 files changed, 1978 insertions(+), 6 deletions(-)
+ CMakeLists.txt                                     |   6 +
+ PluginRoutingInterfacePulse/CMakeLists.txt         | 105 +++
+ PluginRoutingInterfacePulse/README                 |  50 ++
+ .../data/libPluginRoutingInterfacePULSE.conf       |  55 ++
+ .../include/RoutingSenderMainloopPULSE.h           |  97 +++
+ .../include/RoutingSenderPULSE.h                   | 131 +++
+ .../src/RoutingSenderMainloopPULSE.cpp             | 610 ++++++++++++++
+ .../src/RoutingSenderPULSE.cpp                     | 914 +++++++++++++++++++++
+ 8 files changed, 1968 insertions(+)
  create mode 100644 PluginRoutingInterfacePulse/CMakeLists.txt
  create mode 100644 PluginRoutingInterfacePulse/README
  create mode 100755 PluginRoutingInterfacePulse/data/libPluginRoutingInterfacePULSE.conf
@@ -48,54 +35,35 @@ Signed-off-by: Adrian Scarlat <adrian.scarlat@windriver.com>
  create mode 100644 PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3e70e4f..48e7ae2 100755
+index aa885e5..d70b555 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -95,7 +95,15 @@ OPTION ( WITH_NSM
-  OPTION ( WITH_DATABASE_STORAGE
-     "build with sqlite as in memory storage" OFF)
- 
-+OPTION( WITH_PULSE_ROUTING_PLUGIN
+@@ -32,6 +32,8 @@ OPTION(WITH_ROUTING_INTERFACE_CAPI
+        "build with routing iterface common-api plugin" ON)   
+ OPTION(WITH_ROUTING_INTERFACE_DBUS
+        "build with routing iterface dbus plugin" OFF)                    
++OPTION( WITH_ROUTING_INTERFACE_PULSE
 +    "Enable PULSE Audio routing plugin interface" OFF )
-+
- SET (WITH_COMMON_API_GEN ON CACHE INTERNAL "hide this!" FORCE)
-+
-+IF (WITH_PULSE_ROUTING_PLUGIN)
-+    SET (WITH_DBUS_WRAPPER ON CACHE INTERNAL "hide this!" FORCE)
-+    SET (WITH_CAPI_WRAPPER OFF CACHE INTERNAL "hide this!" FORCE)
-+ENDIF (WITH_PULSE_ROUTING_PLUGIN)
-  
- IF (WITH_ENABLED_IPC STREQUAL "DBUS")
-     SET (WITH_DBUS_WRAPPER ON CACHE INTERNAL "hide this!" FORCE)
-@@ -239,12 +247,16 @@ if(WITH_PLUGIN_COMMAND)
- endif(WITH_PLUGIN_COMMAND)
  
- if(WITH_PLUGIN_ROUTING)
--	add_subdirectory (PluginRoutingInterfaceAsync)
--    if(WITH_DBUS_WRAPPER)
--	    add_subdirectory (PluginRoutingInterfaceDbus)
--	elseif(WITH_CAPI_WRAPPER)  	    
--    	add_subdirectory (PluginRoutingInterfaceCAPI)    
--	endif()    
-+    if (WITH_PULSE_ROUTING_PLUGIN)
-+        add_subdirectory (PluginRoutingInterfacePulse)
-+    else ()
-+        add_subdirectory (PluginRoutingInterfaceAsync)
-+        if(WITH_DBUS_WRAPPER)
-+            add_subdirectory (PluginRoutingInterfaceDbus)
-+        elseif(WITH_CAPI_WRAPPER)
-+            add_subdirectory (PluginRoutingInterfaceCAPI)
-+        endif()
-+    endif()
- endif(WITH_PLUGIN_ROUTING)
- 
- if(WITH_PLUGIN_CONTROL)
+ IF (WITH_COMMAND_INTERFACE_COMMON_CAPI)
+ 	add_subdirectory(PluginCommandInterfaceCAPI)
+@@ -57,6 +59,10 @@ IF(WITH_ROUTING_INTERFACE_DBUS)
+ 		add_subdirectory(PluginRoutingInterfaceDBus)
+ ENDIF(WITH_ROUTING_INTERFACE_DBUS) 
+         
++IF(WITH_ROUTING_INTERFACE_PULSE)
++		add_subdirectory(PluginRoutingInterfacePulse)
++ENDIF(WITH_ROUTING_INTERFACE_PULSE)
++
+ add_custom_target(plugins-install
+   COMMAND
+      "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=plugin
 diff --git a/PluginRoutingInterfacePulse/CMakeLists.txt b/PluginRoutingInterfacePulse/CMakeLists.txt
 new file mode 100644
-index 0000000..1a15b40
+index 0000000..7d01f99
 --- /dev/null
 +++ b/PluginRoutingInterfacePulse/CMakeLists.txt
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,105 @@
 +############################################################################
 +# SPDX license identifier: MPL-2.0
 +#
@@ -134,7 +102,7 @@ index 0000000..1a15b40
 +set(LIBRARY_OUTPUT_PATH ${PLUGINS_OUTPUT_PATH}/routing)
 +set(DOC_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/doc/RoutingPlugin)
 +set(INCLUDES_FOLDER "include")
-+SET(LIB_INSTALL_SUFFIX "audioManager")
++SET(LIB_INSTALL_SUFFIX "audiomanager")
 +
 +FIND_PACKAGE(DBUS REQUIRED)
 +FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include)
@@ -145,8 +113,8 @@ index 0000000..1a15b40
 +        message(STATUS "Did not found AudioManager include!")
 +endif(DEFINED AUDIO_INCLUDE_FOLDER)
 +
-+FILE(READ "${AUDIO_INCLUDE_FOLDER}/routing/IAmRoutingSend.h" VERSION_BUFFER LIMIT 6000)
-+STRING(REGEX MATCH "RoutingSendVersion*.[^0-9]*[0-9]" LIB_INTERFACE_VERSION_STRING ${VERSION_BUFFER})
++FILE(READ "${AUDIO_INCLUDE_FOLDER}/IAmRouting.h" VERSION_BUFFER LIMIT 6000)
++STRING(REGEX MATCH "RoutingVersion*.[^0-9]*[0-9]" LIB_INTERFACE_VERSION_STRING ${VERSION_BUFFER})
 +STRING(REGEX REPLACE "[^0-9]" "" LIB_INTERFACE_VERSION ${LIB_INTERFACE_VERSION_STRING})
 +MESSAGE(STATUS "Building against routing interface version ${LIB_INTERFACE_VERSION}")
 +
@@ -159,6 +127,8 @@ index 0000000..1a15b40
 +        ${DBUS_INCLUDE_DIR}
 +        ${DBUS_ARCH_INCLUDE_DIR}
 +        ${AUDIO_INCLUDE_FOLDER}
++    	${AUDIOMANAGER_INCLUDE_FOLDER}
++    	${AUDIOMANAGER_UTILITIES_INCLUDE}
 +        ${INCLUDES_FOLDER}
 +)
 +
@@ -421,7 +391,7 @@ index 0000000..ff0c1d8
 +#endif
 diff --git a/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h b/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
 new file mode 100644
-index 0000000..0fc2197
+index 0000000..335adc5
 --- /dev/null
 +++ b/PluginRoutingInterfacePulse/include/RoutingSenderPULSE.h
 @@ -0,0 +1,131 @@
@@ -450,7 +420,7 @@ index 0000000..0fc2197
 +#define ROUTINGSENDERPULSE_H_
 +
 +/* Includes */
-+#include "routing/IAmRoutingSend.h"
++#include "IAmRouting.h"
 +#include <signal.h>
 +#include <string.h>
 +#include <errno.h>
@@ -558,7 +528,7 @@ index 0000000..0fc2197
 +#endif
 diff --git a/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp b/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
 new file mode 100644
-index 0000000..5738b42
+index 0000000..9e8d7fd
 --- /dev/null
 +++ b/PluginRoutingInterfacePulse/src/RoutingSenderMainloopPULSE.cpp
 @@ -0,0 +1,610 @@
@@ -586,7 +556,7 @@ index 0000000..5738b42
 +/* Includes */
 +
 +#include <pthread.h>
-+#include "shared/CAmDltWrapper.h"
++#include "CAmDltWrapper.h"
 +#include "RoutingSenderPULSE.h"
 +#include "RoutingSenderMainloopPULSE.h"
 +
@@ -1174,7 +1144,7 @@ index 0000000..5738b42
 +//TODO - IMPORTANT !! implement volume change for sink input even multiple sink inputs are created during one connection
 diff --git a/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp b/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
 new file mode 100644
-index 0000000..17422e9
+index 0000000..db9fb21
 --- /dev/null
 +++ b/PluginRoutingInterfacePulse/src/RoutingSenderPULSE.cpp
 @@ -0,0 +1,914 @@
@@ -1222,7 +1192,7 @@ index 0000000..17422e9
 +#include <string.h>
 +#include <iostream>
 +
-+#include "shared/CAmDltWrapper.h"
++#include "CAmDltWrapper.h"
 +
 +#include "RoutingSenderPULSE.h"
 +#include "RoutingSenderMainloopPULSE.h"
@@ -2093,5 +2063,5 @@ index 0000000..17422e9
 +    }
 +}
 -- 
-1.7.9.5
+1.9.1
 

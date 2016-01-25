@@ -1,6 +1,6 @@
-From a6b08fb8e2d31b66b6064171e43c6cf1dc76e019 Mon Sep 17 00:00:00 2001
-From: Adrian Scarlat <adrian.scarlat@windriver.com>
-Date: Mon, 13 Oct 2014 19:45:55 +0300
+From a08e2cfc7d5d3c0ce5f0423c6cf3910595fbe3d4 Mon Sep 17 00:00:00 2001
+From: Jonathan Maw <jonathan.maw@codethink.co.uk>
+Date: Mon, 25 Jan 2016 17:31:13 +0000
 Subject: [PATCH] Porting Pulse Control Interface from AM v1.x to AM v3.0
 
 This Control Interface is the "heart" of the AM; It is needed
@@ -13,30 +13,18 @@ There is one configuration file that is used at the moment by the Control Interf
   1. libPluginControlInterface.conf - configuration file for defining the Sources,
      Source Classes, Sinks, Sink Classes, Gateways, Routes and Mixing rules form them;
 
-Modified files:
-  CMakeLists.txt
+Based off the patch by Adrian Scarlat <adrian.scarlat@windriver.com>
 
-Added new folders:
-  PluginControlInterfacePulse/
-
-Added new files:
-  PluginControlInterfacePulse/CMakeLists.txt
-  PluginControlInterfacePulse/README
-  PluginControlInterfacePulse/data/libPluginControlInterface.conf
-  PluginControlInterfacePulse/include/ControlConfig.h
-  PluginControlInterfacePulse/include/ControlSender.h
-  PluginControlInterfacePulse/src/ControlSender.cpp
-
-Signed-off-by: Adrian Scarlat <adrian.scarlat@windriver.com>
+Signed-off-by: Jonathan Maw <jonathan.maw@codethink.co.uk>
 ---
- CMakeLists.txt                                     |    9 +-
- PluginControlInterfacePulse/CMakeLists.txt         |   97 ++
+ CMakeLists.txt                                     |    6 +
+ PluginControlInterfacePulse/CMakeLists.txt         |   99 ++
  PluginControlInterfacePulse/README                 |   54 +
  .../data/libPluginControlInterface.conf            |   86 +
  .../include/ControlConfig.h                        |  221 +++
- .../include/ControlSender.h                        |  334 ++++
- PluginControlInterfacePulse/src/ControlSender.cpp  | 1762 ++++++++++++++++++++
- 7 files changed, 2562 insertions(+), 1 deletion(-)
+ .../include/ControlSender.h                        |  349 ++++
+ PluginControlInterfacePulse/src/ControlSender.cpp  | 1789 ++++++++++++++++++++
+ 7 files changed, 2604 insertions(+)
  create mode 100644 PluginControlInterfacePulse/CMakeLists.txt
  create mode 100644 PluginControlInterfacePulse/README
  create mode 100644 PluginControlInterfacePulse/data/libPluginControlInterface.conf
@@ -45,38 +33,35 @@ Signed-off-by: Adrian Scarlat <adrian.scarlat@windriver.com>
  create mode 100644 PluginControlInterfacePulse/src/ControlSender.cpp
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3e70e4f..abf2a20 100755
+index 22c46cc..12919e1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -95,6 +95,9 @@ OPTION ( WITH_NSM
-  OPTION ( WITH_DATABASE_STORAGE
-     "build with sqlite as in memory storage" OFF)
- 
+@@ -26,6 +26,8 @@ OPTION (WITH_COMMAND_INTERFACE_DBUS
+         "build with commandinterface dbus plugin" OFF )
+ OPTION (WITH_TEST_CONTROLLER 
+         "Build with the test controller" ON)     
 +OPTION( WITH_PULSE_CONTROL_PLUGIN
 +    "Enable PULSE Audio control plugin interface" OFF)
+ OPTION (WITH_ROUTING_INTERFACE_ASYNC
+         "build with routing interface async plugin" ON)
+ OPTION(WITH_ROUTING_INTERFACE_CAPI
+@@ -47,6 +49,10 @@ IF (WITH_TEST_CONTROLLER)
+ 	add_subdirectory(PluginControlInterface)
+ ENDIF (WITH_TEST_CONTROLLER)   
+ 
++IF (WITH_PULSE_CONTROL_PLUGIN)
++	add_subdirectory(PluginControlInterfacePulse)
++ENDIF (WITH_PULSE_CONTROL_PLUGIN)
 +
- SET (WITH_COMMON_API_GEN ON CACHE INTERNAL "hide this!" FORCE)
-  
- IF (WITH_ENABLED_IPC STREQUAL "DBUS")
-@@ -248,7 +251,11 @@ if(WITH_PLUGIN_ROUTING)
- endif(WITH_PLUGIN_ROUTING)
- 
- if(WITH_PLUGIN_CONTROL)
--	add_subdirectory (PluginControlInterface)
-+    if(WITH_PULSE_CONTROL_PLUGIN)
-+        add_subdirectory (PluginControlInterfacePulse)
-+    else ()
-+        add_subdirectory (PluginControlInterface)
-+    endif(WITH_PULSE_CONTROL_PLUGIN)
- endif(WITH_PLUGIN_CONTROL)
- 
- add_subdirectory (AudioManagerDaemon)
+ IF (WITH_ROUTING_INTERFACE_ASYNC)
+ 	add_subdirectory(PluginRoutingInterfaceAsync)
+ ENDIF (WITH_ROUTING_INTERFACE_ASYNC)  
 diff --git a/PluginControlInterfacePulse/CMakeLists.txt b/PluginControlInterfacePulse/CMakeLists.txt
 new file mode 100644
-index 0000000..3aa3049
+index 0000000..1b8aa67
 --- /dev/null
 +++ b/PluginControlInterfacePulse/CMakeLists.txt
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,99 @@
 +############################################################################
 +# SPDX license identifier: MPL-2.0
 +#
@@ -113,7 +98,7 @@ index 0000000..3aa3049
 +set(LIBRARY_OUTPUT_PATH ${PLUGINS_OUTPUT_PATH}/control)
 +set(DOC_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/doc/ControlPlugin)
 +set(INCLUDE_FOLDER "include")
-+SET(LIB_INSTALL_SUFFIX "audioManager")
++SET(LIB_INSTALL_SUFFIX "audiomanager")
 +
 +FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include)
 +
@@ -123,8 +108,8 @@ index 0000000..3aa3049
 +	message(STATUS "Did not found AudioManager include!")
 +endif(DEFINED AUDIO_INCLUDE_FOLDER)
 +
-+FILE(READ "${AUDIO_INCLUDE_FOLDER}/control/IAmControlSend.h" VERSION_BUFFER LIMIT 6000)
-+STRING(REGEX MATCH "ControlSendVersion*.[^0-9]*[0-9]" LIB_INTERFACE_VERSION_STRING ${VERSION_BUFFER})
++FILE(READ "${AUDIO_INCLUDE_FOLDER}/IAmControl.h" VERSION_BUFFER LIMIT 6000)
++STRING(REGEX MATCH "ControlVersion*.[^0-9]*[0-9]" LIB_INTERFACE_VERSION_STRING ${VERSION_BUFFER})
 +STRING(REGEX REPLACE "[^0-9]" "" LIB_INTERFACE_VERSION ${LIB_INTERFACE_VERSION_STRING})
 +MESSAGE(STATUS "Building against control interface version ${LIB_INTERFACE_VERSION}")
 +
@@ -135,6 +120,8 @@ index 0000000..3aa3049
 +	${STD_INCLUDE_DIRS}
 +	${CMAKE_CURRENT_BINARY_DIR}
 +	${AUDIO_INCLUDE_FOLDER}
++    	${AUDIOMANAGER_INCLUDE_FOLDER}
++    	${AUDIOMANAGER_UTILITIES_INCLUDE}
 +	${PROJECT_INCLUDE_FOLDER}
 +	${INCLUDE_FOLDER}
 +	${NSM_INCLUDE_DIR}
@@ -555,10 +542,10 @@ index 0000000..8648c77
 +*/
 diff --git a/PluginControlInterfacePulse/include/ControlSender.h b/PluginControlInterfacePulse/include/ControlSender.h
 new file mode 100644
-index 0000000..94b84af
+index 0000000..478d1d9
 --- /dev/null
 +++ b/PluginControlInterfacePulse/include/ControlSender.h
-@@ -0,0 +1,334 @@
+@@ -0,0 +1,349 @@
 +/**
 + * SPDX license identifier: MPL-2.0
 + *
@@ -583,7 +570,7 @@ index 0000000..94b84af
 +#define CONTROLSENDER_H_
 +
 +#include "ControlConfig.h"
-+#include "control/IAmControlSend.h"
++#include "IAmControl.h"
 +#include <map>
 +
 +using namespace am;
@@ -654,7 +641,13 @@ index 0000000..94b84af
 +        const am_Gateway_s& gatewayData,
 +        am_gatewayID_t& gatewayID);
 +
++    am_Error_e hookSystemRegisterConverter(
++        const am_Converter_s& converterData,
++        am_converterID_t& converterID);
++
 +    am_Error_e hookSystemDeregisterGateway(const am_gatewayID_t gatewayID);
++
++    am_Error_e hookSystemDeregisterConverter(const am_converterID_t converterID);
 +
 +    am_Error_e hookSystemRegisterCrossfader(
 +        const am_Crossfader_s& crossfaderData,
@@ -773,6 +766,12 @@ index 0000000..94b84af
 +        const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats,
 +        const std::vector<bool>& convertionMatrix);
 +
++    am_Error_e hookSystemUpdateConverter(
++        const am_converterID_t converterID,
++        const std::vector<am_CustomConnectionFormat_t>& listSourceConnectionFormats,
++        const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats,
++        const std::vector<bool>& convertionMatrix);
++
 +    void cbAckSetVolumes(
 +        const am_Handle_s handle,
 +        const std::vector<am_Volumes_s>& listVolumes,
@@ -816,6 +815,9 @@ index 0000000..94b84af
 +        const uint32_t Request,
 +        const uint32_t RequestId);
 +
++    void hookSystemSingleTimingInformationChanged(
++        const am_connectionID_t connectionID,
++        const am_timeSync_t time);
 +private:
 +    bool isStaticRoutingEnabled() {return true;}
 +
@@ -895,10 +897,10 @@ index 0000000..94b84af
 +#endif /* CONTROLSENDER_H_ */
 diff --git a/PluginControlInterfacePulse/src/ControlSender.cpp b/PluginControlInterfacePulse/src/ControlSender.cpp
 new file mode 100644
-index 0000000..f82dfd1
+index 0000000..50973d5
 --- /dev/null
 +++ b/PluginControlInterfacePulse/src/ControlSender.cpp
-@@ -0,0 +1,1762 @@
+@@ -0,0 +1,1789 @@
 +/**
 + * SPDX license identifier: MPL-2.0
 + *
@@ -922,8 +924,8 @@ index 0000000..f82dfd1
 +/*Includes*/
 +#include "ControlSender.h"
 +#include "ControlConfig.h"
-+#include "control/IAmControlReceive.h"
-+#include "shared/CAmDltWrapper.h"
++#include "IAmControl.h"
++#include "CAmDltWrapper.h"
 +
 +#include <cassert>
 +#include <string.h>
@@ -1818,9 +1820,22 @@ index 0000000..f82dfd1
 +    return E_NOT_USED;
 +}
 +
++am_Error_e ControlSenderPlugin::hookSystemRegisterConverter(const am_Converter_s & converterData, am_converterID_t & converterID)
++{
++    (void) converterData;
++    (void) converterID;
++    return E_NOT_USED;
++}
++
 +am_Error_e ControlSenderPlugin::hookSystemDeregisterGateway(const am_gatewayID_t gatewayID)
 +{
 +    (void) gatewayID;
++    return E_NOT_USED;
++}
++
++am_Error_e ControlSenderPlugin::hookSystemDeregisterConverter(const am_converterID_t converterID)
++{
++    (void) converterID;
 +    return E_NOT_USED;
 +}
 +
@@ -2588,6 +2603,15 @@ index 0000000..f82dfd1
 +    return (E_NOT_USED);
 +}
 +
++am_Error_e ControlSenderPlugin::hookSystemUpdateConverter(const am_converterID_t converterID, const std::vector<am_CustomConnectionFormat_t>& listSourceConnectionFormats, const std::vector<am_CustomConnectionFormat_t>& listSinkConnectionFormats, const std::vector<bool>& convertionMatrix)
++{
++    (void) converterID;
++    (void) listSourceConnectionFormats;
++    (void) listSinkConnectionFormats;
++    (void) convertionMatrix;
++    return (E_NOT_USED);
++}
++
 +void ControlSenderPlugin::cbAckSetVolumes(const am_Handle_s handle, const std::vector<am_Volumes_s>& listVolumes, const am_Error_e error)
 +{
 +    (void) handle;
@@ -2661,6 +2685,11 @@ index 0000000..f82dfd1
 +    return (NsmErrorStatus_Error);
 +}
 +
++void ControlSenderPlugin::hookSystemSingleTimingInformationChanged(const am_connectionID_t connectionID, const am_timeSync_t time)
++{
++    (void) connectionID;
++    (void) time;
++}
 -- 
-1.7.9.5
+1.9.1
 
