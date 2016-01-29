@@ -8,7 +8,7 @@ SRC_URI_append = " file://0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-A
                    file://AudioManager_user.service \
                    file://0001-Updated-PluginControlInterfacePulse-control-sender-t.patch \
                  "
-EXTRA_OECMAKE += "-DWITH_PULSE_ROUTING_PLUGIN=ON -DWITH_PULSE_CONTROL_PLUGIN=ON -DWITH_ENABLED_IPC=DBUS -DWITH_DATABASE_STORAGE=ON"
+EXTRA_OECMAKE += "-DWITH_PULSE_ROUTING_PLUGIN=ON -DWITH_PULSE_CONTROL_PLUGIN=ON -DWITH_ENABLED_IPC=DBUS -DWITH_DATABASE_STORAGE=OFF"
 
 do_install_append() {
     mkdir -p ${D}/etc/systemd/user
