@@ -1,4 +1,4 @@
-meta-ivi-demo: the Yocto layer for the GENIVI Demo Platform
+meta-genivi-demo: the Yocto layer for the GENIVI Demo Platform
 ===========================================================
 
 This layer provides a GENIVI Demo Platform (GDP)image build. The layer
@@ -15,94 +15,73 @@ code, submit patches, report bugs, answer questions on our mailing lists and
 review and edit our documentation and much more.
 
 Subscribe to the mailing list
-    [here](https://lists.genivi.org/mailman/listinfo/genivi-projects). 
+    [here](https://lists.genivi.org/mailman/listinfo/genivi-projects).
 View or Report bugs
-    [here](http://bugs.genivi.org/describecomponents.cgi?product=GENIVI%20Demonstration%20Platform). 
+    [here](https://at.projects.genivi.org/jira/projects/GDP/issues).
 Read or Edit the wiki
-    [here](http://wiki.projects.genivi.org/index.php/meta-ivi).  
+    [here](https://at.projects.genivi.org/wiki/display/GDP).
 For information about the Yocto Project, see the
     [Yocto Project website](https://www.yoctoproject.org).  
 For information about the Yocto GENIVI Baseline, see the
-    [Yocto GENIVI Baseline website](http://projects.genivi.org/GENIVI_Baselines/meta-ivi).  
-For information about the Yocto GENIVI Demo Platform, see the
-    [Yocto GENIVI Demo Platform website](http://wiki.projects.genivi.org/index.php/GENIVI_Demo_Platform).
+    [Yocto GENIVI Baseline website](http://projects.genivi.org/GENIVI_Baselines/meta-ivi).
+IRC Channel
+    #automotive - Freenode
 
-Layer Dependencies
+Building the Genivi Demo Platform (GDP)
+--------------------------------------
+To build the GDP, GENIVI maintain a git sub-module repo with branches specific for
+the supported build targets:
+    [genivi-demo-platform.git](http://git.projects.genivi.org/?p=genivi-demo-platform.git;a=summary)
+
+For example, to generate the build environment for the QEMUx86-64 target:
+
+$ mkdir GDP
+$ cd GDP
+$ git clone --recursive http://git.projects.genivi.org/genivi-demo-platform.git -b qemux86-64
+$ cd genivi-demo-platform
+$ source init.sh
+$ bitbake genivi-demo-platform
+
+More specific information on build targets, including build steps and deployments instructions
+for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP)
+
+
+Layer Dependency List
 ------------------
-
 URI: git://git.yoctoproject.org/meta-ivi
-> branch:   7.0  
-> revision: 5376b25bd586f76ef3733e171ae4935cf02595b8
+> branch: 9.0  *baseline version can change*
+> Poky Version: Fido 1.8
 
-URI: https://github.com/meta-qt5/meta-qt5.git
-> branch:   dizzy  
-> revision: adeca0db212d61a933d7952ad44ea1064cfca747
+URI: git://github.com/meta-qt5/meta-qt5.git
+> branch: fido
 
 URI: git://git.openembedded.org/meta-openembedded
-> layers:   meta-oe, meta-ruby  
-> branch:   dizzy  
-> revision: 6413cdb66acf43059f94d0076ec9b8ad6a475b35
+> branch: fido
 
 URI: git://git.yoctoproject.org/poky
-> branch:   dizzy  
-> revision: b630f2f53645fa8f5890b4732f251c354ad525a7
+> branch: fido
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
-
 URI: git://github.com/slawr/meta-renesas.git
-> branch:   genivi-7.0-bsp-1.8.0
-> revision: b42c0c82d628cc3e7af728df668cf4459a50621f
+> branch: genivi-7.0-bsp-1.8.0
+
+## The Intel Minnowboard MAX depends in addition on: ##
+URI: git://git.yoctoproject.org/meta-intel
+> branch: fido
 
 Supported Machines
 ------------------
 
-We do support the builds for currently two machines:
+We support the builds for these machines:
 
 * QEMU (x86-64) - emulated machine: qemux86-64
 * Renesas R-Car Gen2 (R-Car M2) - machine: koelsch
 * Renesas R-Car Gen2 (R-Car M2) - machine: porter
+* Renesas R-Car Gen2 (R-Car E2) - machine: silk
+* Intel Minnowboard MAX (x86-64) - machine: minnowboard
 
 Miscellaneous
 -------------
-
-When building for koelsch, add the following to your local.conf:
-
-> MACHINE = "koelsch"
-> USE_GSTREAMER_1_00="1"
-> LICENSE_FLAGS_WHITELIST = "commercial"
-> MACHINE_FEATURES_append = " sgx"
-> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
-> PREFERRED_PROVIDER_virtual/libgles1 = ""
-> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
-> PREFERRED_PROVIDER_virtual/egl = "libegl"
-> PREFERRED_PROVIDER_virtual/libgl = ""
-> PREFERRED_PROVIDER_virtual/mesa = ""
-> PREFERRED_PROVIDER_libgbm = "libgbm"
-> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-
-
-When building for porter, add the following to your local.conf:
-
-> MACHINE = "porter"
-> LICENSE_FLAGS_WHITELIST = "commercial"
-> SDKIMAGE_FEATURES_append = " staticdev-pkgs"
-> MACHINE_FEATURES_append = " sgx"
-> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
-> PREFERRED_PROVIDER_virtual/libgles1 = ""
-> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
-> PREFERRED_PROVIDER_virtual/egl = "libegl"
-> PREFERRED_PROVIDER_virtual/libgl = ""
-> PREFERRED_PROVIDER_virtual/mesa = ""
-> PREFERRED_PROVIDER_libgbm = "libgbm"
-> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-
-
-For the QEMU machine, in order to have audio, the emulation should be done like:
-(please adjust to your own paths)
-
-$ QEMU_AUDIO_DRV=pa ../../poky/scripts/runqemu ivi-image-demo qemux86-64 audio
-
-
 For the Fuel Stop Advisor Proof of Concept (FSA PoC), a navigation map
 must be downloaded. Once booted, issue the following command on the board:
 

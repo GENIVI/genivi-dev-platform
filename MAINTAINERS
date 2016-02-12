@@ -8,25 +8,27 @@ You may also contact the maintainers directly and cc the list in case you have a
 on a particular meta-genivi-demo topic, but please try to do the following
 first:
 
-  - look (for now) in the meta-genivi-demo Bugzilla
-    (http://bugs.genivi.org/describecomponents.cgi?product=GENIVI%20Demonstration%20Platform)
+  - Look in the Genivi Demo Platform JIRA
+    https://at.projects.genivi.org/jira/projects/GDP/issues
     to see if a problem has already been reported
 
-  - look through recent entries of the meta-ivi mailing list archives
+  - Look through recent entries of the genivi-projects mailing list archives
     (http://lists.genivi.org/pipermail/genivi-projects/) to see if other
     people have run into similar problems or had similar questions
     answered.
+
+  - Ask for advice in #automotive on the Freenode IRC network
 
 When creating patches, please use something like:
     git format-patch -s --subject-prefix='meta-genivi-demo][PATCH' origin
 
 When sending patches, please use something like:
-    git send-email --to=<$mainter address> \
+    git send-email --to=<$maintainer address> \
                    --cc=genivi-projects@lists.genivi.org <generated patch>
 
 Please refer to:
-http://wiki.projects.genivi.org/index.php/How_to_contribute_to_GENIVI for some
-useful guidelines to be followed when submitting patches.
+https://at.projects.genivi.org/wiki/display/PROJ/How+to+contribute+to+GENIVI for some
+useful guidelines to be followed when submitting patches to GENIVI.
 
 
 Descriptions of section entries:
@@ -42,7 +44,7 @@ Descriptions of section entries:
 Please keep this list in alphabetical order.
 
 M:	Jonathan Maw <jonathan.maw@codethink.co.uk
-F:      meta-genivi-demo/
+F:	meta-genivi-demo/
 
 M:	Tom Pollard <tom.pollard@codethink.co.uk>
-F:	meta-genivi-demo/
+F: 	meta-genivi-demo/
