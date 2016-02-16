@@ -1,4 +1,5 @@
 gdp-src-build/bitbake.lock
+gdp-src-build/buildhistory
 gdp-src-build/cache/
 gdp-src-build/conf/sanity_info
 gdp-src-build/conf/templateconf.cfg
