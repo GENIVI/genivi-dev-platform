@@ -10,6 +10,8 @@ the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
 
 PV = "1.3+snapshot-${DATE}"
 
+BOOT_SPACE_raspberrypi2 = "40960"
+
 IMAGE_FEATURES_append = " \
     ssh-server-openssh    \
     "
