@@ -12,3 +12,5 @@ SRC_URI = "\
     file://HULK_SMASH.patch \
     file://defconfig \
 "
+
+CMDLINE_append = " cma=256M"
