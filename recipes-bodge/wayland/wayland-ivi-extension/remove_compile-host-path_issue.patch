@@ -1,0 +1,17 @@
+--- git/ivi-input-modules/ivi-input-controller/CMakeLists.txt.orig	2016-01-28 18:19:37.297557498 +0900
++++ git/ivi-input-modules/ivi-input-controller/CMakeLists.txt	2016-01-28 18:20:01.249558101 +0900
+@@ -37,14 +37,12 @@
+     ${IVI_CONTROLLER_INCLUDE_DIRS}
+     ${WAYLAND_SERVER_INCLUDE_DIRS}
+     ${WESTON_INCLUDE_DIRS}
+-    ${WESTON_INCLUDE_DIRS}/weston
+     ${PIXMAN_INCLUDE_DIRS}
+ )
+ 
+ link_directories(
+     ${WAYLAND_SERVER_LIBRARY_DIRS}
+     ${WESTON_LIBRARY_DIRS}
+-    ${WESTON_LIBDIR}/weston
+     ${PIXMAN_LIBRARY_DIRS}
+ )
+ 
