@@ -31,27 +31,33 @@ Layer Dependencies
 ------------------
 
 URI: git://git.yoctoproject.org/meta-ivi
-> branch:   7.0  
-> revision: 5376b25bd586f76ef3733e171ae4935cf02595b8
+* branch:   9.0
+* revision: bfd95c5021885ed61b58a33087a4ee8e3d2f32ad
 
 URI: https://github.com/meta-qt5/meta-qt5.git
-> branch:   dizzy  
-> revision: adeca0db212d61a933d7952ad44ea1064cfca747
+* branch:   fido
+* revision: 90919b9d86988e7da01fa2c0a07246b5b5600a5d
 
 URI: git://git.openembedded.org/meta-openembedded
-> layers:   meta-oe, meta-ruby  
-> branch:   dizzy  
-> revision: 6413cdb66acf43059f94d0076ec9b8ad6a475b35
+* layers:   meta-oe, meta-ruby, meta-filesystems
+* branch:   fido
+* revision: 5b0305d9efa4b5692cd942586fb7aa92dba42d59
 
 URI: git://git.yoctoproject.org/poky
-> branch:   dizzy  
-> revision: b630f2f53645fa8f5890b4732f251c354ad525a7
+* branch:   fido
+* revision: eb4a134a60e3ac26a48379675ad6346a44010339
+
+## The Raspberry Pi2 board depend in addition on: ##
+
+URI: git://git.yoctoproject.org/meta-raspberrypi
+* branch:   jethro 
+* revision: f2cff839f52a6e6211337fc45c7c3eabf0fac113
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 
 URI: git://github.com/slawr/meta-renesas.git
-> branch:   genivi-7.0-bsp-1.8.0
-> revision: b42c0c82d628cc3e7af728df668cf4459a50621f
+* branch:   genivi-7.0-bsp-1.8.0
+* revision: b42c0c82d628cc3e7af728df668cf4459a50621f
 
 Supported Machines
 ------------------
@@ -61,9 +67,21 @@ We do support the builds for currently two machines:
 * QEMU (x86-64) - emulated machine: qemux86-64
 * Renesas R-Car Gen2 (R-Car M2) - machine: koelsch
 * Renesas R-Car Gen2 (R-Car M2) - machine: porter
+* Raspberry Pi2 - machine: raspberrypi2
 
 Miscellaneous
 -------------
+When building for raspberrypi2, add the following to your local.conf:
+> MACHINE = "raspberrypi2"
+> GPU_MEM = "128"
+> PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
+> PREFERRED_VERSION_weston = "1.9.0"
+> PREFERRED_VERSION_wayland-ivi-extension = "1.9.0"
+> PREFERRED_PROVIDER_virtual/egl = "mesa"
+> PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
+> PREFERRED_PROVIDER_virtual/libgl = "mesa"
+> PREFERRED_PROVIDER_virtual/mesa = "mesa"
+> PREFERRED_PROVIDER_jpeg = "jpeg"
 
 When building for koelsch, add the following to your local.conf:
 
