@@ -13,4 +13,4 @@ SRC_URI = "\
     file://defconfig \
 "
 
-CMDLINE_append = " cma=256M"
+CMDLINE_append = " cma=256M usbhid.mousepoll=0"
