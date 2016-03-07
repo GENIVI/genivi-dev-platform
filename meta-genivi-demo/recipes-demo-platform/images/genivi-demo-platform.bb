@@ -35,3 +35,5 @@ IMAGE_INSTALL_append_rcar-gen2 = " \
     libegl-dev \
     libgbm-dev \
     "
+
+IMAGE_INSTALL_append_raspberrypi2 = " mesa-megadriver"
