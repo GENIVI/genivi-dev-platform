@@ -14,3 +14,8 @@ SRC_URI = "\
 "
 
 CMDLINE_append = " cma=256M usbhid.mousepoll=0"
+
+KERNEL_MODULE_AUTOLOAD += "snd-bcm2835"
+
+RDEPENDS_${PN} += "kernel-module-snd-bcm2835"
+PACKAGES += "kernel-module-snd-bcm2835"
