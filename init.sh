@@ -8,6 +8,21 @@ cmd=$(basename "$0")
    exit 1
 }
 
+# Set the machine
+declare -a supported_machines=("raspberrypi2" "raspberrypi3")
+
+machine="raspberrypi2"
+
+for i in ${supported_machines[@]}; do
+    if [[ "${i}" == "$1" ]]; then
+        machine=$1
+        break
+    fi
+done
+
+sed -i "/MACHINE/d" gdp-src-build/conf/auto.conf
+echo "MACHINE = \"${machine}\"" >> gdp-src-build/conf/auto.conf
+
 # init really makes sense only the first time
 # and after that is redundant
 git submodule init
