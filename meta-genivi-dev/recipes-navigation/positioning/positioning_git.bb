@@ -35,7 +35,7 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=http"
-SRCREV = "fde1a780f531389d5a05e3b0486c98ad34df3dcb"
+SRCREV = "48451e36a8c21afb00575227d27e10417c27878c"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
@@ -62,22 +62,17 @@ RDEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 DEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 
 do_configure() {
-    cd ${S}/gnss-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON
-    cd ${S}/sensors-service && cmake -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON
-    cd ${S}/log-replayer && cmake -DWITH_DLT=OFF -DWITH_TESTS=ON
-    cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON
+    cd ${S} && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON -DWITH_IPHONE=OFF .
 }
 
 do_compile() {
-    cd ${S}/gnss-service && make
-    cd ${S}/sensors-service && make
-    cd ${S}/log-replayer && make
-    cd ${S}/enhanced-position-service && make
+    cd ${S} && make
 }
 
 do_install() {
     install -d ${D}/${bindir}
     install -d ${D}/${libdir}
+    install -d ${D}${includedir}/${PN}
     install -d ${D}${datadir}/${PN}
     install -m 755 ${S}/log-replayer/src/log-replayer ${D}/${bindir}
     install -m 755 ${S}/log-replayer/test/test-log-replayer ${D}/${bindir}
@@ -87,10 +82,11 @@ do_install() {
     install -m 755 ${S}/gnss-service/test/compliance-test/gnss-service-compliance-test ${D}/${bindir}
     install -m 755 ${S}/sensors-service/src/*.so ${D}/${libdir}
     install -m 755 ${S}/sensors-service/test/sensors-service-client ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/src/enhanced-position-service ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/test/enhanced-position-client ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/api/*.xml ${D}${datadir}/${PN}
+    install -m 755 ${S}/enhanced-position-service/*/src/enhanced-position-service ${D}/${bindir}
+    install -m 755 ${S}/enhanced-position-service/*/test/enhanced-position-client ${D}/${bindir}
+    install -m 755 ${S}/enhanced-position-service/*/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
+    install -m 755 ${S}/enhanced-position-service/*/api/*.xml ${D}${datadir}/${PN}
+    install -m 755 ${S}/enhanced-position-service/dbus/api/*.h ${D}${includedir}/${PN}
 }
 
 FILES_${PN}-gnss = "${libdir}/libgnss-service*.so "
