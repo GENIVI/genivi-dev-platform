@@ -8,12 +8,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=b42382de5d854b9bb598acf2e8827de3"
 
 inherit cmake systemd
 
-PV = "0.12+git${SRCPV}"
+PV = "0.14+git${SRCPV}"
 
 DEPENDS = "glib-2.0 util-linux sqlite3 qtbase boost json-c libtool gpsd"
 
-SRC_URI = "git://github.com/otcshare/automotive-message-broker.git"
-SRCREV = "ac3fe53327a13afc571efe079a31a0472ea285a3"
+SRC_URI = "git://github.com/otcshare/automotive-message-broker.git;branch=0.14"
+SRCREV = "c216955d16ca275159891cad296217094d972390"
 
 SRC_URI += "file://amb_allow_sessionbus.patch \
             file://ambd.service \
@@ -33,3 +33,5 @@ do_install_append() {
 }
 
 FILES_${PN} += "${systemd_unitdir}/ambd.service"
+
+INSANE_SKIP_${PN} = "dev-deps"
