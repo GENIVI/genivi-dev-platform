@@ -9,6 +9,7 @@ SRC_URI_append = " git://git.projects.genivi.org/AudioManagerPlugins.git;destsuf
                    file://0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch;patchdir=${S}/Plugins \
                    file://0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch;patchdir=${S}/Plugins \
                  "
+SRC_URI_append_raspberrypi2 = " file://0001-Temporarily-code-block-for-rpi2.patch"
 
 EXTRA_OECMAKE += " \
     -DWITH_PULSE_CONTROL_PLUGIN=ON \

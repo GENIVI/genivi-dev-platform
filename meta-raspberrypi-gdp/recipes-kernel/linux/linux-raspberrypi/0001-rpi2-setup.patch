@@ -1,0 +1,85 @@
+From f2c5f404d2616c91357d3390d4c5503d8e13c947 Mon Sep 17 00:00:00 2001
+From: Derek Foreman <derekf@osg.samsung.com>
+Date: Wed, 27 May 2015 13:20:21 -0500
+Subject: [PATCH 1/3] rpi2 setup
+
+Fix up device tree and i2c setup for rpi2
+
+Signed-off-by: Derek Foreman <derekf@osg.samsung.com>
+---
+ arch/arm/boot/dts/bcm2708_common.dtsi | 2 +-
+ arch/arm/boot/dts/bcm2709-rpi-2-b.dts | 6 ++++++
+ drivers/i2c/busses/i2c-bcm2708.c      | 6 +++++-
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2708_common.dtsi b/arch/arm/boot/dts/bcm2708_common.dtsi
+index ccf01a5..15277d2 100644
+--- a/arch/arm/boot/dts/bcm2708_common.dtsi
++++ b/arch/arm/boot/dts/bcm2708_common.dtsi
+@@ -155,7 +155,7 @@
+ 		};
+ 
+ 		i2c2: i2c@7e805000 {
+-			compatible = "brcm,bcm2835-i2c";
++			compatible = "brcm,bcm2708-i2c";
+ 			reg = <0x7e805000 0x1000>;
+ 			interrupts = <2 21>;
+ 			clocks = <&clk_i2c>;
+diff --git a/arch/arm/boot/dts/bcm2709-rpi-2-b.dts b/arch/arm/boot/dts/bcm2709-rpi-2-b.dts
+index 8aaaf1f..712ca45 100644
+--- a/arch/arm/boot/dts/bcm2709-rpi-2-b.dts
++++ b/arch/arm/boot/dts/bcm2709-rpi-2-b.dts
+@@ -11,6 +11,7 @@
+ 		spi0 = &spi0;
+ 		i2c0 = &i2c0;
+ 		i2c1 = &i2c1;
++		i2c2 = &i2c2;
+ 		i2s  = &i2s;
+ 		gpio = &gpio;
+ 		intc = &intc;
+@@ -94,6 +95,11 @@
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c2 {
++	pinctrl-names = "default";
++	clock-frequency = <100000>;
++};
++
+ &i2s {
+ 	#sound-dai-cells = <0>;
+ 	pinctrl-names = "default";
+diff --git a/drivers/i2c/busses/i2c-bcm2708.c b/drivers/i2c/busses/i2c-bcm2708.c
+index 8773203..2054ff4 100644
+--- a/drivers/i2c/busses/i2c-bcm2708.c
++++ b/drivers/i2c/busses/i2c-bcm2708.c
+@@ -109,6 +109,7 @@ static void bcm2708_i2c_init_pinmode(int id)
+ #define SET_GPIO_ALT(g,a) *(gpio+(((g)/10))) |= (((a)<=3?(a)+4:(a)==4?3:2)<<(((g)%10)*3))
+ 
+ 	int pin;
++
+ 	u32 *gpio = ioremap(GPIO_BASE, SZ_16K);
+ 
+ 	BUG_ON(id != 0 && id != 1);
+@@ -382,7 +383,7 @@ static int bcm2708_i2c_probe(struct platform_device *pdev)
+ 		goto out_clk_put;
+ 	}
+ 
+-	if (!pdev->dev.of_node)
++	if (pdev->id < 2)
+ 		bcm2708_i2c_init_pinmode(pdev->id);
+ 
+ 	bi = kzalloc(sizeof(*bi), GFP_KERNEL);
+@@ -407,6 +408,9 @@ static int bcm2708_i2c_probe(struct platform_device *pdev)
+ 	case 1:
+ 		adap->class = I2C_CLASS_DDC;
+ 		break;
++	case 2:
++		adap->class = I2C_CLASS_DDC;
++		break;
+ 	default:
+ 		dev_err(&pdev->dev, "can only bind to BSC 0 or 1\n");
+ 		err = -ENXIO;
+-- 
+2.1.4
+

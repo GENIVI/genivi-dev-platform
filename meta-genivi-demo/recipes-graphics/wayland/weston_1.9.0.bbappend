@@ -17,6 +17,38 @@ SRC_URI_append = " \
 
 inherit systemd
 DEPENDS_append = " systemd"
+DEPENDS_append_raspberrypi2 = " ${@bb.utils.contains('PACKAGECONFIG', 'cairo-glesv2', 'virtual/libgles2', '', d)}"
+
+EXTRA_OECONF_append_raspberrypi2 = "\
+    WESTON_NATIVE_BACKEND=drm-backend.so \
+    --enable-simple-egl-clients  \
+    --enable-simple-clients \
+    --enable-clients \
+    --enable-wayland-compositor \
+    --enable-weston-launch \
+    --enable-drm-compositor \
+    --enable-egl \
+    --enable-fbdev-compositor \
+    --enable-demo-clients-install \
+    --disable-vaapi-recorder \
+    --disable-headless-compositor \
+    --disable-lcms \
+    --disable-webp \
+    --disable-static \
+    --disable-setuid-install \
+    --disable-libunwind \
+    --disable-xwayland \
+    --disable-xwayland-test \
+    --disable-x11-compositor \
+    --disable-rpi-compositor \
+    --disable-rdp-compositor \
+    ${@bb.utils.contains('PACKAGECONFIG', 'cairo-glesv2', ' --with-cairo=glesv2', '', d)} \
+"
+
+CFLAGS_append_raspberrypi2 ="\
+    -I${STAGING_DIR_TARGET}/usr/include/interface/vcos/pthreads \
+    -I${STAGING_DIR_TARGET}/usr/include/interface/vmcs_host/linux \
+"
 
 do_install_append() {
     install -m644 ${WORKDIR}/GDP*.png ${D}/usr/share/weston

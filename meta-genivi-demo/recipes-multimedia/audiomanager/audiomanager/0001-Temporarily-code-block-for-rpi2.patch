@@ -1,0 +1,25 @@
+From 55337987364641ccf207410b864179e8e4ab9be6 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Fri, 25 Mar 2016 11:45:48 +0900
+Subject: [PATCH] Temporarily code block for rpi2
+
+---
+ AudioManagerDaemon/src/CAmDatabaseHandlerMap.cpp |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/AudioManagerDaemon/src/CAmDatabaseHandlerMap.cpp b/AudioManagerDaemon/src/CAmDatabaseHandlerMap.cpp
+index 427b805..383e433 100644
+--- a/AudioManagerDaemon/src/CAmDatabaseHandlerMap.cpp
++++ b/AudioManagerDaemon/src/CAmDatabaseHandlerMap.cpp
+@@ -616,7 +616,7 @@ am_Error_e CAmDatabaseHandlerMap::enterSinkDB(const am_Sink_s & sinkData, am_sin
+     assert(sinkData.sinkID<DYNAMIC_ID_BOUNDARY);
+     assert(sinkData.domainID!=0);
+     assert(!sinkData.name.empty());
+-    assert(sinkData.sinkClassID!=0);
++    //assert(sinkData.sinkClassID!=0);
+     assert(sinkData.muteState>=MS_UNKNOWN && sinkData.muteState<=MS_MAX);
+ 
+     am_sinkID_t temp_SinkID = 0;
+-- 
+1.7.9.5
+
