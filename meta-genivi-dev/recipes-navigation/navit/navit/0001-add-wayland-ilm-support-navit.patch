@@ -412,7 +412,7 @@ diff -urN navit/navit/graphics/opengl/graphics_opengl.c navit/navit/graphics/ope
 +event_opengl_new(struct event_methods *meth);
 +
  static void *
- get_data(struct graphics_priv *this, char *type)
+ get_data(struct graphics_priv *this, const char *type)
  {
 +	const char* platform = getenv("NAVIT_PLATFORM");
 +	if (platform == NULL) {
@@ -949,7 +949,7 @@ diff -urN navit/navit/graphics/opengl/graphics_opengl_wayland.c navit/navit/grap
 +
 +	display->wl_display = wl_display_connect(NULL);
 +	if (display->wl_display == NULL) {
-+		dbg(0, "[ERROR] : failed to open wayland display(wl_display_connect)\n");
++		dbg(lvl_error, "[ERROR] : failed to open wayland display(wl_display_connect)\n");
 +		goto error;
 +	}
 +
@@ -990,7 +990,7 @@ diff -urN navit/navit/graphics/opengl/graphics_opengl_wayland.c navit/navit/grap
 +	return window;
 +
 +error:
-+	dbg(0, "[ERROR] : graphics_opengl_wayland.c wayland_new\n");
++	dbg(lvl_error, "[ERROR] : graphics_opengl_wayland.c wayland_new\n");
 +	graphics_opengl_wayland_destroy(window);
 +	return NULL;
 +}
@@ -1096,16 +1096,3 @@ index 290a1e9..2f74ecf 100755
  else()
     message (STATUS "no Freetype found")
  endif(FREETYPE_FOUND)
-diff --git a/navit/font/freetype/font_freetype.c b/navit/font/freetype/font_freetype.c
-index 504cc55..0ca6214 100644
---- a/navit/font/freetype/font_freetype.c
-+++ b/navit/font/freetype/font_freetype.c
-@@ -32,7 +32,7 @@
- #if USE_FRIBIDI
- #include <fribidi.h>
- #endif
--#include <freetype/ftglyph.h>
-+#include <freetype2/ftglyph.h>
- #include "point.h"
- #include "graphics.h"
- #include "debug.h"

@@ -1,0 +1,130 @@
+diff --git a/cmake/FindOpenGL.cmake b/cmake/FindOpenGL.cmake
+index 6f2bf16..4d552ca 100644
+--- a/cmake/FindOpenGL.cmake
++++ b/cmake/FindOpenGL.cmake
+@@ -13,39 +13,31 @@ libfind_pkg_check_modules(OPENGLES2_PKGCONFIG glesv2)
+ FIND_PATH(OPENGL_INCLUDE_DIR GL/gl.h
+    PATHS
+       ${OPENGL_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+ )
+ 
+ FIND_PATH(OPENGL_GLU_INCLUDE_DIR GL/glu.h
+    PATHS
+       ${OPENGL_GLU_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+-      /usr/include
+ )
+ 
+ FIND_PATH(OPENGL_GLUT_INCLUDE_DIR GL/glut.h
+    PATHS
+       ${OPENGL_GLUT_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+-      /usr/include
+ )
+ 
+ FIND_PATH(OPENGLES_EGL_INCLUDE_DIR EGL/egl.h
+    PATHS
+       ${OPENGLES_EGL_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+ )
+ 
+ FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h
+    PATHS
+       ${OPENGLES_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+ )
+ 
+ FIND_PATH(OPENGLES2_INCLUDE_DIR GLES2/gl2.h
+    PATHS
+       ${OPENGLES2_PKGCONFIG_INCLUDE_DIRS}
+-      ${WLD}/usrfs/include
+ )
+ 
+ #################
+@@ -54,37 +46,31 @@ FIND_PATH(OPENGLES2_INCLUDE_DIR GLES2/gl2.h
+ FIND_LIBRARY(OPENGL_gl_LIBRARY GL
+    PATHS
+       ${OPENGL_PKGCONFIG_LIBRARY_DIRS}
+-      ${WLD}/usrfs/lib
+ )
+ 
+ FIND_LIBRARY(OPENGL_glu_LIBRARY GLU
+    PATHS
+       ${OPENGL_GLU_PKGCONFIG_LIBRARY_DIRS}
+-      /usr/lib
+ )
+ 
+ FIND_LIBRARY(GLUT_glut_LIBRARY glut
+    PATHS
+       ${OPENGL_GLUT_PKGCONFIG_LIBRARY_DIRS}
+-      /usr/lib
+ )
+ 
+ FIND_LIBRARY(OPENGLES_EGL_LIBRARY EGL
+    PATHS
+       ${OPENGLES_EGL_PKGCONFIG_LIBRARY_DIRS}
+-      ${WLD}/usrfs/lib
+ )
+ 
+ FIND_LIBRARY(OPENGLES_glesv1_CM_LIBRARY GLESv1_CM
+    PATHS
+       ${OPENGLES_PKGCONFIG_LIBRARY_DIRS}
+-      ${WLD}/usrfs/lib
+ )
+ 
+ FIND_LIBRARY(OPENGLES2_glesv2_LIBRARY GLESv2
+    PATHS
+       ${OPENGLES2_PKGCONFIG_LIBRARY_DIRS}
+-      ${WLD}/usrfs/lib
+ )
+ 
+ IF (OPENGL_gl_LIBRARY)
+@@ -100,6 +86,7 @@ IF (OPENGL_glut_LIBRARY)
+ ENDIF (OPENGL_glut_LIBRARY)
+ 
+ IF (OPENGLES_EGL_LIBRARY)
++   SET(OPENGL_FOUND TRUE)
+    IF (OPENGLES_glesv1_CM_LIBRARY)
+       SET(USE_OPENGLES TRUE)
+    ENDIF (OPENGLES_glesv1_CM_LIBRARY)
+diff --git a/navit/graphics/opengl/graphics_opengl.c b/navit/graphics/opengl/graphics_opengl.c
+index 8fd6339..6ea3a54 100644
+--- a/navit/graphics/opengl/graphics_opengl.c
++++ b/navit/graphics/opengl/graphics_opengl.c
+@@ -24,6 +24,7 @@
+ #include <unistd.h>
+ #include <math.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #include <time.h>
+ 
+@@ -1262,9 +1263,6 @@ load_shader(const char *shader_source, GLenum type)
+ }
+ #endif
+ 
+-static struct event_priv *
+-event_opengl_new(struct event_methods *meth);
+-
+ static void *
+ get_data(struct graphics_priv *this, const char *type)
+ {
+diff --git a/navit/graphics/opengl/graphics_opengl_wayland.c b/navit/graphics/opengl/graphics_opengl_wayland.c
+index 02b3eb2..bfb46d4 100644
+--- a/navit/graphics/opengl/graphics_opengl_wayland.c
++++ b/navit/graphics/opengl/graphics_opengl_wayland.c
+@@ -397,7 +397,12 @@ static struct wl_shell_surface_listener wl_shell_surface_listener = {
+ static void
+ graphics_opengl_wayland_watch(struct graphics_opengl_wayland_window *window)
+ {
+-	wl_display_dispatch(window->display->wl_display);
++        /* FIXME
++         * in Genivi 8.0.1, wl_display_dispatch blocks
++         * Workarroud use: wl_display_roundtrip
++         */
++	//wl_display_dispatch(window->display->wl_display);
++        wl_display_roundtrip(window->display->wl_display);
+ }
+ 
+ /********************* public function ****************************/

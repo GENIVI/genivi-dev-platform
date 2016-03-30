@@ -1,0 +1,17 @@
+Index: navit/navit/navit.c
+===================================================================
+--- navit/navit/navit.c      (revision 5827)
++++ navit/navit/navit.c      (working copy)
+@@ -2353,10 +2353,12 @@ navit_get_cursor_pnt(struct navit *this_, struct point *p, int keep_orientation,
+         }
+ #endif
+ 
++#if 0
+ 	if (this_->gra) {
+ 		padding = graphics_get_data(this_->gra, "padding");
+ 	} else
+ 		dbg(lvl_warning, "cannot get padding: this->gra is NULL\n");
++#endif
+ 
+ 	transform_get_size(this_->trans, &width, &height);
+ 	dbg(lvl_debug, "width=%d height=%d\n", width, height);
