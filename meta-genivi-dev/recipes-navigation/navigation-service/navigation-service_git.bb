@@ -1,13 +1,12 @@
 SUMMARY = "Navigation software based on Navit and compliant with the Navigation APIs standardized by the GENIVI Alliance"
-SRCREV = "9953bcd40cb4185eaaad1c15c486dd6220253990"
+SRCREV = "497fe70ab183c2a968c8e488fde2e3ba143b141e"
 PV = "1"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/navigation.git;protocol=http \
-           file://change_xml_generation_dir.patch \
-           file://navit_genivi_mapviewer.xml \
-           file://navit_genivi_navigationcore.xml \
+           file://change_directories_xsl_files.patch \
           "
-DEPENDS = "navit positioning"
+
+DEPENDS = "wayland-ivi-extension navit positioning"
 
 S = "${WORKDIR}/git"
 
@@ -16,60 +15,42 @@ LIC_FILES_CHKSUM = "file://src/navigation/LICENSE;md5=50772b2cd18ba00801e433556c
 
 inherit cmake
 
-
-EXTRA_CMAKEFLAGS = "-Wno-dev -C ${STAGING_DATADIR}/cmake_plugin_settings.txt -Dapi_DIR=${S}/api -Dgenerated_api_DIR=${S}/api/include -Dnavit_SRC_DIR=${STAGING_LIBDIR} -Dpositioning_API=${STAGING_DATADIR}/positioning"
+EXTRA_CMAKEFLAGS = " -DYOCTO_CONFIG=ON \
+                     -DSTAGING_INCDIR=${STAGING_INCDIR} \
+                     -DSTAGING_LIBDIR=${STAGING_LIBDIR} \
+                     -DSTAGING_DATADIR=${STAGING_DATADIR} \
+                   "
 
 do_configure() {
-    cd ${S}/api/map-viewer && cmake . && cd ${S}/api/navigation-core && cmake . && cd ${S}/api/poi-service && cmake .
-
-    cd ${S}/src/navigation/map-viewer && cmake -Dnavit_SRC_DIR=${STAGING_LIBDIR}
-    cd ${S}/src/navigation/map-viewer/configuration-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/map-viewer/mapviewercontrol-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/map-viewer/session-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON .
-
-    cd ${S}/src/navigation/navigation-core && cmake -Dnavit_SRC_DIR=${STAGING_LIBDIR}
-    cd ${S}/src/navigation/navigation-core/configuration-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/enhancedposition-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/guidance-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/locationinput-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/mapmatchedposition-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/routing-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-    cd ${S}/src/navigation/navigation-core/session-plugin && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON .
-
-    cd ${S}/src/navigation/poi-cam && cmake ${EXTRA_CMAKEFLAGS} .
-    cd ${S}/src/poi-service/poi-server && cmake ${EXTRA_CMAKEFLAGS} -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON .
+    cd ${S}/src/navigation && cmake ${EXTRA_CMAKEFLAGS} .
+    cd ${S}/src/poi-service && cmake ${EXTRA_CMAKEFLAGS} .
 }
 
 do_compile() {
-    cd ${S}/src/navigation/map-viewer && make
-    cd ${S}/src/navigation/map-viewer/configuration-plugin && make
-    cd ${S}/src/navigation/map-viewer/mapviewercontrol-plugin && make
-    cd ${S}/src/navigation/map-viewer/session-plugin && make
-
-    cd ${S}/src/navigation/navigation-core && make
-    cd ${S}/src/navigation/navigation-core/configuration-plugin && make
-    cd ${S}/src/navigation/navigation-core/enhancedposition-plugin && make
-    cd ${S}/src/navigation/navigation-core/guidance-plugin && make
-    cd ${S}/src/navigation/navigation-core/locationinput-plugin && make
-    cd ${S}/src/navigation/navigation-core/mapmatchedposition-plugin && make
-    cd ${S}/src/navigation/navigation-core/routing-plugin && make
-    cd ${S}/src/navigation/navigation-core/session-plugin && make
-    cd ${S}/src/navigation/poi-cam && make
-    cd ${S}/src/poi-service/poi-server && make
+    cd ${S}/src/navigation && make
+    cd ${S}/src/poi-service && make
 }
 
 do_install() {
+    #Yocto Post-Processing for generated files.
+    sed -i '/libgraphics_null.so/a\\t\t<plugin path="$NAVIT_LIBDIR/*/${NAVIT_LIBPREFIX}libgraphics_opengl.so"/>' ${S}/src/navigation/map-viewer/navit_genivi_mapviewer.xml
+
     install -d ${D}${libdir}/navigation
     find ${S}/src -name libgenivi*.so | xargs -i install -m 0755 {} ${D}${libdir}/navigation
     install -d ${D}${datadir}/navigation-service
-#    find ${S}/src -name navit*.xml | xargs -i install -m 0755 {} ${D}${datadir}/navigation-service
-    install -m 0755 ${WORKDIR}/navit*.xml ${D}${datadir}/navigation-service
+    find ${S}/src -name navit*.xml | xargs -i install -m 0755 {} ${D}${datadir}/navigation-service
     install -d ${D}${bindir}
-    install -m 0755 ${S}/src/poi-service/poi-server/poi-server ${D}${bindir}
-    install -d ${D}${includedir}/navigation-service
-    install -m 0755 ${S}/api/include/* ${D}${includedir}/navigation-service
-    install -m 0755 ${S}/src/poi-service/script/poi-database-sample.db ${D}${datadir}/navigation-service
+    install -m 0755 ${S}/src/poi-service/bin/poi-server ${D}${bindir}
+    install -d ${D}${includedir}/navigation-core
+    install -m 0755 ${S}/src/navigation/dbus-include/*/*.h ${D}${includedir}/navigation-core
+    install -m 0755 ${S}/src/poi-service/resource/poi-database-sample.db ${D}${datadir}/navigation-service
+
+    #Install switzerland map
+    install -d 0755 ${D}${datadir}/navit/maps
+    cp ${S}/src/navigation/map/switzerland.bin ${D}${datadir}/navit/maps
+
 }
 
 FILES_${PN} += "${libdir}/navigation"
+FILES_${PN} += "${datadir}/navit/maps"
 FILES_${PN}-dbg += "${libdir}/navigation/.debug/"
