@@ -6,9 +6,8 @@ inherit cargo systemd
 
 SRC_URI = "git://github.com/advancedtelematic/rvi_sota_client.git;protocol=https \
            file://rvi-sota-client.service \
-           file://0001-run.sh-Listen-anywhere-if-SOTA_CLIENT_ADDR-is-not-se.patch \
           "
-SRCREV="57e803803691acab8e443f1631767edaec9da10f"
+SRCREV="f4904e085b29092e3ff6c2accfd2fb59ef049290"
 LIC_FILES_CHKSUM="file://LICENSE;md5=65d26fcc2f35ea6a181ac777e42db1ea"
 
 S = "${WORKDIR}/git"
@@ -21,7 +20,7 @@ RDEPENDS_${PN} += "dbus-lib libcrypto libssl"
 SYSTEMD_SERVICE_${PN} = "rvi-sota-client.service"
 
 do_install_append() {
- install -m 0755 -p -D ${S}/docker/client.toml ${D}/var/sota/client.toml
+ install -m 0755 -p -D ${S}/client.toml ${D}/var/sota/client.toml
  install -m 0755 -p -D ${S}/docker/run.sh ${D}${bindir}/run.sh
  if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
   install -p -D ${WORKDIR}/rvi-sota-client.service ${D}${systemd_unitdir}/system/rvi-sota-client.service
