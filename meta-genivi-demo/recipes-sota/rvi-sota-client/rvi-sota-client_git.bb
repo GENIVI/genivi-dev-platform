@@ -22,16 +22,11 @@ SYSTEMD_SERVICE_${PN} = "rvi-sota-client.service"
 
 do_install_append() {
  install -m 0755 -p -D ${S}/docker/client.toml ${D}/var/sota/client.toml
- install -m 0755 -p -D ${S}/docker/run.sh ${D}${prefix}/bin/run.sh
+ install -m 0755 -p -D ${S}/docker/run.sh ${D}${bindir}/run.sh
  if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
   install -p -D ${WORKDIR}/rvi-sota-client.service ${D}${systemd_unitdir}/system/rvi-sota-client.service
  fi
 }
-
-FILES_${PN} += "/var/sota/"
-FILES_${PN} += "/var/sota/client.toml"
-FILES_${PN} += "${prefix}/bin/"
-FILES_${PN} += "${prefix}/bin/run.sh"
 
 ## dbus-rs
 SRC_URI += "\
