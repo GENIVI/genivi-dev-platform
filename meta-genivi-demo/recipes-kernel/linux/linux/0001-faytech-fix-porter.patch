@@ -1,0 +1,26 @@
+From bc732982c9fdfbb042893d84eef899882adb51cf Mon Sep 17 00:00:00 2001
+From: Jonathan Maw <jonathan.maw@codethink.co.uk>
+Date: Tue, 5 Apr 2016 13:47:43 +0000
+Subject: [PATCH] Fix lack of touch up for Faytech 10" Touchscreen Monitor V2
+
+NOTE: This is a very temporary hack that is not in a state to be upstreamed yet.
+---
+ drivers/hid/hid-multitouch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 3d8e58a..e7d70d9 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -347,7 +347,7 @@ static void mt_feature_mapping(struct hid_device *hdev,
+ 			__s32 *quirks = &td->mtclass.quirks;
+ 			*quirks |= MT_QUIRK_ALWAYS_VALID;
+ 			*quirks |= MT_QUIRK_IGNORE_DUPLICATES;
+-			*quirks |= MT_QUIRK_HOVERING;
++			*quirks &= ~MT_QUIRK_HOVERING;
+ 			*quirks |= MT_QUIRK_CONTACT_CNT_ACCURATE;
+ 			*quirks &= ~MT_QUIRK_NOT_SEEN_MEANS_UP;
+ 			*quirks &= ~MT_QUIRK_VALID_IS_INRANGE;
+-- 
+1.9.1
+

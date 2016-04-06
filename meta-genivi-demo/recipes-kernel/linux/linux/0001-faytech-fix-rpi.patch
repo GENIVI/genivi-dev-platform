@@ -1,0 +1,24 @@
+From f9fefc63456dd50eeec727ae2fbc13b0d84eb44e Mon Sep 17 00:00:00 2001
+From: Tom Pollard <tom.pollard@codethink.co.uk>
+Date: Wed, 6 Apr 2016 07:47:25 +0000
+Subject: [PATCH 1/1] Fix lack of touch up for Faytech 10" Touchscreen MonitorV2
+
+NOTE: This is a very temporary hack that is not in a state to be upstreamed yet.
+---
+ drivers/hid/hid-multitouch.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 6a9b05b..4647b5b 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -205,7 +205,6 @@ static struct mt_class mt_classes[] = {
+ 	{ .name = MT_CLS_WIN_8,
+ 		.quirks = MT_QUIRK_ALWAYS_VALID |
+ 			MT_QUIRK_IGNORE_DUPLICATES |
+-			MT_QUIRK_HOVERING |
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE },
+ 	{ .name = MT_CLS_EXPORT_ALL_INPUTS,
+ 		.quirks = MT_QUIRK_ALWAYS_VALID |
+-- 
+1.9.1
