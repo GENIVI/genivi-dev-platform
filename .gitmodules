@@ -16,3 +16,6 @@
 [submodule "meta-renesas"]
 	path = meta-renesas
 	url = git://github.com/slawr/meta-renesas.git
+[submodule "meta-rust"]
+	path = meta-rust
+	url = git://github.com/jmesmon/meta-rust.git
