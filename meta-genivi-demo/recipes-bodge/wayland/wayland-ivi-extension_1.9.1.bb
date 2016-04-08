@@ -20,7 +20,6 @@ FILES_${PN} += "${libdir}/weston/*"
 FILES_${PN}-dbg += "${libdir}/weston/.debug/*"
 
 # for testing
-SRC_URI_append += "file://remove_compile-host-path_issue.patch "
 DEPENDS += " gtest"
 EXTRA_OECMAKE += " -DBUILD_ILM_API_TESTS=1 -DINSTALL_ILM_API_TESTS=1"
 FILES_${PN} += " ${bindir}/*"
