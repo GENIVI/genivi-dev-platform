@@ -2,6 +2,8 @@ LINUX_VERSION = "4.1.0"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
+USE_FAYTECH_MONITOR ?= "0"
+
 SRCREV = "07009cab090ade3dd180e8a55d590b1a00072eed"
 SRC_URI = "\
     git://git.baserock.org/delta/linux.git;protocol=git;branch=baserock/pedroalvarez/rpi2-drm-rebased-on-vc4-kms-v3d-rpi2 \
@@ -11,6 +13,8 @@ SRC_URI = "\
     file://rpi2-defconfig.patch \
     file://HULK_SMASH.patch \
     file://defconfig \
+    ${@' file://0001-faytech-fix-rpi.patch' \
+    if ${USE_FAYTECH_MONITOR} == 1 else ''} \
 "
 
 CMDLINE_append = " cma=256M usbhid.mousepoll=0"
