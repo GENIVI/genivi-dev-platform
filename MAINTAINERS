@@ -33,21 +33,21 @@ useful guidelines to be followed when submitting patches to GENIVI.
 
 Descriptions of section entries:
 
-	M: Mail patches to: FullName <address@domain>
-	F: Files and directories with wildcard patterns.
-	   A trailing slash includes all files and subdirectory files.
-	   F:	meta-genivi-demo/	all files in and below meta-genivi-demo
-	   F:	meta-genivi-demo/*	all files in meta-genivi-demo,
-	                           	but not below
-	   One pattern per line.  Multiple F: lines acceptable.
+    M: Mail patches to: FullName <address@domain>
+    F: Files and directories with wildcard patterns.
+        A trailing slash includes all files and subdirectory files.
+        F: meta-genivi-demo/    all files in and below meta-genivi-demo
+        F: meta-genivi-demo/*   all files in meta-genivi-demo
+                                but not below
+    One pattern per line. Multiple F: lines acceptable.
 
 Please keep this list in alphabetical order.
 
-M:      Changhyeok Bae <changhyeok.bae@lge.com>
-F:      meta-raspberrypi-gdp/
+M: Changhyeok Bae <changhyeok.bae@gmail.com>
+F: meta-raspberrypi-gdp/
 
-M:	Jonathan Maw <jonathan.maw@codethink.co.uk>
-F:      meta-genivi-demo/
+M: Jonathan Maw <jonathan.maw@codethink.co.uk>
+F: meta-genivi-demo/
 
-M:	Tom Pollard <tom.pollard@codethink.co.uk>
-F: 	meta-genivi-demo/
+M: Tom Pollard <tom.pollard@codethink.co.uk>
+F: meta-genivi-demo/

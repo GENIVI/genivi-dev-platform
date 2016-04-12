@@ -1,7 +1,7 @@
 meta-genivi-demo: the Yocto layer for the GENIVI Demo Platform
-===========================================================
+==============================================================
 
-This layer provides a GENIVI Demo Platform (GDP)image build. The layer
+This layer provides a GENIVI Demo Platform (GDP) image build. The layer
 supports cross-architecture application development using QEMU
 emulation and an SDK.
 
@@ -27,9 +27,9 @@ For information about the Yocto GENIVI Baseline, see the
 IRC Channel
     #automotive - Freenode
 
-Building the Genivi Demo Platform (GDP)
---------------------------------------
-To build the GDP, GENIVI maintain a git sub-module repo with branches specific for
+Building the GENIVI Demo Platform (GDP)
+---------------------------------------
+To build the GDP, GENIVI maintains a git sub-module repo with branches specific for
 the supported build targets:
     [genivi-demo-platform.git](http://git.projects.genivi.org/?p=genivi-demo-platform.git;a=summary)
 
@@ -42,12 +42,12 @@ $ cd genivi-demo-platform
 $ source init.sh
 $ bitbake genivi-demo-platform
 
-More specific information on build targets, including build steps and deployments instructions
+More specific information on build targets, including build steps and deployment instructions
 for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
 
 
 Layer Dependency List
-------------------
+---------------------
 URI: git://git.yoctoproject.org/meta-ivi
 * branch:   9.0
 * revision: bfd95c5021885ed61b58a33087a4ee8e3d2f32ad
@@ -68,7 +68,7 @@ URI: git://git.yoctoproject.org/poky
 ## The Raspberry Pi2 board depend in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
-* branch:   jethro 
+* branch:   master
 * revision: 519c387e3b97ecc21ac1d7b4fc9197298f289a71
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
@@ -82,24 +82,25 @@ URI: git://git.yoctoproject.org/meta-intel
 
 Supported Machines
 ------------------
-
 We support the builds for these machines:
 
-* QEMU (x86-64) - emulated machine: qemux86-64
-* Renesas R-Car Gen2 (R-Car M2) - machine: koelsch
-* Renesas R-Car Gen2 (R-Car M2) - machine: porter
-* Renesas R-Car Gen2 (R-Car E2) - machine: silk
+* QEMU (x86-64)                  - machine: qemux86-64
+* Renesas R-Car Gen2 (R-Car M2)  - machine: koelsch
+* Renesas R-Car Gen2 (R-Car M2)  - machine: porter
+* Renesas R-Car Gen2 (R-Car E2)  - machine: silk
 * Intel Minnowboard MAX (x86-64) - machine: minnowboard
-* Raspberry Pi2 - machine: raspberrypi2
+* Raspberry Pi 2                 - machine: raspberrypi2
 
 Miscellaneous
 -------------
 When building for raspberrypi2, add the following to your local.conf:
 > MACHINE = "raspberrypi2"
 > GPU_MEM = "128"
+> KERNEL_DEVICETREE = "bcm2709-rpi-2-b.dtb"
 > PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
 > PREFERRED_VERSION_weston = "1.9.0"
-> PREFERRED_VERSION_wayland-ivi-extension = "1.9.0"
+> PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
+> PREFERRED_VERSION_mesa = "11.%"
 > PREFERRED_PROVIDER_virtual/egl = "mesa"
 > PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
 > PREFERRED_PROVIDER_virtual/libgl = "mesa"
@@ -152,5 +153,5 @@ must be downloaded. Once booted, issue the following command on the board:
 To build the RVI SOTA client into your GDP image, please check:
 [here](https://at.projects.genivi.org/wiki/display/GDP/RVI+SOTA+Client)
 
-Enable touch support on the Genivi AMM Faytech V2 monitor for Porter & Raspberrypi2 add to local.conf:
+Enable touch support on the GENIVI AMM Faytech V2 monitor for Porter & Raspberry Pi 2 add to local.conf:
 USE_FAYTECH_MONITOR = "1"
