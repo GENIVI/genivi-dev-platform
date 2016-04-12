@@ -43,7 +43,7 @@ $ source init.sh
 $ bitbake genivi-demo-platform
 
 More specific information on build targets, including build steps and deployments instructions
-for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP)
+for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
 
 
 Layer Dependency List
@@ -59,17 +59,17 @@ URI: https://github.com/meta-qt5/meta-qt5.git
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems
 * branch:   fido
-* revision: 5b0305d9efa4b5692cd942586fb7aa92dba42d59
+* revision: a7c1a2b0e6947740758136216e45ca6ca66321fc
 
 URI: git://git.yoctoproject.org/poky
 * branch:   fido
-* revision: eb4a134a60e3ac26a48379675ad6346a44010339
+* revision: 900d7d6b59c36b2bdbd1c85febec99e80ab54f95
 
 ## The Raspberry Pi2 board depend in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   jethro 
-* revision: f2cff839f52a6e6211337fc45c7c3eabf0fac113
+* revision: 519c387e3b97ecc21ac1d7b4fc9197298f289a71
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
@@ -148,3 +148,9 @@ For the Fuel Stop Advisor Proof of Concept (FSA PoC), a navigation map
 must be downloaded. Once booted, issue the following command on the board:
 
 # cd /usr/share/navit/maps/ && wget http://www.navit-project.org/switzerland.bin
+
+To build the RVI SOTA client into your GDP image, please check:
+[here](https://at.projects.genivi.org/wiki/display/GDP/RVI+SOTA+Client)
+
+Enable touch support on the Genivi AMM Faytech V2 monitor for Porter & Raspberrypi2 add to local.conf:
+USE_FAYTECH_MONITOR = "1"
