@@ -16,3 +16,6 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
+[submodule "meta-rust"]
+	path = meta-rust
+	url = git://github.com/jmesmon/meta-rust.git
