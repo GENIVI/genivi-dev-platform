@@ -2,7 +2,7 @@ SUMMARY = "Navigation software based on Navit and compliant with the Navigation 
 SRCREV = "9953bcd40cb4185eaaad1c15c486dd6220253990"
 PV = "1"
 
-SRC_URI = "git://git.projects.genivi.org/lbs/navigation.git \
+SRC_URI = "git://git.projects.genivi.org/lbs/navigation.git;protocol=http \
            file://change_xml_generation_dir.patch \
            file://navit_genivi_mapviewer.xml \
            file://navit_genivi_navigationcore.xml \

@@ -9,7 +9,7 @@ SRCREV = "231265ba9cc7581f8fb36d9e7f862f211d43564a"
 
 DEPENDS = "qtbase qtwebkit"
 
-SRC_URI = "git://git.projects.genivi.org/browser-poc.git \
+SRC_URI = "git://git.projects.genivi.org/browser-poc.git;protocol=http \
            file://browser_poc_smaller_bookmarks_qml.patch \
            file://browser.service \
            file://demoui.service \

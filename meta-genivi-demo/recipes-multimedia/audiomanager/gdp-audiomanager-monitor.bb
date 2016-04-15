@@ -8,7 +8,7 @@ DEPENDS = "qtbase qtdeclarative pulseaudio audiomanager"
 BRANCH="master"
 
 SRC_URI = "\
-    git://git.projects.genivi.org/AudioManagerDemo.git;branch=${BRANCH} \
+    git://git.projects.genivi.org/AudioManagerDemo.git;branch=${BRANCH};protocol=http \
     file://AudioManager_Monitor.service \
     file://0001-gdp-audio-monitor-include-fix.patch \
     "

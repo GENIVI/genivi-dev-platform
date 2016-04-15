@@ -9,7 +9,7 @@ PV = "1"
 DEPENDS = "automotive-message-broker navit navigation-service qtbase qtdeclarative"
 RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
 
-SRC_URI = "git://git.projects.genivi.org/lbs/navigation-application.git \
+SRC_URI = "git://git.projects.genivi.org/lbs/navigation-application.git;protocol=http \
            file://remove_amb_link_path.patch \
            file://logreplayerconfig \
            file://pregenerated_images_and_style_sheets_1024x768.tar.bz2 \

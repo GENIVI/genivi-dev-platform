@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=176cedb32f48dd58f07e0c1c717b3ea4"
 
 PR = "r1"
 
-SRC_URI = "git://git.projects.genivi.org/${PN}.git;tag=${PV}"
+SRC_URI = "git://git.projects.genivi.org/${PN}.git;tag=${PV};protocol=http"
 
 DEPENDS = "weston"
 S = "${WORKDIR}/git"

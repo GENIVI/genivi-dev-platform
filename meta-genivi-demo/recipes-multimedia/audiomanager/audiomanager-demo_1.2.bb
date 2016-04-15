@@ -10,7 +10,7 @@ BRANCH = "Intreprid_stable_branch"
 VERSION = "6.1"
 
 SRC_URI = "\
-    git://git.projects.genivi.org/AudioManager.git;branch=${BRANCH};tag=${VERSION} \
+    git://git.projects.genivi.org/AudioManager.git;branch=${BRANCH};tag=${VERSION};protocol=http \
     file://0001-AudioManagerPoC-GENIVI-Alliance-Audio-Manager-proof-.patch \
     file://0002-AudioManagerPoC-add-support-for-Wayland-ivi-shell.patch \
     file://AudioManager_PoC.service \
