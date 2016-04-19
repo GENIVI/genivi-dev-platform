@@ -2,7 +2,12 @@ FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 
 DEPENDS_append = " pulseaudio"
 
-SRC_URI_append = " git://git.projects.genivi.org/AudioManagerPlugins.git;destsuffix=git/Plugins;branch=${BRANCH};tag=${PV};protocol=http \
+SRCREV = ""
+
+SRC_URI_remove = " git://git.projects.genivi.org/AudioManager.git;branch=master;protocol=http \ "
+
+SRC_URI_append = " git://git.projects.genivi.org/AudioManager.git;branch=master;tag=${PV};protocol=http \
+                   git://git.projects.genivi.org/AudioManagerPlugins.git;destsuffix=git/Plugins;branch=master;tag=${PV};protocol=http \
                    file://sqlite_database_handler_change_mainVolume_to_volume.patch \
                    file://AudioManager_user.service \
                    file://fix_dbus_plugins.patch \
