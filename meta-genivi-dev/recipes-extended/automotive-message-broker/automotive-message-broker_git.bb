@@ -17,7 +17,6 @@ SRCREV = "c216955d16ca275159891cad296217094d972390"
 
 SRC_URI += "file://amb_allow_sessionbus.patch \
             file://ambd.service \
-            file://stopgap_amb_fix_json_package_check.patch \
             "
 
 SYSTEMD_PACKAGES = "${PN}"
