@@ -14,7 +14,7 @@ It is therefore recommended to :
 ```bash
 git clone --recursive <thisrepo> -b <branch>
 ```
-where branch is (for example) koelsch, porter or minnowboard
+where branch is (for example) koelsch, porter ,minnowboard or raspberrypi2
 (you must check which branches exist)
 
 The master branch is no longer maintained
