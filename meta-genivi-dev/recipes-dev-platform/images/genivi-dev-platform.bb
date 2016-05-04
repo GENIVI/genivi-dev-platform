@@ -1,11 +1,11 @@
-# Copyright (C) 2014-2015 GENIVI Alliance
+# Copyright (C) 2014-2016 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 # Base this image on generic IVI image
 require recipes-yocto-ivi/images/ivi-image.inc
 
-DESCRIPTION = "GENIVI Demo Platform image which includes currently a simple \
-HMI and three proof-of-concepts (PoC's) and demos.  The GENIVI Browser PoC, \
+DESCRIPTION = "GENIVI Development Platform image which includes currently a simple \
+HMI and three proof-of-concepts (PoC's) and demos. The GENIVI Browser PoC, \
 the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
 
 PV = "1.3+snapshot-${DATE}"

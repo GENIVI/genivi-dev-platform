@@ -1,5 +1,5 @@
 [Unit]
-Description=GENIVI Demo Platform HMI - Launcher
+Description=GENIVI Development Platform HMI - Launcher
 Requires=gdp-hmi-controller.service gdp-hmi-background.service gdp-hmi-panel.service
 
 [Service]

@@ -24,6 +24,7 @@
 #
 #MACHINE ?= "koelsch"
 #MACHINE ?= "porter"
+#MACHINE ?= "raspberrypi2"
 
 #
 # This sets the default machine to be vexpressa9 if no other machine is selected:

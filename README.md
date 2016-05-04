@@ -1,16 +1,16 @@
-meta-genivi-demo: the Yocto layer for the GENIVI Demo Platform
-==============================================================
+meta-genivi-dev: the Yocto layer for the GENIVI Development Platform
+====================================================================
 
-This layer provides a GENIVI Demo Platform (GDP) image build. The layer
+This layer provides a GENIVI Development Platform (GDP) image build. The layer
 supports cross-architecture application development using QEMU
 emulation and an SDK.
 
 Please see the  
-[MAINTAINERS](http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob;f=MAINTAINERS)
+[MAINTAINERS](https://github.com/genivi/meta-genivi-dev/blob/master/MAINTAINERS)
 file for information on contacting the maintainers of this layer, as well as
 instructions for submitting patches.
 
-The GENIVI Demo Platform project welcomes contributions. You can contribute
+The GENIVI Development Platform project welcomes contributions. You can contribute
 code, submit patches, report bugs, answer questions on our mailing lists and
 review and edit our documentation and much more.
 
@@ -27,24 +27,23 @@ For information about the Yocto GENIVI Baseline, see the
 IRC Channel
     #automotive - Freenode
 
-Building the GENIVI Demo Platform (GDP)
----------------------------------------
+Building the GENIVI Development Platform (GDP)
+----------------------------------------------
 To build the GDP, GENIVI maintains a git sub-module repo with branches specific for
 the supported build targets:
-    [genivi-demo-platform.git](http://git.projects.genivi.org/?p=genivi-demo-platform.git;a=summary)
+    [genivi-dev-platform.git](https://github.com/genivi/genivi-dev-platform/branches/all)
 
 For example, to generate the build environment for the QEMUx86-64 target:
 
 $ mkdir GDP
 $ cd GDP
-$ git clone --recursive http://git.projects.genivi.org/genivi-demo-platform.git -b qemux86-64
-$ cd genivi-demo-platform
+$ git clone --recursive http://github.com/genivi/genivi-dev-platform.git -b qemux86-64
+$ cd genivi-dev-platform
 $ source init.sh
-$ bitbake genivi-demo-platform
+$ bitbake genivi-dev-platform
 
 More specific information on build targets, including build steps and deployment instructions
 for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
-
 
 Layer Dependency List
 ---------------------

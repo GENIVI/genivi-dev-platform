@@ -1,5 +1,5 @@
 [Unit]
-Description=GENIVI Demo Platform HMI - Background
+Description=GENIVI Development Platform HMI - Background
 After=gdp-hmi-controller.service
 
 [Service]

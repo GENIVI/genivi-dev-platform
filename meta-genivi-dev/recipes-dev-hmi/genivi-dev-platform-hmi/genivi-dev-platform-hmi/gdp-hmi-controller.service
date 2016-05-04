@@ -1,5 +1,5 @@
 [Unit]
-Description=GENIVI Demo Platform HMI - Controller
+Description=GENIVI Development Platform HMI - Controller
 Requires=dbus.service
 After=weston.service
 Wants=gdp-hmi-panel.service

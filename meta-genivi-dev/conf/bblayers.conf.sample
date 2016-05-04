@@ -14,7 +14,7 @@ BBLAYERS ?= " \
   ##OEROOT##/../meta-openembedded/meta-oe \
   ##OEROOT##/../meta-openembedded/meta-ruby \
   ##OEROOT##/../meta-qt5 \
-  ##OEROOT##/../meta-genivi-demo \
+  ##OEROOT##/../meta-genivi-dev \
   "
 BBLAYERS_NON_REMOVABLE ?= " \
   ##OEROOT##/meta \

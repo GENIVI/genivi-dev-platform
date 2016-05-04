@@ -1,5 +1,5 @@
 [Unit]
-Description=GENIVI Demo Platform HMI - Panel
+Description=GENIVI Development Platform HMI - Panel
 Requires=gdp-hmi-controller.service
 After=gdp-hmi-controller.service
 

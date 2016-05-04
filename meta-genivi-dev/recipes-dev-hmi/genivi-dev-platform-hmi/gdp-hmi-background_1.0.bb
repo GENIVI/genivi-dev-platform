@@ -1,9 +1,9 @@
-# Copyright (C) 2015 GENIVI Alliance
+# Copyright (C) 2015-2016 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-include genivi-demo-platform-hmi.inc
+include genivi-dev-platform-hmi.inc
 
-SUMMARY = "GENIVI Demo Platform Background Image"
+SUMMARY = "GENIVI Development Platform Background Image"
 DEPENDS = "qtbase qtdeclarative"
 
 SRC_URI_append ="\
