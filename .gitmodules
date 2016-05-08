@@ -29,3 +29,8 @@
 [submodule "meta-erlang"]
 	path = meta-erlang
 	url = git://github.com/joaohf/meta-erlang.git
+[submodule "meta-genivi-ocf-demo"]
+	path = meta-genivi-ocf-demo
+	url = http://github.com/GENIVI/meta-genivi-ocf-demo.git
+	branch = master
+
