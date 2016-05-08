@@ -19,3 +19,7 @@
 [submodule "meta-rust"]
 	path = meta-rust
 	url = git://github.com/jmesmon/meta-rust.git
+[submodule "meta-oic"]
+	path = meta-oic
+	url = http://git.yoctoproject.org/git/meta-oic.git
+	branch = 1.0.1
