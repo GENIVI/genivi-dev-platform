@@ -17,9 +17,14 @@ SRC_URI_append = " \
 
 inherit systemd
 DEPENDS_append = " systemd"
-DEPENDS_append_raspberrypi2 = " ${@bb.utils.contains('PACKAGECONFIG', 'cairo-glesv2', 'virtual/libgles2', '', d)}"
+DEPENDS_append_rpi = " ${@bb.utils.contains('PACKAGECONFIG', 'cairo-glesv2', 'virtual/libgles2', '', d)}"
 
-EXTRA_OECONF_append_raspberrypi2 = "\
+EXTRA_OECONF_remove_rpi = "\
+	--enable-rpi-compositor \
+    WESTON_NATIVE_BACKEND=rpi-backend.so \
+"
+
+EXTRA_OECONF_append_rpi = "\
     WESTON_NATIVE_BACKEND=drm-backend.so \
     --enable-simple-egl-clients  \
     --enable-simple-clients \
@@ -45,7 +50,7 @@ EXTRA_OECONF_append_raspberrypi2 = "\
     ${@bb.utils.contains('PACKAGECONFIG', 'cairo-glesv2', ' --with-cairo=glesv2', '', d)} \
 "
 
-CFLAGS_append_raspberrypi2 ="\
+CFLAGS_append_rpi ="\
     -I${STAGING_DIR_TARGET}/usr/include/interface/vcos/pthreads \
     -I${STAGING_DIR_TARGET}/usr/include/interface/vmcs_host/linux \
 "
