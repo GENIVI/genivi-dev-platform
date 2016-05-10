@@ -26,3 +26,12 @@
 [submodule "meta-erlang"]
 	path = meta-erlang
 	url = git://github.com/joaohf/meta-erlang.git
+[submodule "meta-raspberrypi"]
+	path = meta-raspberrypi
+	url = git://git.yoctoproject.org/meta-raspberrypi
+[submodule "meta-renesas"]
+	path = meta-renesas
+	url = git://github.com/slawr/meta-renesas.git
+[submodule "meta-intel"]
+	path = meta-intel
+	url = git://git.yoctoproject.org/meta-intel
