@@ -1,23 +1,13 @@
-# gdp-submodules
-GDP setup using git submodules
+# GENIVI Development Platform
 
---- 
-
-This is pretty close to ready for public usage :-)
-
----- 
-
-The project uses submodules to pull in dependencies
-
+This project uses submodules to pull in dependencies. 
 It is therefore recommended to :
 
 ```bash
 git clone --recursive <thisrepo> -b <branch>
 ```
 where branch is (for example) koelsch, porter, minnowboard or raspberrypi2
-(you must check which branches exist)
-
-The master branch is no longer maintained
+Please check which branches are available, for example, the master branch is no longer maintained so if you use that you will not get support.
 
 If you forgot the recursive option, try:
 ```bash
@@ -30,7 +20,7 @@ To build:
 ```
 source init.sh
 ```
-and then follow instructions
+and then follow instructions.
 
 If you do anything more advanced you probably need to study
 information on git submodules - they are a bit special to
