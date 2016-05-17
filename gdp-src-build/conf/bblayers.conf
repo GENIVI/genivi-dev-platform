@@ -17,6 +17,7 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-qt5 \
   ${TOPDIR}/../meta-genivi-dev/meta-genivi-dev \
   ${TOPDIR}/../meta-rust \
+  ${TOPDIR}/../meta-oic \
   "
 
 BBLAYERS_NON_REMOVABLE ?= " \
