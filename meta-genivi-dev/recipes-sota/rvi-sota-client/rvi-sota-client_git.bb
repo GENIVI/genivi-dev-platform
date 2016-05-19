@@ -38,3 +38,21 @@ SRCREV_dbus-rs = "c2c4c98adcf9949992ac5b0050bf17afe10868c9"
 
 SRCREV_FORMAT .= "_dbus-rs"
 EXTRA_OECARGO_PATHS += "${WORKDIR}/dbus-rs"
+
+## rust-openssl
+SRC_URI += "git://github.com/sfackler/rust-openssl.git;protocol=https;name=rust-openssl;destsuffix=rust-openssl "
+
+# 0.7.10
+SRCREV_rust-openssl = "d6bc3bb16f2673f610e9310041fc030ea9b90187"
+
+SRCREV_FORMAT .= "_rust-openssl"
+EXTRA_OECARGO_PATHS += "${WORKDIR}/rust-openssl"
+
+## hyper
+SRC_URI += "git://github.com/hyperium/hyper.git;protocol=https;name=hyper;destsuffix=hyper "
+
+# 0.9.1
+SRCREV_hyper = "4828437551c7f5ed3f54acb1c1bf1fd50a6a3516"
+
+SRCREV_FORMAT .= "_hyper"
+EXTRA_OECARGO_PATHS += "${WORKDIR}/hyper"
