@@ -93,6 +93,8 @@ We support the builds for these machines:
 Miscellaneous
 -------------
 When building for raspberrypi2, add the following to your local.conf:
+
+```
 > MACHINE = "raspberrypi2"
 > GPU_MEM = "128"
 > KERNEL_DEVICETREE = "bcm2709-rpi-2-b.dtb"
@@ -105,9 +107,11 @@ When building for raspberrypi2, add the following to your local.conf:
 > PREFERRED_PROVIDER_virtual/libgl = "mesa"
 > PREFERRED_PROVIDER_virtual/mesa = "mesa"
 > PREFERRED_PROVIDER_jpeg = "jpeg"
+```
 
 When building for koelsch, add the following to your local.conf:
 
+```
 > MACHINE = "koelsch"
 > USE_GSTREAMER_1_00="1"
 > LICENSE_FLAGS_WHITELIST = "commercial"
@@ -120,10 +124,11 @@ When building for koelsch, add the following to your local.conf:
 > PREFERRED_PROVIDER_virtual/mesa = ""
 > PREFERRED_PROVIDER_libgbm = "libgbm"
 > PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-
+```
 
 When building for porter, add the following to your local.conf:
 
+```
 > MACHINE = "porter"
 > LICENSE_FLAGS_WHITELIST = "commercial"
 > SDKIMAGE_FEATURES_append = " staticdev-pkgs"
@@ -136,21 +141,27 @@ When building for porter, add the following to your local.conf:
 > PREFERRED_PROVIDER_virtual/mesa = ""
 > PREFERRED_PROVIDER_libgbm = "libgbm"
 > PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-
+```
 
 For the QEMU machine, in order to have audio, the emulation should be done like:
 (please adjust to your own paths)
 
+```
 $ QEMU_AUDIO_DRV=pa ../../poky/scripts/runqemu ivi-image-demo qemux86-64 audio
-
+```
 
 For the Fuel Stop Advisor Proof of Concept (FSA PoC), a navigation map
 must be downloaded. Once booted, issue the following command on the board:
 
+```
 # cd /usr/share/navit/maps/ && wget http://www.navit-project.org/switzerland.bin
+```
 
 To build the RVI SOTA client into your GDP image, please check:
 [here](https://at.projects.genivi.org/wiki/display/GDP/RVI+SOTA+Client)
 
 Enable touch support on the GENIVI AMM Faytech V2 monitor for Porter & Raspberry Pi 2 add to local.conf:
+
+```
 USE_FAYTECH_MONITOR = "1"
+```
