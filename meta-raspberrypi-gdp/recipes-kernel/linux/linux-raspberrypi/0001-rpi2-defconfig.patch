@@ -1,0 +1,39 @@
+From 42d9705d47ad7b89473a5ca8fc2990e71502b1aa Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Mon, 9 May 2016 16:17:30 +0900
+Subject: [PATCH] rpi2 defconfig
+
+---
+ arch/arm/configs/bcm2709_defconfig |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/configs/bcm2709_defconfig b/arch/arm/configs/bcm2709_defconfig
+index 54c8f4e..57f1f43 100644
+--- a/arch/arm/configs/bcm2709_defconfig
++++ b/arch/arm/configs/bcm2709_defconfig
+@@ -604,6 +604,7 @@ CONFIG_I2C=y
+ CONFIG_I2C_CHARDEV=m
+ CONFIG_I2C_MUX_PCA954x=m
+ CONFIG_I2C_BCM2708=m
++CONFIG_I2C_BCM2835=y
+ CONFIG_I2C_GPIO=m
+ CONFIG_SPI=y
+ CONFIG_SPI_BCM2835=m
+@@ -814,11 +815,11 @@ CONFIG_VIDEO_TW9903=m
+ CONFIG_VIDEO_TW9906=m
+ CONFIG_VIDEO_OV7640=m
+ CONFIG_VIDEO_MT9V011=m
+-CONFIG_DRM=m
++CONFIG_DRM=y
+ CONFIG_DRM_UDL=m
+-CONFIG_DRM_VC4=m
++CONFIG_DRM_VC4=y
+ CONFIG_FB=y
+-CONFIG_FB_BCM2708=y
++# CONFIG_FB_BCM2708 is not set
+ CONFIG_FB_UDL=m
+ CONFIG_FB_SSD1307=m
+ CONFIG_FB_RPISENSE=m
+-- 
+1.7.9.5
+
