@@ -2,12 +2,13 @@ FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 
 DEPENDS_append = " pulseaudio"
 
-SRCREV = ""
+SRCREV_am = "8725157e248c6706de59a02996f869b6ccdccb13"
+SRCREV_amp = "a0ed3b8f05147e9240d941655488d505057bbae7"
 
-SRC_URI_remove = " git://git.projects.genivi.org/AudioManager.git;branch=master;protocol=http \ "
+SRC_URI_remove = "git://git.projects.genivi.org/AudioManager.git;branch=master"
 
-SRC_URI_append = " git://git.projects.genivi.org/AudioManager.git;branch=master;tag=${PV};protocol=http \
-                   git://git.projects.genivi.org/AudioManagerPlugins.git;destsuffix=git/Plugins;branch=master;tag=${PV};protocol=http \
+SRC_URI_append = " git://git.projects.genivi.org/AudioManager.git;branch=master;protocol=http;name=am \
+                   git://git.projects.genivi.org/AudioManagerPlugins.git;destsuffix=git/Plugins;branch=master;protocol=http;name=amp \
                    file://sqlite_database_handler_change_mainVolume_to_volume.patch \
                    file://AudioManager_user.service \
                    file://fix_dbus_plugins.patch \
@@ -35,15 +36,20 @@ do_install_append() {
     ln -sf /etc/systemd/user/AudioManager.service ${D}/etc/systemd/user/default.target.wants/AudioManager.service
 }
 
+
 FILES_${PN} += " \
-    ${libdir}/audiomanager/command/*.so* \
-    ${libdir}/audiomanager/control/*.conf \
-    ${libdir}/audiomanager/control/*.so* \
-    ${libdir}/audiomanager/routing/*.conf \
-    ${libdir}/audiomanager/routing/*.so* \
+    ${libdir}/${PN}/command \
+    ${libdir}/${PN}/control \
+    ${libdir}/${PN}/routing \
     ${systemd_unitdir}/AudioManager.service \
     ${systemd_unitdir}/scripts/setup_amgr.sh \
+    ${sysconfdir}/systemd/user \
+    ${sysconfdir}/systemd/user/default.target.wants \
+    ${datadir}/${PN}/${PN} \
     "
+
+FILES_${PN}-dev_remove = "${libdir}/*"
+FILES_${PN}-dev += "${libdir}/${PN}/cmake"
 
 FILES_${PN}-dbg += " \
     ${libdir}/audiomanager/command/.debug/* \
