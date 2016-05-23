@@ -36,22 +36,33 @@ cp gdp-src-build/conf/templates/${machine}.local.conf gdp-src-build/conf/local.c
 cp gdp-src-build/conf/templates/${machine}.bblayers.conf gdp-src-build/conf/bblayers.conf
 echo "Local & bblayers conf set for $machine"
 
-# Unset variables
-unset machine choice
-
 # init really makes sense only the first time
-# and after that is redundant
-git submodule init
+# and after that is redundant, only require target
+# bsp submodule layer
+declare -A bsparr
+bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["porter"]="meta-renesas" )
+
+declare -a modules=("meta-genivi-dev" "meta-ivi" "poky" "meta-qt5" "meta-openembedded" "meta-rust")
+
+if [[ "$machine" != "qemux86-64" ]] ; then
+   bsp=${bsparr[${machine}]}
+   echo "bsp was set to $bsp"
+   modules+=("$bsp")
+fi
+
+git submodule init "${modules[@]}"
 
 # git submodule sync helpfully rewrites your remotes (typically "origin")
 # inside the submodules :) I bet this helpfulness will drive some power
 # users mad, but for most users this will reduce instead of add confusion
-git submodule sync
+git submodule sync "${modules[@]}"
 
 # update here could help ensure people get the right checked out version
 # after they have switched branches. However learning how submodules work
 # is better (because they are not that user friendly otherwise...))
-git submodule update 
+git submodule update "${modules[@]}"
+
+unset machine choice modules bsp bsparr
 
 source poky/oe-init-build-env gdp-src-build
 
