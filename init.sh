@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This script should be sourced 
 
 # Check that it was sourced
