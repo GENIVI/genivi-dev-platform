@@ -34,8 +34,8 @@ LICENSE_${PN}-sns = "MPLv2"
 LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
-SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=http"
-SRCREV = "48451e36a8c21afb00575227d27e10417c27878c"
+SRC_URI = "git://github.com/GENIVI/positioning.git;protocol=http"
+SRCREV = "53b518d5eb8559c1c78150639a5f000453108cec"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
@@ -84,7 +84,6 @@ do_install() {
     install -m 755 ${S}/sensors-service/test/sensors-service-client ${D}/${bindir}
     install -m 755 ${S}/enhanced-position-service/*/src/enhanced-position-service ${D}/${bindir}
     install -m 755 ${S}/enhanced-position-service/*/test/enhanced-position-client ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/*/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
     install -m 755 ${S}/enhanced-position-service/*/api/*.xml ${D}${datadir}/${PN}
     install -m 755 ${S}/enhanced-position-service/dbus/api/*.h ${D}${includedir}/${PN}
 }
