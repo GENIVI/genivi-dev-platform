@@ -52,14 +52,9 @@ HMI_LAYER=700
 FSA_LAYER=600
 HMI_SURFACE=`expr 8000 + $PID` 
 
-LayerManagerControl set surface $HMI_SURFACE destination region 0 0 800 412
 LayerManagerControl set surface $HMI_SURFACE visibility 1
 
 LayerManagerControl set layer $HMI_LAYER render order $HMI_SURFACE
-LayerManagerControl set layer $HMI_LAYER destination region 0 -22 800 412
 LayerManagerControl set layer $HMI_LAYER visibility 1
-
-LayerManagerControl set layer $FSA_LAYER destination region 0 -22 800 412
-LayerManagerControl set layer $FSA_LAYER visibility 1
 
 LayerManagerControl set screen 0 render order $FSA_LAYER,$HMI_LAYER

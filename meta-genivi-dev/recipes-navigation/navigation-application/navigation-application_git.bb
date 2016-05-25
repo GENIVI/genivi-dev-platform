@@ -9,7 +9,7 @@ PV = "1"
 DEPENDS = "automotive-message-broker navit navigation-service qtbase qtdeclarative"
 RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
 
-SRC_URI = "git://git.projects.genivi.org/lbs/navigation-application.git;protocol=http \
+SRC_URI = "git://github.com/GENIVI/navigation-application.git;protocol=http \
            file://remove_amb_link_path.patch \
            file://pregenerated_images_and_style_sheets_1024x768.tar.bz2 \
            file://allow_qt_moc_from_build_system.patch \
@@ -18,7 +18,7 @@ SRC_URI = "git://git.projects.genivi.org/lbs/navigation-application.git;protocol
            file://launch_gdp_fsa.sh \
            file://kill_gdp_fsa.sh \
           "
-SRCREV  = "d7b29a69e46525f5140aa61aa4c7a36903f83816"
+SRCREV = "5c53c08a85ac2f953f986cf21023a938fb77c385"
 
 S = "${WORKDIR}/git"
 
