@@ -1,8 +1,8 @@
 SUMMARY = "Navigation software based on Navit and compliant with the Navigation APIs standardized by the GENIVI Alliance"
-SRCREV = "497fe70ab183c2a968c8e488fde2e3ba143b141e"
+SRCREV = "5ca0a6e28cf8dfcba41c299cc2b5340c7a0444f3"
 PV = "1"
 
-SRC_URI = "git://git.projects.genivi.org/lbs/navigation.git;protocol=http \
+SRC_URI = "git://github.com/GENIVI/navigation.git;protocol=http \
            file://change_directories_xsl_files.patch \
           "
 
