@@ -23,3 +23,9 @@
 	path = meta-oic
 	url = http://git.yoctoproject.org/git/meta-oic.git
 	branch = 1.0.1
+[submodule "meta-rvi"]
+	path = meta-rvi
+	url = git://github.com/GENIVI/meta-rvi.git
+[submodule "meta-erlang"]
+	path = meta-erlang
+	url = git://github.com/joaohf/meta-erlang.git
