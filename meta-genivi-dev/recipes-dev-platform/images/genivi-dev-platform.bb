@@ -14,6 +14,7 @@ BOOT_SPACE_raspberrypi2 = "40960"
 
 IMAGE_FEATURES_append = " \
     ssh-server-openssh    \
+    tools-debug           \
     "
 
 IMAGE_INSTALL_append = " \
