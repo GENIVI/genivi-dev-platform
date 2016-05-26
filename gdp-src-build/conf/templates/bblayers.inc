@@ -18,6 +18,8 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-genivi-dev/meta-genivi-dev \
   ${TOPDIR}/../meta-rust \
   ${TOPDIR}/../meta-oic \
+  ${TOPDIR}/../meta-erlang \
+  ${TOPDIR}/../meta-rvi \
   "
 
 BBLAYERS_NON_REMOVABLE ?= " \

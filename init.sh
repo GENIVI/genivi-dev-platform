@@ -44,7 +44,7 @@ echo "Local & bblayers conf set for $machine"
 declare -A bsparr
 bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["porter"]="meta-renesas" )
 
-declare -a modules=("meta-genivi-dev" "meta-ivi" "poky" "meta-qt5" "meta-openembedded" "meta-rust" "meta-oic")
+declare -a modules=("meta-genivi-dev" "meta-ivi" "poky" "meta-qt5" "meta-openembedded" "meta-rust" "meta-oic" "meta-erlang" "meta-rvi")
 
 if [[ "$machine" != "qemux86-64" ]] ; then
    bsp=${bsparr[${machine}]}
