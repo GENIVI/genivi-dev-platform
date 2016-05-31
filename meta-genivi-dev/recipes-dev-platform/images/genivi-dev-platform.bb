@@ -29,6 +29,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-gps \
     packagegroup-gdp-hmi \
     packagegroup-gdp-qt5 \
+    packagegroup-gdp-rvi \
     boost \
     "
 
