@@ -29,17 +29,16 @@ IRC Channel
 
 Building the GENIVI Development Platform (GDP)
 ----------------------------------------------
-To build the GDP, GENIVI maintains a git sub-module repo with branches specific for
-the supported build targets:
-    [genivi-dev-platform.git](https://github.com/genivi/genivi-dev-platform/branches/all)
+To build the GDP, GENIVI maintains a git sub-module repo, which supports multiple targets:
+    [genivi-dev-platform.git](https://github.com/genivi/genivi-dev-platform/)
 
 For example, to generate the build environment for the QEMUx86-64 target:
 
 $ mkdir GDP
 $ cd GDP
-$ git clone --recursive http://github.com/genivi/genivi-dev-platform.git -b qemux86-64
+$ git clone http://github.com/genivi/genivi-dev-platform.git
 $ cd genivi-dev-platform
-$ source init.sh
+$ source init.sh qemux86-64 (check README for currently supported targets)
 $ bitbake genivi-dev-platform
 
 More specific information on build targets, including build steps and deployment instructions
@@ -64,11 +63,27 @@ URI: git://git.yoctoproject.org/poky
 * branch:   fido
 * revision: 900d7d6b59c36b2bdbd1c85febec99e80ab54f95
 
-## The Raspberry Pi2 board depend in addition on: ##
+URI: git://github.com/jmesmon/meta-rust.git
+* branch: master
+* revision: f13ac9d48ae928b761d7be204fa8f877d41e7099
+
+URI: git://git.yoctoproject.org/git/meta-oic.git
+* branch: 1.0.1
+* revision: 69146eaf8bc05c74c377e731b7e16d82854a4659
+
+URI: git://github.com/GENIVI/meta-rvi.git
+* branch: master
+* revision: de9d548fe35e2cee8688faaae910b4f6f7fea17e
+
+URI: git://github.com/joaohf/meta-erlang.git
+* branch: master
+* revision: 4d7eacc8e6593934ed5b0c8abc3d3e9dc339d849
+
+## The Raspberry Pi2 board depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
-* revision: 519c387e3b97ecc21ac1d7b4fc9197298f289a71
+* revision: 9912d38e97671704822d1aa05312a0439cb650d3
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
@@ -78,10 +93,11 @@ URI: git://github.com/slawr/meta-renesas.git
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
 * branch: fido
+* revision: ead0a5c115e632015d8358f4f304ec8908732f5f
 
 Supported Machines
 ------------------
-We support the builds for these machines:
+We aim to support the builds for these machines:
 
 * QEMU (x86-64)                  - machine: qemux86-64
 * Renesas R-Car Gen2 (R-Car M2)  - machine: koelsch
@@ -157,10 +173,7 @@ must be downloaded. Once booted, issue the following command on the board:
 # cd /usr/share/navit/maps/ && wget http://www.navit-project.org/switzerland.bin
 ```
 
-To build the RVI SOTA client into your GDP image, please check:
-[here](https://at.projects.genivi.org/wiki/display/GDP/RVI+SOTA+Client)
-
-Enable touch support on the GENIVI AMM Faytech V2 monitor for Porter & Raspberry Pi 2 add to local.conf:
+Enable touch support on the GENIVI AMM Faytech V2 monitor add to local.inc:
 
 ```
 USE_FAYTECH_MONITOR = "1"
