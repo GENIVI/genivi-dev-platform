@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# This script should be sourced 
-
-# Check that it was sourced
-cmd=$(basename "$0")
-[ "$cmd" = "init.sh" ] && { 
-   echo "No, the script needs to be _sourced_ from your current shell." 
-   echo "Use source $cmd  or  . $cmd" 
-   exit 1
-}
-
 # Parse target board from arg
 
 choice=$1
