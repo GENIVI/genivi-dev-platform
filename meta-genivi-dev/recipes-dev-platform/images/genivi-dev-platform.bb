@@ -10,7 +10,7 @@ the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
 
 PV = "1.3+snapshot-${DATE}"
 
-BOOT_SPACE_raspberrypi2 = "40960"
+BOOT_SPACE_rpi = "40960"
 
 IMAGE_FEATURES_append = " \
     ssh-server-openssh    \
@@ -40,4 +40,4 @@ IMAGE_INSTALL_append_rcar-gen2 = " \
     libgbm-dev \
     "
 
-IMAGE_INSTALL_append_raspberrypi2 = " mesa-megadriver"
+IMAGE_INSTALL_append_rpi = " mesa-megadriver"

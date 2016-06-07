@@ -79,7 +79,7 @@ URI: git://github.com/joaohf/meta-erlang.git
 * branch: master
 * revision: 4d7eacc8e6593934ed5b0c8abc3d3e9dc339d849
 
-## The Raspberry Pi2 board depends in addition on: ##
+## The Raspberry Pi 2,3 board depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
@@ -105,6 +105,7 @@ We aim to support the builds for these machines:
 * Renesas R-Car Gen2 (R-Car E2)  - machine: silk
 * Intel Minnowboard MAX (x86-64) - machine: minnowboard
 * Raspberry Pi 2                 - machine: raspberrypi2
+* Raspberry Pi 3                 - machine: raspberrypi3
 
 Miscellaneous
 -------------
@@ -113,8 +114,12 @@ When building for raspberrypi2, add the following to your local.conf:
 ```
 > MACHINE = "raspberrypi2"
 > GPU_MEM = "128"
-> KERNEL_DEVICETREE = "bcm2709-rpi-2-b.dtb"
-> PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
+> IMAGE_CLASSES = "sdcard_image-rpi-gdp"
+> KERNEL_DEVICETREE = "\
+>    bcm2709-rpi-2-b.dtb \
+>    overlays/vc4-kms-v3d-overlay.dtb
+> "
+> PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
 > PREFERRED_VERSION_weston = "1.9.0"
 > PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
 > PREFERRED_VERSION_mesa = "11.%"
@@ -124,6 +129,23 @@ When building for raspberrypi2, add the following to your local.conf:
 > PREFERRED_PROVIDER_virtual/mesa = "mesa"
 > PREFERRED_PROVIDER_jpeg = "jpeg"
 ```
+
+When building for raspberrypi3, add the following to your local.conf:
+
+```
+> MACHINE = "raspberrypi3"
+> GPU_MEM = "128"
+> IMAGE_CLASSES = "sdcard_image-rpi-gdp"
+> KERNEL_DEVICETREE_append = " overlays/vc4-kms-v3d-overlay.dtb"
+> PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
+> PREFERRED_VERSION_weston = "1.9.0"
+> PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
+> PREFERRED_VERSION_mesa = "11.%"
+> PREFERRED_PROVIDER_virtual/egl = "mesa"
+> PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
+> PREFERRED_PROVIDER_virtual/libgl = "mesa"
+> PREFERRED_PROVIDER_virtual/mesa = "mesa"
+> PREFERRED_PROVIDER_jpeg = "jpeg"
 
 When building for koelsch, add the following to your local.conf:
 

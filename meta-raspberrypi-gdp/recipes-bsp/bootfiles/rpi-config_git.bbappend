@@ -6,3 +6,9 @@ do_deploy_append() {
     echo "dtoverlay=vc4-kms-v3d-overlay,cma-256" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
     echo "dtparam=audio=on" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
 }
+
+ENABLE_UART_raspberrypi3 = "1"
+
+do_deploy_append_raspberrypi3() {
+    echo "dtoverlay=pi3-miniuart-bt-overlay" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
+}
