@@ -17,6 +17,7 @@ SRC_URI = "git://github.com/GENIVI/navigation-application.git;protocol=http \
            file://constants.js \
            file://launch_gdp_fsa.sh \
            file://kill_gdp_fsa.sh \
+           file://0001-Fix-reduce-relocations-error.patch \
           "
 SRCREV = "5c53c08a85ac2f953f986cf21023a938fb77c385"
 
