@@ -38,7 +38,7 @@ To initiate the build environment:
 ```
 source init.sh $target
 ```
-The current supported targets are qemux86-64, porter, raspberrypi2, minnowboard.
+The current supported targets are qemux86-64, porter, raspberrypi2, minnowboard, silk.
 Current this requires the use of the bash shell
 
 The init.sh script handles the the $target specific bitbake configuration.
