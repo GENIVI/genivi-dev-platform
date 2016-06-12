@@ -1,7 +1,7 @@
-From d43a17fbfe0bc71feb700fc41a8e80f2dbcd737d Mon Sep 17 00:00:00 2001
-From: Pedro Alvarez <pedro.alvarez@codethink.co.uk>
-Date: Fri, 8 Jan 2016 11:45:59 +0000
-Subject: [PATCH 1/1] Implement initial IVI-Shell support
+From e2cfca1dc23f0d90fffe42e920750600eb20d0e8 Mon Sep 17 00:00:00 2001
+From: Manuel Bachmann <manuel.bachmann@open.eurogiciel.org>
+Date: Sun, 7 Sep 2014 08:19:30 +0200
+Subject: [PATCH 1/2] Implement initial IVI-Shell support
 
 IVI-Shell provides a shell interface for Weston, which maps the GENIVI
 API (http://www.genivi.org) for In-Vehicle Infotainment.
@@ -9,25 +9,108 @@ API (http://www.genivi.org) for In-Vehicle Infotainment.
 This patch enables detecting the IVI-Shell interface at runtime, and
 creating compatible surfaces if found.
 ---
- src/client/client.pro             |   5 ++
- src/client/qwaylanddisplay.cpp    |   9 ++++
- src/client/qwaylanddisplay_p.h    |   5 ++
- src/client/qwaylandivishell.cpp   |  69 +++++++++++++++++++++++++
- src/client/qwaylandivishell_p.h   |  70 +++++++++++++++++++++++++
- src/client/qwaylandivisurface.cpp | 106 ++++++++++++++++++++++++++++++++++++++
- src/client/qwaylandivisurface_p.h |  90 ++++++++++++++++++++++++++++++++
- src/client/qwaylandwindow.cpp     |   9 +++-
- 8 files changed, 362 insertions(+), 1 deletion(-)
+ src/3rdparty/protocol/ivi-application.xml |   76 ++++++++++++++++++++
+ src/client/client.pro                     |    5 ++
+ src/client/qwaylanddisplay.cpp            |    9 +++
+ src/client/qwaylanddisplay_p.h            |    5 ++
+ src/client/qwaylandivishell.cpp           |   73 +++++++++++++++++++
+ src/client/qwaylandivishell_p.h           |   75 ++++++++++++++++++++
+ src/client/qwaylandivisurface.cpp         |  110 +++++++++++++++++++++++++++++
+ src/client/qwaylandivisurface_p.h         |   95 +++++++++++++++++++++++++
+ 8 files changed, 448 insertions(+)
+ create mode 100644 src/3rdparty/protocol/ivi-application.xml
  create mode 100644 src/client/qwaylandivishell.cpp
  create mode 100644 src/client/qwaylandivishell_p.h
  create mode 100644 src/client/qwaylandivisurface.cpp
  create mode 100644 src/client/qwaylandivisurface_p.h
 
+diff --git a/src/3rdparty/protocol/ivi-application.xml b/src/3rdparty/protocol/ivi-application.xml
+new file mode 100644
+index 0000000..b06ae6c
+--- /dev/null
++++ b/src/3rdparty/protocol/ivi-application.xml
+@@ -0,0 +1,76 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<protocol name="ivi_application">
++
++    <copyright>
++    Copyright (C) 2013 DENSO CORPORATION
++    Copyright (c) 2013 BMW Car IT GmbH
++
++    Permission is hereby granted, free of charge, to any person obtaining a copy
++    of this software and associated documentation files (the "Software"), to deal
++    in the Software without restriction, including without limitation the rights
++    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++    copies of the Software, and to permit persons to whom the Software is
++    furnished to do so, subject to the following conditions:
++
++    The above copyright notice and this permission notice shall be included in
++    all copies or substantial portions of the Software.
++
++    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++    THE SOFTWARE.
++    </copyright>
++
++    <interface name="ivi_surface" version="1">
++        <description summary="application interface to surface in ivi compositor"/>
++
++        <request name="destroy" type="destructor">
++            <description summary="destroy ivi_surface">
++                This removes link from ivi_id to wl_surface and destroys ivi_surface.
++            </description>
++        </request>
++
++        <event name="visibility">
++            <description summary="visibility of surface in ivi compositor has changed">
++                The new visibility state is provided in argument visibility.
++                If visibility is 0, the surface has become invisible.
++                If visibility is not 0, the surface has become visible.
++            </description>
++            <arg name="visibility" type="int"/>
++        </event>
++
++        <event name="configure">
++            <arg name="width" type="int"/>
++            <arg name="height" type="int"/>
++        </event>
++
++    </interface>
++
++    <interface name="ivi_application" version="1">
++        <description summary="create ivi-style surfaces">
++	    This interface is implemented by servers that provide desktop-style user interfaces.
++	    It allows clients to associate a ivi_surface with a basic surface.
++	</description>
++
++        <request name="surface_create">
++            <description summary="create ivi_surface with numeric ID in ivi compositor">
++                surface_create will create a interface:ivi_surface with numeric ID; ivi_id in
++                ivi compositor. These ivi_ids are defined as unique in the system to identify
++                it inside of ivi compositor. The ivi compositor implements business logic how to
++                set properties of the surface with ivi_id according to status of the system.
++                E.g. a unique ID for Car Navigation application is used for implementing special
++                logic of the application about where it shall be located.
++		if a wl_surface which already has another role is set, the server regards this as
++		error and disconnects the client.
++            </description>
++            <arg name="ivi_id" type="uint"/>
++            <arg name="surface" type="object" interface="wl_surface"/>
++            <arg name="id" type="new_id" interface="ivi_surface"/>
++        </request>
++
++    </interface>
++
++</protocol>
 diff --git a/src/client/client.pro b/src/client/client.pro
-index a8a1136..5474112 100644
+index 0c13a4a..8e5a969 100644
 --- a/src/client/client.pro
 +++ b/src/client/client.pro
-@@ -44,6 +44,7 @@ WAYLANDCLIENTSOURCES += \
+@@ -52,6 +52,7 @@ WAYLANDCLIENTSOURCES += \
              ../extensions/windowmanager.xml \
              ../3rdparty/protocol/text.xml \
              ../3rdparty/protocol/xdg-shell.xml \
@@ -35,7 +118,7 @@ index a8a1136..5474112 100644
  
  SOURCES +=  qwaylandintegration.cpp \
              qwaylandnativeinterface.cpp \
-@@ -63,6 +64,8 @@ SOURCES +=  qwaylandintegration.cpp \
+@@ -71,6 +72,8 @@ SOURCES +=  qwaylandintegration.cpp \
              qwaylandwlshellsurface.cpp \
              qwaylandxdgshell.cpp \
              qwaylandxdgsurface.cpp \
@@ -44,7 +127,7 @@ index a8a1136..5474112 100644
              qwaylandextendedoutput.cpp \
              qwaylandextendedsurface.cpp \
              qwaylandsubsurface.cpp \
-@@ -96,6 +99,8 @@ HEADERS +=  qwaylandintegration_p.h \
+@@ -104,6 +107,8 @@ HEADERS +=  qwaylandintegration_p.h \
              qwaylandwlshellsurface_p.h \
              qwaylandxdgshell_p.h \
              qwaylandxdgsurface_p.h \
@@ -54,10 +137,10 @@ index a8a1136..5474112 100644
              qwaylandextendedsurface_p.h \
              qwaylandsubsurface_p.h \
 diff --git a/src/client/qwaylanddisplay.cpp b/src/client/qwaylanddisplay.cpp
-index 11904ae..ab7af00 100644
+index 0bea9af..afb8ed2 100644
 --- a/src/client/qwaylanddisplay.cpp
 +++ b/src/client/qwaylanddisplay.cpp
-@@ -53,6 +53,7 @@
+@@ -45,6 +45,7 @@
  #include "qwaylandxdgshell_p.h"
  #include "qwaylandxdgsurface_p.h"
  #include "qwaylandwlshellsurface_p.h"
@@ -65,7 +148,7 @@ index 11904ae..ab7af00 100644
  
  #include "qwaylandwindowmanagerintegration_p.h"
  #include "qwaylandshellintegration_p.h"
-@@ -66,6 +67,7 @@
+@@ -58,6 +59,7 @@
  
  #include <QtWaylandClient/private/qwayland-text.h>
  #include <QtWaylandClient/private/qwayland-xdg-shell.h>
@@ -73,7 +156,7 @@ index 11904ae..ab7af00 100644
  
  #include <QtCore/QAbstractEventDispatcher>
  #include <QtGui/private/qguiapplication_p.h>
-@@ -239,6 +241,8 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
+@@ -246,6 +248,8 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
          mCompositor.init(registry, id, mCompositorVersion);
      } else if (interface == QStringLiteral("wl_shm")) {
          mShm = static_cast<struct wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface,1));
@@ -82,7 +165,7 @@ index 11904ae..ab7af00 100644
      } else if (interface == QStringLiteral("xdg_shell")
                 && qEnvironmentVariableIsSet("QT_WAYLAND_USE_XDG_SHELL")) {
          mShellXdg.reset(new QWaylandXdgShell(registry,id));
-@@ -376,4 +380,9 @@ void QWaylandDisplay::setLastInputDevice(QWaylandInputDevice *device, uint32_t s
+@@ -387,6 +391,11 @@ void QWaylandDisplay::setLastInputDevice(QWaylandInputDevice *device, uint32_t s
      mLastInputWindow = win;
  }
  
@@ -91,12 +174,14 @@ index 11904ae..ab7af00 100644
 +    return mShellIvi.data();
 +}
 +
+ }
+ 
  QT_END_NAMESPACE
 diff --git a/src/client/qwaylanddisplay_p.h b/src/client/qwaylanddisplay_p.h
-index 5a32413..760cb9d 100644
+index ee129a5..8604913 100644
 --- a/src/client/qwaylanddisplay_p.h
 +++ b/src/client/qwaylanddisplay_p.h
-@@ -52,6 +52,7 @@
+@@ -45,6 +45,7 @@
  #include <QtWaylandClient/private/qwayland-wayland.h>
  #include <QtWaylandClient/private/qwaylandclientexport_p.h>
  #include <QtWaylandClient/private/qwayland-xdg-shell.h>
@@ -104,7 +189,15 @@ index 5a32413..760cb9d 100644
  
  struct wl_cursor_image;
  
-@@ -72,6 +73,7 @@ class QWaylandWindow;
+@@ -61,6 +62,7 @@ namespace QtWayland {
+     class qt_surface_extension;
+     class wl_text_input_manager;
+     class xdg_shell;
++    class ivi_application;
+ }
+ 
+ namespace QtWaylandClient {
+@@ -77,6 +79,7 @@ class QWaylandWindow;
  class QWaylandEventThread;
  class QWaylandIntegration;
  class QWaylandHardwareIntegration;
@@ -112,15 +205,7 @@ index 5a32413..760cb9d 100644
  class QWaylandXdgShell;
  class QWaylandShellSurface;
  
-@@ -82,6 +84,7 @@ namespace QtWayland {
-     class qt_surface_extension;
-     class wl_text_input_manager;
-     class xdg_shell;
-+    class ivi_application;
- }
- 
- typedef void (*RegistryListener)(void *data,
-@@ -120,6 +123,7 @@ public:
+@@ -116,6 +119,7 @@ public:
  
      QtWayland::wl_shell *shell() { return mShell.data(); }
      QtWayland::xdg_shell *shellXdg();
@@ -128,7 +213,7 @@ index 5a32413..760cb9d 100644
  
      QList<QWaylandInputDevice *> inputDevices() const { return mInputDevices; }
      QWaylandInputDevice *defaultInputDevice() const;
-@@ -185,6 +189,7 @@ private:
+@@ -180,6 +184,7 @@ private:
      QWaylandEventThread *mEventThreadObject;
      QScopedPointer<QtWayland::wl_shell> mShell;
      QScopedPointer<QWaylandXdgShell> mShellXdg;
@@ -138,10 +223,10 @@ index 5a32413..760cb9d 100644
      QList<Listener> mRegistryListeners;
 diff --git a/src/client/qwaylandivishell.cpp b/src/client/qwaylandivishell.cpp
 new file mode 100644
-index 0000000..5186d6f
+index 0000000..c84a2a6
 --- /dev/null
 +++ b/src/client/qwaylandivishell.cpp
-@@ -0,0 +1,69 @@
+@@ -0,0 +1,73 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2014 Eurogiciel, author: <manuel.bachmann@open.eurogiciel.org>
@@ -195,6 +280,8 @@ index 0000000..5186d6f
 +
 +QT_BEGIN_NAMESPACE
 +
++namespace QtWaylandClient {
++
 +QWaylandIviShell::QWaylandIviShell(struct ::ivi_application *shell)
 +    : QtWayland::ivi_application(shell)
 +{
@@ -210,13 +297,15 @@ index 0000000..5186d6f
 +    ivi_application_destroy(object());
 +}
 +
++}
++
 +QT_END_NAMESPACE
 diff --git a/src/client/qwaylandivishell_p.h b/src/client/qwaylandivishell_p.h
 new file mode 100644
-index 0000000..f9f6983
+index 0000000..047f3a8
 --- /dev/null
 +++ b/src/client/qwaylandivishell_p.h
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,75 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2014 Eurogiciel, author: <manuel.bachmann@open.eurogiciel.org>
@@ -271,9 +360,12 @@ index 0000000..f9f6983
 +
 +QT_BEGIN_NAMESPACE
 +
++class QWindow;
++
++namespace QtWaylandClient {
++
 +class QWaylandWindow;
 +class QWaylandInputDevice;
-+class QWindow;
 +
 +class Q_WAYLAND_CLIENT_EXPORT QWaylandIviShell : public QtWayland::ivi_application
 +{
@@ -284,15 +376,17 @@ index 0000000..f9f6983
 +    virtual ~QWaylandIviShell();
 +};
 +
++}
++
 +QT_END_NAMESPACE
 +
 +#endif // QWAYLANDIVISHELL_H
 diff --git a/src/client/qwaylandivisurface.cpp b/src/client/qwaylandivisurface.cpp
 new file mode 100644
-index 0000000..bb79eed
+index 0000000..b48f7ad
 --- /dev/null
 +++ b/src/client/qwaylandivisurface.cpp
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,110 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
@@ -346,6 +440,8 @@ index 0000000..bb79eed
 +
 +QT_BEGIN_NAMESPACE
 +
++namespace QtWaylandClient {
++
 +QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window)
 +    : QtWayland::ivi_surface(ivi_surface)
 +    , QWaylandShellSurface(window)
@@ -398,13 +494,15 @@ index 0000000..bb79eed
 +{
 +}
 +
++}
++
 +QT_END_NAMESPACE
 diff --git a/src/client/qwaylandivisurface_p.h b/src/client/qwaylandivisurface_p.h
 new file mode 100644
-index 0000000..c6a7ce6
+index 0000000..964137a
 --- /dev/null
 +++ b/src/client/qwaylandivisurface_p.h
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,95 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
@@ -459,9 +557,12 @@ index 0000000..c6a7ce6
 +
 +QT_BEGIN_NAMESPACE
 +
++class QWindow;
++
++namespace QtWaylandClient {
++
 +class QWaylandWindow;
 +class QWaylandInputDevice;
-+class QWindow;
 +class QWaylandExtendedSurface;
 +
 +class Q_WAYLAND_CLIENT_EXPORT QWaylandIviSurface : public QtWayland::ivi_surface
@@ -492,49 +593,11 @@ index 0000000..c6a7ce6
 +    friend class QWaylandWindow;
 +};
 +
++}
++
 +QT_END_NAMESPACE
 +
 +#endif // QWAYLANDIVISURFACE_H
-diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
-index 83c44c2..12d2089 100644
---- a/src/client/qwaylandwindow.cpp
-+++ b/src/client/qwaylandwindow.cpp
-@@ -39,6 +39,8 @@
- **
- ****************************************************************************/
- 
-+#include <unistd.h>
-+
- #include "qwaylandwindow_p.h"
- 
- #include "qwaylandbuffer_p.h"
-@@ -49,12 +51,14 @@
- #include "qwaylandshellsurface_p.h"
- #include "qwaylandwlshellsurface_p.h"
- #include "qwaylandxdgsurface_p.h"
-+#include "qwaylandivisurface_p.h"
- #include "qwaylandsubsurface_p.h"
- #include "qwaylandabstractdecoration_p.h"
- #include "qwaylandwindowmanagerintegration_p.h"
- #include "qwaylandnativeinterface_p.h"
- #include "qwaylanddecorationfactory_p.h"
- #include "qwaylandshmbackingstore_p.h"
-+#define IVI_SURFACE_ID 8000
- 
- #include <QtCore/QFileInfo>
- #include <QtCore/QPointer>
-@@ -100,7 +104,10 @@ QWaylandWindow::QWaylandWindow(QWindow *window)
-         mSubSurfaceWindow = new QWaylandSubSurface(this, mDisplay->subSurfaceExtension()->get_sub_surface_aware_surface(object()));
- 
-     if (!(window->flags() & Qt::BypassWindowManagerHint)) {
--        mShellSurface = mDisplay->createShellSurface(this);
-+        if (mDisplay->shellIvi()) {
-+            mShellSurface = new QWaylandIviSurface(mDisplay->shellIvi()->surface_create(IVI_SURFACE_ID + getpid(), object()), this);
-+        } else
-+            mShellSurface = mDisplay->createShellSurface(this);
-     }
- 
-     if (mShellSurface) {
 -- 
-2.1.4
+1.7.9.5
 
