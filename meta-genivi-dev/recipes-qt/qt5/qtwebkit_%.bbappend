@@ -1,1 +1,1 @@
-PACKAGECONFIG = "gstreamer010 qtlocation qtmultimedia qtsensors"
+PACKAGECONFIG = "gstreamer qtlocation qtmultimedia qtsensors"
