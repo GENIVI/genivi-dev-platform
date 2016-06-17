@@ -14,7 +14,7 @@ S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
 
-DEPENDS += "dbus"
+DEPENDS += "dbus openssl"
 RDEPENDS_${PN} += "dbus-lib libcrypto libssl"
 
 SYSTEMD_SERVICE_${PN} = "rvi-sota-client.service"
