@@ -34,12 +34,12 @@ To build the GDP, GENIVI maintains a git sub-module repo, which supports multipl
 
 For example, to generate the build environment for the QEMUx86-64 target:
 
-$ mkdir GDP
-$ cd GDP
-$ git clone http://github.com/genivi/genivi-dev-platform.git
-$ cd genivi-dev-platform
-$ source init.sh qemux86-64 (check README for currently supported targets)
-$ bitbake genivi-dev-platform
+$ mkdir GDP  
+$ cd GDP  
+$ git clone http://github.com/genivi/genivi-dev-platform.git  
+$ cd genivi-dev-platform  
+$ source init.sh qemux86-64 (check README for currently supported targets)  
+$ bitbake genivi-dev-platform  
 
 More specific information on build targets, including build steps and deployment instructions
 for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
@@ -47,8 +47,8 @@ for each supported target, check [here](https://at.projects.genivi.org/wiki/disp
 Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
-* branch:   9.0
-* revision: bfd95c5021885ed61b58a33087a4ee8e3d2f32ad
+* branch:   master
+* revision: 9d72380c1d50d0c3469b85c3a43fe612b5ee1dd9
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   fido
@@ -56,12 +56,12 @@ URI: https://github.com/meta-qt5/meta-qt5.git
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems
-* branch:   fido
-* revision: a7c1a2b0e6947740758136216e45ca6ca66321fc
+* branch:   jethro
+* revision: ad6133a2e95f4b83b6b3ea413598e2cd5fb3fd90
 
 URI: git://git.yoctoproject.org/poky
-* branch:   fido
-* revision: 900d7d6b59c36b2bdbd1c85febec99e80ab54f95
+* branch:   jethro
+* revision: fc45deac89ef63ca1c44e763c38ced7dfd72cbe1
 
 URI: git://github.com/jmesmon/meta-rust.git
 * branch: master
@@ -87,13 +87,13 @@ URI: git://git.yoctoproject.org/meta-raspberrypi
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
-* branch:   experimental-genivi-9-bsp-1.10.0-weston-1.9.0
-* revision: 565dd7def3cd39724169939c68bb748f5888cafb
+* branch:   stevel/genivi-10
+* revision: f14dc3725cab24387f9f3acd8e5f6a500b42a73a
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
-* branch: fido
-* revision: ead0a5c115e632015d8358f4f304ec8908732f5f
+* branch: jethro
+* revision: 2397181e99d3155c7a00e1756cec92b568d9a9eb
 
 Supported Machines
 ------------------
@@ -115,10 +115,7 @@ When building for raspberrypi2, add the following to your local.conf:
 > MACHINE = "raspberrypi2"
 > GPU_MEM = "128"
 > IMAGE_CLASSES = "sdcard_image-rpi-gdp"
-> KERNEL_DEVICETREE = "\
->    bcm2709-rpi-2-b.dtb \
->    overlays/vc4-kms-v3d-overlay.dtb
-> "
+> KERNEL_DEVICETREE_append = " overlays/vc4-kms-v3d-overlay.dtb"
 > PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
 > PREFERRED_VERSION_weston = "1.9.0"
 > PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
@@ -146,6 +143,7 @@ When building for raspberrypi3, add the following to your local.conf:
 > PREFERRED_PROVIDER_virtual/libgl = "mesa"
 > PREFERRED_PROVIDER_virtual/mesa = "mesa"
 > PREFERRED_PROVIDER_jpeg = "jpeg"
+```
 
 When building for koelsch, add the following to your local.conf:
 
