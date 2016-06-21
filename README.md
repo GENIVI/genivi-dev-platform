@@ -30,7 +30,10 @@ For information about the Yocto GENIVI Baseline, see [Yocto GENIVI Baseline webs
 
 This project uses submodules to pull in layer dependencies.
 It is advised to avoid using the --recursive option for the
-initial clone. 'master' is the default branch.
+initial clone. 'master' is the default branch. Previous release
+'maintenance' branches are also available. Note certain tags
+may require a different set of usage instructions, please refer
+to the relative README.
 ```
 git clone <thisrepo> -b <branch>
 ```
@@ -39,7 +42,7 @@ To initiate the build environment:
 source init.sh $target
 ```
 The current supported targets are qemux86-64, porter, raspberrypi2, minnowboard, silk.
-Current this requires the use of the bash shell
+Currently this requires the use of the bash shell
 
 The init.sh script handles the the $target specific bitbake configuration.
 The $target templates can be found in gdp-src-build/templates, as well as common
