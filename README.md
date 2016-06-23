@@ -51,8 +51,8 @@ URI: git://git.yoctoproject.org/meta-ivi
 * revision: 9d72380c1d50d0c3469b85c3a43fe612b5ee1dd9
 
 URI: https://github.com/meta-qt5/meta-qt5.git
-* branch:   fido
-* revision: 90919b9d86988e7da01fa2c0a07246b5b5600a5d
+* branch:   jethro
+* revision: ea37a0bc987aa9484937ad68f762b4657c198617
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems
