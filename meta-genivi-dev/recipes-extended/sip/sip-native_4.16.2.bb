@@ -12,6 +12,8 @@ SRC_URI[md5sum] = "1ca96f90a7496a3c9664fdaa76205719"
 SRC_URI[sha256sum] = "a55a2324a46ab42e42ae57c52ef06583b17d25c987973fe2e7ff2e8a649294ce"
 S = "${WORKDIR}/sip-${PV}/sipgen"
 
+BBCLASSEXTEND = "native"
+
 inherit qmake5 native python-dir
 
 EXTRA_QMAKEVARS_POST += "DESTDIR=${S} CONFIG=console"
@@ -21,16 +23,24 @@ export HOST_SYS
 export STAGING_LIBDIR
 export STAGING_INCDIR
 
+PYTHON_SITEPACKAGES_DIR = "${libdir_native}/${PYTHON_DIR}/site-packages"
+
 do_configure_prepend() {
     pwd
     cat ${S}/sipgen.sbf | sed s,target,TARGET, | sed s,sources,SOURCES, | sed s,headers,HEADERS, > ${S}/sipgen.pro
 }
-do_install() {
-    install -d ${D}${bindir}
-    install -m 0755 ${S}/sip ${D}${bindir}/sip
+
+do_install_append() {
+    install -d ${D}${bindir_native}
+    install -m 0755 ${S}/sip ${D}${bindir_native}/sip
     # python-pyqt expects sip4
-    ln -sf sip ${D}${bindir}/sip4
+    ln -sf sip ${D}${bindir_native}/sip4
     cd ${WORKDIR}/sip-${PV} && python configure.py
     install -d ${D}${PYTHON_SITEPACKAGES_DIR}
     install -m 0755 sip*.py ${D}${PYTHON_SITEPACKAGES_DIR}
+}
+
+sysroot_stage_all_append() {
+    sysroot_stage_dir ${D}${bindir_native} ${SYSROOT_DESTDIR}${bindir}
+    sysroot_stage_dir ${D}${PYTHON_SITEPACKAGES_DIR} ${SYSROOT_DESTDIR}/${libdir}/${PYTHON_DIR}/site-packages
 }
