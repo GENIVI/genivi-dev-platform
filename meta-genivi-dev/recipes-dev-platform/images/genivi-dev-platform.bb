@@ -30,6 +30,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-hmi \
     packagegroup-gdp-qt5 \
     packagegroup-gdp-rvi \
+    packagegroup-gdp-dev \
     "
 
 IMAGE_INSTALL_append_rcar-gen2 = " \
