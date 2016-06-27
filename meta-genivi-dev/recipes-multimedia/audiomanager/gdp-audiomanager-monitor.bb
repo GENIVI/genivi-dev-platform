@@ -5,14 +5,13 @@ LICENSE = "MPLv2"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
 DEPENDS = "qtbase qtdeclarative pulseaudio audiomanager"
 
-BRANCH="master"
+SRCREV = "eea896440e5ad49622c7b1a4095f0d63c3465aa2"
 
 SRC_URI = "\
-    git://git.projects.genivi.org/AudioManagerDemo.git;branch=${BRANCH};protocol=http \
+    git://github.com/GENIVI/audio-manager-demo.git \
     file://AudioManager_Monitor.service \
     file://0001-gdp-audio-monitor-include-fix.patch \
     "
-SRCREV = "eea896440e5ad49622c7b1a4095f0d63c3465aa2"
 
 S = "${WORKDIR}/git"
 
