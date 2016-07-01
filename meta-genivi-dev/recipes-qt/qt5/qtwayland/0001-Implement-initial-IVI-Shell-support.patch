@@ -1,7 +1,7 @@
-From e2cfca1dc23f0d90fffe42e920750600eb20d0e8 Mon Sep 17 00:00:00 2001
-From: Manuel Bachmann <manuel.bachmann@open.eurogiciel.org>
-Date: Sun, 7 Sep 2014 08:19:30 +0200
-Subject: [PATCH 1/2] Implement initial IVI-Shell support
+From 3774eb6b9ebae94afcdde0f47c3b826de84ee2a0 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Thu, 30 Jun 2016 23:48:38 +0900
+Subject: [PATCH] Implement initial IVI-Shell support
 
 IVI-Shell provides a shell interface for Weston, which maps the GENIVI
 API (http://www.genivi.org) for In-Vehicle Infotainment.
@@ -107,10 +107,10 @@ index 0000000..b06ae6c
 +
 +</protocol>
 diff --git a/src/client/client.pro b/src/client/client.pro
-index 0c13a4a..8e5a969 100644
+index 59234b1..9c2430e 100644
 --- a/src/client/client.pro
 +++ b/src/client/client.pro
-@@ -52,6 +52,7 @@ WAYLANDCLIENTSOURCES += \
+@@ -42,6 +42,7 @@ WAYLANDCLIENTSOURCES += \
              ../extensions/windowmanager.xml \
              ../3rdparty/protocol/text.xml \
              ../3rdparty/protocol/xdg-shell.xml \
@@ -118,29 +118,29 @@ index 0c13a4a..8e5a969 100644
  
  SOURCES +=  qwaylandintegration.cpp \
              qwaylandnativeinterface.cpp \
-@@ -71,6 +72,8 @@ SOURCES +=  qwaylandintegration.cpp \
+@@ -61,6 +62,8 @@ SOURCES +=  qwaylandintegration.cpp \
              qwaylandwlshellsurface.cpp \
              qwaylandxdgshell.cpp \
              qwaylandxdgsurface.cpp \
 +            qwaylandivishell.cpp \
 +            qwaylandivisurface.cpp \
-             qwaylandextendedoutput.cpp \
              qwaylandextendedsurface.cpp \
              qwaylandsubsurface.cpp \
-@@ -104,6 +107,8 @@ HEADERS +=  qwaylandintegration_p.h \
+             qwaylandtouch.cpp \
+@@ -94,6 +97,8 @@ HEADERS +=  qwaylandintegration_p.h \
              qwaylandwlshellsurface_p.h \
              qwaylandxdgshell_p.h \
              qwaylandxdgsurface_p.h \
 +            qwaylandivishell_p.h \
 +            qwaylandivisurface_p.h \
-             qwaylandextendedoutput_p.h \
              qwaylandextendedsurface_p.h \
              qwaylandsubsurface_p.h \
+             qwaylandtouch_p.h \
 diff --git a/src/client/qwaylanddisplay.cpp b/src/client/qwaylanddisplay.cpp
-index 0bea9af..afb8ed2 100644
+index a6f52bc..7b80c45 100644
 --- a/src/client/qwaylanddisplay.cpp
 +++ b/src/client/qwaylanddisplay.cpp
-@@ -45,6 +45,7 @@
+@@ -44,6 +44,7 @@
  #include "qwaylandxdgshell_p.h"
  #include "qwaylandxdgsurface_p.h"
  #include "qwaylandwlshellsurface_p.h"
@@ -148,7 +148,7 @@ index 0bea9af..afb8ed2 100644
  
  #include "qwaylandwindowmanagerintegration_p.h"
  #include "qwaylandshellintegration_p.h"
-@@ -58,6 +59,7 @@
+@@ -56,6 +57,7 @@
  
  #include <QtWaylandClient/private/qwayland-text.h>
  #include <QtWaylandClient/private/qwayland-xdg-shell.h>
@@ -156,7 +156,7 @@ index 0bea9af..afb8ed2 100644
  
  #include <QtCore/QAbstractEventDispatcher>
  #include <QtGui/private/qguiapplication_p.h>
-@@ -246,6 +248,8 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
+@@ -257,6 +259,8 @@ void QWaylandDisplay::registry_global(uint32_t id, const QString &interface, uin
          mCompositor.init(registry, id, mCompositorVersion);
      } else if (interface == QStringLiteral("wl_shm")) {
          mShm = static_cast<struct wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface,1));
@@ -165,7 +165,7 @@ index 0bea9af..afb8ed2 100644
      } else if (interface == QStringLiteral("xdg_shell")
                 && qEnvironmentVariableIsSet("QT_WAYLAND_USE_XDG_SHELL")) {
          mShellXdg.reset(new QWaylandXdgShell(registry,id));
-@@ -387,6 +391,11 @@ void QWaylandDisplay::setLastInputDevice(QWaylandInputDevice *device, uint32_t s
+@@ -394,6 +398,11 @@ void QWaylandDisplay::setLastInputDevice(QWaylandInputDevice *device, uint32_t s
      mLastInputWindow = win;
  }
  
@@ -178,10 +178,10 @@ index 0bea9af..afb8ed2 100644
  
  QT_END_NAMESPACE
 diff --git a/src/client/qwaylanddisplay_p.h b/src/client/qwaylanddisplay_p.h
-index ee129a5..8604913 100644
+index b53e057..570f954 100644
 --- a/src/client/qwaylanddisplay_p.h
 +++ b/src/client/qwaylanddisplay_p.h
-@@ -45,6 +45,7 @@
+@@ -56,6 +56,7 @@
  #include <QtWaylandClient/private/qwayland-wayland.h>
  #include <QtWaylandClient/private/qwaylandclientexport_p.h>
  #include <QtWaylandClient/private/qwayland-xdg-shell.h>
@@ -189,7 +189,7 @@ index ee129a5..8604913 100644
  
  struct wl_cursor_image;
  
-@@ -61,6 +62,7 @@ namespace QtWayland {
+@@ -72,6 +73,7 @@ namespace QtWayland {
      class qt_surface_extension;
      class wl_text_input_manager;
      class xdg_shell;
@@ -197,15 +197,15 @@ index ee129a5..8604913 100644
  }
  
  namespace QtWaylandClient {
-@@ -77,6 +79,7 @@ class QWaylandWindow;
- class QWaylandEventThread;
+@@ -89,6 +91,7 @@ class QWaylandEventThread;
  class QWaylandIntegration;
  class QWaylandHardwareIntegration;
-+class QWaylandIviShell;
  class QWaylandXdgShell;
++class QWaylandIviShell;
  class QWaylandShellSurface;
  
-@@ -116,6 +119,7 @@ public:
+ typedef void (*RegistryListener)(void *data,
+@@ -129,6 +132,7 @@ public:
  
      QtWayland::wl_shell *shell() { return mShell.data(); }
      QtWayland::xdg_shell *shellXdg();
@@ -213,8 +213,8 @@ index ee129a5..8604913 100644
  
      QList<QWaylandInputDevice *> inputDevices() const { return mInputDevices; }
      QWaylandInputDevice *defaultInputDevice() const;
-@@ -180,6 +184,7 @@ private:
-     QWaylandEventThread *mEventThreadObject;
+@@ -190,6 +194,7 @@ private:
+     struct wl_shm *mShm;
      QScopedPointer<QtWayland::wl_shell> mShell;
      QScopedPointer<QWaylandXdgShell> mShellXdg;
 +    QScopedPointer<QWaylandIviShell> mShellIvi;
