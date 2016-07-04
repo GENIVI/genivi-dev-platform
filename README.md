@@ -97,6 +97,11 @@ URI: git://git.yoctoproject.org/meta-intel
 * branch: jethro
 * revision: 2397181e99d3155c7a00e1756cec92b568d9a9eb
 
+## The Qualcomm Dragonboard 410c depends in addition on: ##
+URI: git://git.yoctoproject.org/meta-qcom
+* branch: jethro
+* revision: 505f490caf66deeb8ae4e8038a2546a8e0c7aca4
+
 Supported Machines
 ------------------
 We aim to support the builds for these machines:
@@ -108,10 +113,10 @@ We aim to support the builds for these machines:
 * Intel Minnowboard MAX (x86-64) - machine: minnowboard
 * Raspberry Pi 2                 - machine: raspberrypi2
 * Raspberry Pi 3                 - machine: raspberrypi3
+* Qualcomm Dragonboard 410c      - machine: dragonboard-410c
 
 Miscellaneous
 -------------
-
 For the QEMU machine, in order to have audio, the emulation should be done like:
 (please adjust to your own paths)
 
