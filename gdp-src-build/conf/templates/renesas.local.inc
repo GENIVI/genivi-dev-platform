@@ -1,12 +1,5 @@
 include local.inc
 
-#DL_DIR ?= "${TOPDIR}/downloads"
-
-# Uncomment following 2 lines to save significant HDD space in your build.
-# FSA has a cross-build dependency on navit so exclude it until fixed upstream.
-#INHERIT += "rm_work"
-#RM_WORK_EXCLUDE += "navit"
-
 # Define the name of multimedia, dtv, graphic test, multimedia-test for bbmask
 BB_MULTIMEDIA_KERNEL_MODULE = "fdpm-kernel-module|mmngr-kernel-module|\
                                mmngrbuf-kernel-module|s3ctl-kernel-module|\
