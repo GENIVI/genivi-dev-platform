@@ -3,7 +3,7 @@
 
 GENIVI Development Platform is the integration and delivery project that brings together all components developed by GENIVI experts and delivers them to developers and users in a consumable way. You can find all the relevant information about GDP through these links:
 * GDP [landing page](https://projects.genivi.org/gdp)
-* GDP [Download page](https://projetcs.genivi.org/gdp/download)
+* GDP [Download page](https://projects.genivi.org/gdp/download)
 * GDP-ivi9 [feature page](https://projects.genivi.org/gdp/gdp9)
 * GDP-ivi9 [ports to target boards](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
 * [GDP In Detail](https://at.projects.genivi.org/wiki/pages/viewpage.action?pageId=11567879) with further information about GDP components.
