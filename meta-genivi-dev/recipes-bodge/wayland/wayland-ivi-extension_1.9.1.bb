@@ -12,7 +12,7 @@ SRC_URI = "git://git.projects.genivi.org/${PN}.git;tag=${PV};protocol=http"
 DEPENDS = "weston"
 S = "${WORKDIR}/git"
 
-inherit cmake autotools
+inherit cmake
 
 EXTRA_OECMAKE := "-DWITH_ILM_INPUT=1"
 
