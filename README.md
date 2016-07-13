@@ -38,8 +38,10 @@ $ mkdir GDP
 $ cd GDP  
 $ git clone http://github.com/genivi/genivi-dev-platform.git  
 $ cd genivi-dev-platform  
-$ source init.sh qemux86-64 (check README for currently supported targets)  
+$ source init.sh qemux86-64 (check below for currently supported targets)  
 $ bitbake genivi-dev-platform  
+
+If you are reading this as a developer you should be familiar with the instructions on the [GDP Master](https://at.projects.genivi.org/wiki/display/GDP/GDP+Master) page.
 
 More specific information on build targets, including build steps and deployment instructions
 for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
@@ -79,7 +81,7 @@ URI: git://github.com/joaohf/meta-erlang.git
 * branch: master
 * revision: 4d7eacc8e6593934ed5b0c8abc3d3e9dc339d849
 
-## The Raspberry Pi 2,3 board depends in addition on: ##
+## The Raspberry Pi 2,3 boards depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
@@ -109,75 +111,6 @@ We aim to support the builds for these machines:
 
 Miscellaneous
 -------------
-When building for raspberrypi2, add the following to your local.conf:
-
-```
-> MACHINE = "raspberrypi2"
-> GPU_MEM = "128"
-> IMAGE_CLASSES = "sdcard_image-rpi-gdp"
-> KERNEL_DEVICETREE_append = " overlays/vc4-kms-v3d-overlay.dtb"
-> PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
-> PREFERRED_VERSION_weston = "1.9.0"
-> PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
-> PREFERRED_VERSION_mesa = "11.%"
-> PREFERRED_PROVIDER_virtual/egl = "mesa"
-> PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
-> PREFERRED_PROVIDER_virtual/libgl = "mesa"
-> PREFERRED_PROVIDER_virtual/mesa = "mesa"
-> PREFERRED_PROVIDER_jpeg = "jpeg"
-```
-
-When building for raspberrypi3, add the following to your local.conf:
-
-```
-> MACHINE = "raspberrypi3"
-> GPU_MEM = "128"
-> IMAGE_CLASSES = "sdcard_image-rpi-gdp"
-> KERNEL_DEVICETREE_append = " overlays/vc4-kms-v3d-overlay.dtb"
-> PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
-> PREFERRED_VERSION_weston = "1.9.0"
-> PREFERRED_VERSION_wayland-ivi-extension = "1.9.1"
-> PREFERRED_VERSION_mesa = "11.%"
-> PREFERRED_PROVIDER_virtual/egl = "mesa"
-> PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
-> PREFERRED_PROVIDER_virtual/libgl = "mesa"
-> PREFERRED_PROVIDER_virtual/mesa = "mesa"
-> PREFERRED_PROVIDER_jpeg = "jpeg"
-```
-
-When building for koelsch, add the following to your local.conf:
-
-```
-> MACHINE = "koelsch"
-> USE_GSTREAMER_1_00="1"
-> LICENSE_FLAGS_WHITELIST = "commercial"
-> MACHINE_FEATURES_append = " sgx"
-> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
-> PREFERRED_PROVIDER_virtual/libgles1 = ""
-> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
-> PREFERRED_PROVIDER_virtual/egl = "libegl"
-> PREFERRED_PROVIDER_virtual/libgl = ""
-> PREFERRED_PROVIDER_virtual/mesa = ""
-> PREFERRED_PROVIDER_libgbm = "libgbm"
-> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-```
-
-When building for porter, add the following to your local.conf:
-
-```
-> MACHINE = "porter"
-> LICENSE_FLAGS_WHITELIST = "commercial"
-> SDKIMAGE_FEATURES_append = " staticdev-pkgs"
-> MACHINE_FEATURES_append = " sgx"
-> MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
-> PREFERRED_PROVIDER_virtual/libgles1 = ""
-> PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
-> PREFERRED_PROVIDER_virtual/egl = "libegl"
-> PREFERRED_PROVIDER_virtual/libgl = ""
-> PREFERRED_PROVIDER_virtual/mesa = ""
-> PREFERRED_PROVIDER_libgbm = "libgbm"
-> PREFERRED_PROVIDER_libgbm-dev = "libgbm"
-```
 
 For the QEMU machine, in order to have audio, the emulation should be done like:
 (please adjust to your own paths)
