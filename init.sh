@@ -6,7 +6,7 @@ choice=$1
 
 echo "You selected target $choice"
 
-declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk")
+declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
 
 for i in ${targets[@]}; do
    if [[ ${i} == $choice ]] ; then
@@ -33,7 +33,7 @@ echo "Local & bblayers conf set for $machine"
 # bsp submodule layer
 declare -A bsparr
 
-bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["porter"]="meta-renesas" ["silk"]="meta-renesas")
+bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["porter"]="meta-renesas" ["silk"]="meta-renesas" ["dragonboard-410c"]="meta-qcom" )
 
 modules=($(git submodule | awk '{ print $2 }'))
 for i in ${bsparr[@]}; do

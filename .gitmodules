@@ -35,3 +35,6 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
+[submodule "meta-qcom"]
+    path = meta-qcom
+    url = git://git.yoctoproject.org/meta-qcom
