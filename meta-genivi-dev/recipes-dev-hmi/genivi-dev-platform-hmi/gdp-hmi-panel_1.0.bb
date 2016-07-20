@@ -14,6 +14,8 @@ SRC_URI_append_qemux86-64 ="\
     file://0003-panel-Make-Graphic-working-on-Qemu-machine.patch \
     "
 
+SRC_URI_append_dragonboard-410c = " file://0001-Fix-broken-resolution-issue.patch;patchdir=${WORKDIR}/git"
+
 S = "${WORKDIR}/git/app/gdp-hmi-panel"
 
 inherit qmake5

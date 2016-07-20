@@ -21,6 +21,8 @@ SRC_URI_append_qemux86-64 ="\
     file://0006-Launcher2-Simplify-the-OpenGLes-part.patch \
     "
 
+SRC_URI_append_dragonboard-410c = " file://0001-Fix-broken-resolution-issue.patch;patchdir=${WORKDIR}/git"
+
 S = "${WORKDIR}/git/app/gdp-hmi-launcher2"
 
 inherit qmake5

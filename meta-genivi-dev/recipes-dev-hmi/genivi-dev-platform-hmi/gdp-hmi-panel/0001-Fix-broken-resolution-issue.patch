@@ -1,0 +1,26 @@
+From e260a77176040fe3edc85f3d25c335272c9844d8 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Mon, 4 Jul 2016 13:38:54 +0900
+Subject: [PATCH] Fix broken resolution issue
+
+---
+ app/gdp-hmi-panel/main.cpp      | 3 +++
+ 1 files changed, 3 insertions(+)
+
+diff --git a/app/gdp-hmi-panel/main.cpp b/app/gdp-hmi-panel/main.cpp
+index c274931..c9c8e6b 100644
+--- a/app/gdp-hmi-panel/main.cpp
++++ b/app/gdp-hmi-panel/main.cpp
+@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
+     GDPPanelClass panel;
+     QObject::connect(object, SIGNAL(homeSignal()), &panel, SLOT(homeSlot()));
+ 
++    view.setFlags(Qt::FramelessWindowHint);
++    view.setColor(Qt::transparent);
++
+     view.setProperty("IVI-Surface-ID", GDP_PANEL_SURFACE_ID);
+     view.show();
+     return app.exec();
+-- 
+1.9.1
+

@@ -1,0 +1,24 @@
+From e260a77176040fe3edc85f3d25c335272c9844d8 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Mon, 4 Jul 2016 13:38:54 +0900
+Subject: [PATCH] Fix broken resolution issue
+
+---
+ app/gdp-hmi-launcher/main.cpp   | 1 -
+ 1 files changed, 1 deletions(-)
+
+diff --git a/app/gdp-hmi-launcher/main.cpp b/app/gdp-hmi-launcher/main.cpp
+index 412b094..1075240 100644
+--- a/app/gdp-hmi-launcher/main.cpp
++++ b/app/gdp-hmi-launcher/main.cpp
+@@ -28,7 +28,6 @@
+ int main(int argc, char *argv[])
+ {
+     setenv("QT_QPA_PLATFORM", "wayland", 1); // force to use wayland plugin
+-    setenv("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1", 1);
+ 
+     sd_journal_print(LOG_DEBUG, "GDP: launcher surface (id=%u)",
+         GDP_LAUNCHER_SURFACE_ID);
+-- 
+1.9.1
+
