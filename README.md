@@ -49,8 +49,8 @@ for each supported target, check [here](https://at.projects.genivi.org/wiki/disp
 Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
-* branch:   master
-* revision: 9d72380c1d50d0c3469b85c3a43fe612b5ee1dd9
+* branch:   11.0
+* revision: ac2477469052e8c94c751a63781ee6d969e027f0
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
@@ -58,12 +58,12 @@ URI: https://github.com/meta-qt5/meta-qt5.git
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems
-* branch:   jethro
-* revision: ad6133a2e95f4b83b6b3ea413598e2cd5fb3fd90
+* branch:   krogoth
+* revision: 247b1267bbe95719cd4877d2d3cfbaf2a2f4865a
 
 URI: git://git.yoctoproject.org/poky
-* branch:   jethro
-* revision: fc45deac89ef63ca1c44e763c38ced7dfd72cbe1
+* branch:   krogoth
+* revision: 98c57bb512ea6790db8604fcf0b88c81651d2ab4
 
 URI: git://github.com/jmesmon/meta-rust.git
 * branch: master
