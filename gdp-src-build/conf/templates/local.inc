@@ -2,8 +2,6 @@
 
 DISTRO ?= "poky-ivi-systemd"
 USE_GSTREAMER_1_00 ?= "1"
-PREFERRED_VERSION_weston ?= "1.9.0"
-PREFERRED_VERSION_wayland-ivi-extension ?= "1.9.1"
 PACKAGE_CLASSES ?= "package_rpm package_ipk"
 EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
 USER_CLASSES ?= "buildstats image-mklibs image-prelink"
