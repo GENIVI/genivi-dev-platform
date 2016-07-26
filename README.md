@@ -99,8 +99,8 @@ URI: git://git.yoctoproject.org/meta-intel
 
 ## The Qualcomm Dragonboard 410c depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-qcom
-* branch: jethro
-* revision: 505f490caf66deeb8ae4e8038a2546a8e0c7aca4
+* branch: krogoth
+* revision: 19ff1853a764ee1014f4e7a295e030b6ddc10612
 
 Supported Machines
 ------------------
