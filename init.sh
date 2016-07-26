@@ -25,10 +25,20 @@ if test -z "$machine" ; then
    unset machine choice
    return
 else
-   if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
+    if [[ "$machine" != "qemux86-64" ]] ; then
+       echo "However for the current GDP-11 beta release only the qemux86-64 board is supported."
+       echo "You can either "
+       echo " re-run with the qemux86-64 target"
+       echo " or get the gdp-ivi9 branch:"
+       echo "   git checkout origin/gdp-ivi9 and then re-run "
+       echo "   source init.sh $machine"
+       echo " or wait for the GDP-11 RC1 due in August."
+       return
+    fi
+    if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
       echo "Building GDP for DragonBoard 410c requires Qualcomm EULA acceptance."
       echo "See http://git.yoctoproject.org/cgit/cgit.cgi/meta-qcom/tree/conf/EULA for details."
-      echo "Please rerun init.sh with additional 'accept-eula' argument"
+      echo "Please re-run init.sh with additional 'accept-eula' argument"
       unset machine choice
       return
    fi

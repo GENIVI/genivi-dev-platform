@@ -1,15 +1,12 @@
 # GENIVI Development Platform
 ========================
 
-GENIVI Development Platform is the integration and delivery project that brings together all components developed by GENIVI experts and delivers them to developers and users in a consumable way. You can find all the relevant information about GDP through these links:
-* GDP [landing page](https://projects.genivi.org/gdp)
-* GDP [Download page](https://projects.genivi.org/gdp/download)
-* GDP-ivi9 [feature page](https://projects.genivi.org/gdp/gdp9)
-* GDP-ivi9 [ports to target boards](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
-* [GDP In Detail](https://at.projects.genivi.org/wiki/pages/viewpage.action?pageId=11567879) with further information about GDP components.
-* Information about how [GDP is managed](https://at.projects.genivi.org/wiki/display/GDP/GENIVI+Development+Platform+management)
-* GDP [Roadmap](https://projects.genivi.org/gdp/roadmap)
-* [GENIVI on GitHub](https://www.github.com/GENIVI)
+GENIVI Development Platform is the integration and delivery project that brings together all components developed by GENIVI experts and provides them to developers and users in a consumable way. You can find all the relevant information about GDP in the wiki:
+GDP [landing page](https://projects.genivi.org/gdp): GDP project home page.
+GDP [Download page](https://projects.genivi.org/gdp/download): download GDP binaries, metadata and artifacts.
+GDP [Master](https://projects.genivi.org/gdp/master): build GDP from scratch.
+GDP [releases](https://projects.genivi.org/gdp/releases): information about GDP releases, target boards and peripherals.
+GDP [management](https://projects.genivi.org/gdp/management): policies and other processes associated to the GDP project.
 
 ## Contribute to GDP
 ----------------------------
