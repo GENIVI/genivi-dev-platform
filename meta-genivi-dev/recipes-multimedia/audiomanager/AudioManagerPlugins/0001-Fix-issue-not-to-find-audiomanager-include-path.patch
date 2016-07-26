@@ -1,0 +1,39 @@
+From c8e93fbc4100150432e8eeccc83fb21acb69df79 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Sat, 23 Jul 2016 15:44:45 +0900
+Subject: [PATCH] Fix issue not to find audiomanager include path
+
+---
+ PluginControlInterfacePulse/CMakeLists.txt | 2 +-
+ PluginRoutingInterfacePulse/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/PluginControlInterfacePulse/CMakeLists.txt b/PluginControlInterfacePulse/CMakeLists.txt
+index 7f772e6..7d77ef3 100644
+--- a/PluginControlInterfacePulse/CMakeLists.txt
++++ b/PluginControlInterfacePulse/CMakeLists.txt
+@@ -36,7 +36,7 @@ set(DOC_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/doc/ControlPlugin)
+ set(INCLUDE_FOLDER "include")
+ SET(LIB_INSTALL_SUFFIX "audiomanager")
+ 
+-FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include)
++FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include/audiomanager)
+ 
+ if(DEFINED AUDIO_INCLUDE_FOLDER)
+ 	message(STATUS "Found AudioManager include: ${AUDIO_INCLUDE_FOLDER}")
+diff --git a/PluginRoutingInterfacePulse/CMakeLists.txt b/PluginRoutingInterfacePulse/CMakeLists.txt
+index a6ee140..5683b82 100644
+--- a/PluginRoutingInterfacePulse/CMakeLists.txt
++++ b/PluginRoutingInterfacePulse/CMakeLists.txt
+@@ -39,7 +39,7 @@ set(INCLUDES_FOLDER "include")
+ SET(LIB_INSTALL_SUFFIX "audiomanager")
+ 
+ FIND_PACKAGE(DBUS REQUIRED)
+-FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include)
++FIND_PATH(AUDIO_INCLUDE_FOLDER audiomanagertypes.h /usr/include/audiomanager)
+ 
+ if(DEFINED AUDIO_INCLUDE_FOLDER)
+         message(STATUS "Found AudioManager include: ${AUDIO_INCLUDE_FOLDER}")
+-- 
+1.9.1
+
