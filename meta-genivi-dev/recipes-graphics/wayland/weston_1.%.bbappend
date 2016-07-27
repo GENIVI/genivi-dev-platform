@@ -8,7 +8,6 @@ SRC_URI_append = "\
     file://start_am-poc.sh \
     file://start_browser-poc.sh \
     file://weston.ini \
-	file://0001-Fix-issue-not-to-apply-pam-definition.patch \
 "
 
 inherit systemd
