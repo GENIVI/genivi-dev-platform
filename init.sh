@@ -22,10 +22,11 @@ done
 if test -z "$machine" ; then
    echo "An invalid target name was given of $choice, available targets are:"
    printf '%s\n' "${targets[@]}"
-   unset machine choice
+   unset machine choice eula
+   echo "Usage: source init.sh target [accept-eula] [-f]"
    return
 else
-    if [[ "$machine" != "qemux86-64" ]] ; then
+    if [[ "$machine" != "qemux86-64" ]] && [[ ${!#} != "-f" ]]; then
        echo "However for the current GDP-11 beta release only the qemux86-64 board is supported."
        echo "You can either "
        echo " re-run with the qemux86-64 target"
@@ -33,6 +34,7 @@ else
        echo "   git checkout origin/gdp-ivi9 and then re-run "
        echo "   source init.sh $machine"
        echo " or wait for the GDP-11 RC1 due in August."
+       unset machine choice eula
        return
     fi
     if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
