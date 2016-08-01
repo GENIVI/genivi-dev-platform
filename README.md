@@ -4,8 +4,9 @@ GENIVI Development Platform
 GENIVI Development Platform is the integration and delivery project that brings together all components developed by GENIVI experts and provides them to developers and users in a consumable way. You can find all the relevant information about GDP in the wiki:
 * GDP [landing page](https://projects.genivi.org/gdp): GDP project home page.
 * GDP [Download page](https://projects.genivi.org/gdp/download): download GDP binaries, metadata and artifacts.
-* GDP [Master](https://projects.genivi.org/gdp/master): build GDP from scratch.
+* GDP [GDP-11 Beta](https://projects.genivi.org/gdp/gdp11): build GDP from scratch.
 * GDP [releases](https://projects.genivi.org/gdp/releases): information about GDP releases, target boards and peripherals.
+* GDP [QEMU86 x64](https://at.projects.genivi.org/wiki/display/GDP/QEMU+x86_64+Hardware+Setup+and+Software+Installation) QEMU86-64 building and running the pre-built downloaded image
 * GDP [management](https://projects.genivi.org/gdp/management): policies and other processes associated to the GDP project.
 
 Contribute to GDP
@@ -27,22 +28,19 @@ genivi-dev-platform.git usage
 
 This project uses submodules to pull in layer dependencies.
 It is advised to avoid using the --recursive option for the
-initial clone. 'master' is the default branch. Previous release
-'maintenance' branches are also available. Note certain tags
-may require a different set of usage instructions, please refer
-to the relative README.
+initial clone. To use the beta release you need to select the gdp-11-beta branch
 
-    git clone <thisrepo> -b <branch>
+    git clone <thisrepo> -b gdp-11-beta
 
+The current only supported target in the beta is qemux86-64
 To initiate the build environment:
 
-    source init.sh $target
+    source init.sh qemux86-64
 
-The current supported targets are qemux86-64, porter, raspberrypi2, minnowboard, silk.
-Currently this requires the use of the bash shell
+Currently this requires the use of the bash shell.
 
-The `init.sh` script handles the the `$target` specific bitbake configuration.
-The `$target` templates can be found in gdp-src-build/templates, as well as common
+The `init.sh` script handles the the qemux86-64 specific bitbake configuration.
+The qemux86-64 templates can be found in gdp-src-build/templates, as well as common
 configuration `.inc` files. `init.sh` also handles the relevant git submodule
 initiation.
 
