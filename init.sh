@@ -11,6 +11,8 @@ fi
 echo "You selected target $choice"
 
 declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
+declare -a supported=("qemux86-64" "minnowboard")
+declare -a variables=("choice" "eula" "machine" "modules" "bsp" "bsparr" "supported" "targets" "variables")
 
 for i in ${targets[@]}; do
    if [[ ${i} == $choice ]] ; then
@@ -19,31 +21,34 @@ for i in ${targets[@]}; do
       break
    fi
 done
+
 if test -z "$machine" ; then
    echo "An invalid target name was given of $choice, available targets are:"
    printf '%s\n' "${targets[@]}"
-   unset machine choice eula
+   unset "${variables[@]}"
    echo "Usage: source init.sh target [accept-eula] [-f]"
    return
 else
-    if [[ "$machine" != "qemux86-64" ]] && [[ ${!#} != "-f" ]]; then
-       echo "However for the current GDP-11 beta release only the qemux86-64 board is supported."
-       echo "You can either "
-       echo " re-run with the qemux86-64 target"
-       echo " or get the gdp-ivi9 branch:"
-       echo "   git checkout origin/gdp-ivi9 and then re-run "
-       echo "   source init.sh $machine"
-       echo " or wait for the GDP-11 RC1 due in August."
-       unset machine choice eula
-       return
-    fi
-    if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
-      echo "Building GDP for DragonBoard 410c requires Qualcomm EULA acceptance."
-      echo "See http://git.yoctoproject.org/cgit/cgit.cgi/meta-qcom/tree/conf/EULA for details."
-      echo "Please re-run init.sh with additional 'accept-eula' argument"
-      unset machine choice
+   if [[ ! ${supported[@]} =~ "$machine" ]] && [[ ${!#} != "-f" ]]; then
+      echo "However currently, only the following targets are officialy supported:"
+      printf '%s\n' "${supported[@]}"
+      echo "You can either "
+      echo "re-run with a supported target (or override this check with -f)"
+      echo "or get the gdp-ivi9 branch:"
+      echo "   git checkout origin/gdp-ivi9 and then re-run"
+      echo "   source init.sh $machine"
+      echo "Further target support is scheduled for the GDP11 RC1 release"
+      unset "${variables[@]}"
       return
    fi
+fi
+
+if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
+   echo "Building GDP for DragonBoard 410c requires Qualcomm EULA acceptance."
+   echo "See http://git.yoctoproject.org/cgit/cgit.cgi/meta-qcom/tree/conf/EULA for details."
+   echo "Please re-run init.sh with additional 'accept-eula' argument"
+   unset "${variables[@]}"
+   return
 fi
 
 echo "Generating bitbake configuration files for $machine"
@@ -84,7 +89,7 @@ git submodule sync "${modules[@]}"
 # is better (because they are not that user friendly otherwise...))
 git submodule update "${modules[@]}"
 
-unset machine choice modules bsp bsparr eula
+unset "${variables[@]}"
 
 source poky/oe-init-build-env gdp-src-build
 
