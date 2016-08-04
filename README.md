@@ -94,8 +94,8 @@ URI: git://github.com/slawr/meta-renesas.git
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
-* branch: jethro
-* revision: 2397181e99d3155c7a00e1756cec92b568d9a9eb
+* branch: krogoth
+* revision: b8c199201ffe026485a14e1fcfc398e2b3551512
 
 ## The Qualcomm Dragonboard 410c depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-qcom
