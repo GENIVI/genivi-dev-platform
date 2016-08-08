@@ -85,7 +85,7 @@ URI: git://github.com/joaohf/meta-erlang.git
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
-* revision: 9912d38e97671704822d1aa05312a0439cb650d3
+* revision: 2745399f75d7564fcc586d0365ff73be47849d0e
 
 ## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
