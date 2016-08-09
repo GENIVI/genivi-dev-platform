@@ -11,7 +11,7 @@ fi
 echo "You selected target $choice"
 
 declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
-declare -a supported=("qemux86-64" "minnowboard")
+declare -a supported=("qemux86-64" "minnowboard" "raspberrypi2")
 declare -a variables=("choice" "eula" "machine" "modules" "bsp" "bsparr" "supported" "targets" "variables")
 
 for i in ${targets[@]}; do
@@ -30,7 +30,7 @@ if test -z "$machine" ; then
    return
 else
    if [[ ! ${supported[@]} =~ "$machine" ]] && [[ ${!#} != "-f" ]]; then
-      echo "However currently, only the following targets are officialy supported:"
+      echo "However currently, only the following targets are officially supported:"
       printf '%s\n' "${supported[@]}"
       echo "You can either "
       echo "re-run with a supported target (or override this check with -f)"
