@@ -6,6 +6,10 @@ SRC_URI_append = " file://client_conf.patch \
                    file://pulseaudio_user.service \
 "
 
+do_install_append_intel-corei7-64() {
+    sed -i -e "40s/device=hw:0,0/device=hw:0,3/" ${WORKDIR}/am_poc.pa
+}
+
 do_install_append() {
     cp ${WORKDIR}/am_poc.pa ${D}/etc/pulse
     mkdir -p ${D}//etc/systemd/user
