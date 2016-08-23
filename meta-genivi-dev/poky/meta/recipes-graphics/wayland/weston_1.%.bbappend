@@ -18,6 +18,14 @@ RDEPENDS_${PN}_append_qemux86 = " mesa-megadriver"
 RDEPENDS_${PN}_append_qemux86-64 = " mesa-megadriver"
 RDEPENDS_${PN}_append_vexpressa9 = " mesa-megadriver"
 
+EXTRA_OECONF_remove_qemux86-64 = "\
+    WESTON_NATIVE_BACKEND=fbdev-backend.so \
+"
+
+EXTRA_OECONF_append_qemux86-64 = "\
+    WESTON_NATIVE_BACKEND=drm-backend.so \
+"
+
 EXTRA_OECONF_append_vexpressa9 = " WESTON_NATIVE_BACKEND=fbdev-backend.so"
 
 EXTRA_OECONF_append_rpi = "\
