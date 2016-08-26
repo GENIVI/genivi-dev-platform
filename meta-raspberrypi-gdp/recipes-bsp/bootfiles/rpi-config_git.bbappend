@@ -9,7 +9,3 @@ do_deploy_append() {
 }
 
 ENABLE_UART_raspberrypi3 = "1"
-
-do_deploy_append_raspberrypi3() {
-    echo "dtoverlay=pi3-miniuart-bt-overlay" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
-}
