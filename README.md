@@ -44,13 +44,13 @@ $ bitbake genivi-dev-platform
 If you are reading this as a developer you should be familiar with the instructions on the [GDP Master](https://at.projects.genivi.org/wiki/display/GDP/GDP+Master) page.
 
 More specific information on build targets, including build steps and deployment instructions
-for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+target+boards%2C+virtualization+and+peripherals)
+for each supported target, check [here](https://at.projects.genivi.org/wiki/display/GDP/GDP+releases)
 
 Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
 * branch:   11.0
-* revision: ac2477469052e8c94c751a63781ee6d969e027f0
+* revision: 4248ecf683a27cbb75fa584e63cd786f18ad0013
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
@@ -63,7 +63,7 @@ URI: git://git.openembedded.org/meta-openembedded
 
 URI: git://git.yoctoproject.org/poky
 * branch:   krogoth
-* revision: 98c57bb512ea6790db8604fcf0b88c81651d2ab4
+* revision: 12eb72ee3b02f826a156ff4e396c770f2b93571e
 
 URI: git://github.com/jmesmon/meta-rust.git
 * branch: master
