@@ -1,0 +1,33 @@
+From a62b5180444055b05b9723f125fb5312d514e733 Mon Sep 17 00:00:00 2001
+From: a629114 <a629114@aw.atos.net>
+Date: Thu, 1 Sep 2016 16:39:35 +0200
+Subject: [PATCH 2/2] Correct textfield on RPI
+
+---
+ src/controls/TextField.qml | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/src/controls/TextField.qml b/src/controls/TextField.qml
+index c5d5d2b..fbe5581 100644
+--- a/src/controls/TextField.qml
++++ b/src/controls/TextField.qml
+@@ -629,7 +629,6 @@ Control {
+         color: __panel ? __panel.placeholderTextColor : "darkgray"
+         clip: contentWidth > width;
+         elide: Text.ElideRight
+-        renderType: __style ? __style.renderType : Text.NativeRendering
+     }
+ 
+     TextInputWithHandles {
+@@ -656,8 +655,6 @@ Control {
+         color: __panel ? __panel.textColor : "darkgray"
+         clip: contentWidth > width
+ 
+-        renderType: __style ? __style.renderType : Text.NativeRendering
+-
+         Keys.forwardTo: textfield
+ 
+         EnterKey.type: control.EnterKey.type
+-- 
+2.1.4
+
