@@ -11,7 +11,7 @@ fi
 echo "You selected target $choice"
 
 declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
-declare -a supported=("qemux86-64" "minnowboard" "raspberrypi2" "raspberrypi3" "dragonboard-410c")
+declare -a supported=("qemux86-64" "porter" "minnowboard" "raspberrypi2" "raspberrypi3" "dragonboard-410c" "silk")
 declare -a variables=("choice" "eula" "machine" "modules" "bsp" "bsparr" "supported" "targets" "variables")
 
 for i in ${targets[@]}; do
