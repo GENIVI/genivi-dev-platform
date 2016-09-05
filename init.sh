@@ -37,7 +37,6 @@ else
       echo "or get the gdp-ivi9 branch:"
       echo "   git checkout origin/gdp-ivi9 and then re-run"
       echo "   source init.sh $machine"
-      echo "Further target support is scheduled for the GDP11 RC1 release"
       unset "${variables[@]}"
       return
    fi
