@@ -19,6 +19,8 @@ SRC_URI += "file://amb_allow_sessionbus.patch \
             file://ambd.service \
             "
 
+EXTRA_OECMAKE += "-Denable_icecc=OFF"
+
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE_${PN} = "ambd.service"
 
