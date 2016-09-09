@@ -7,9 +7,7 @@ BB_MULTIMEDIA_KERNEL_MODULE = "fdpm-kernel-module|mmngr-kernel-module|\
 BB_MULTIMEDIA_USER_MODULE = "fdpm-user-module|mmngr-user-module|\
                              mmngrbuf-user-module|omx-user-module|\
 							 s3ctl-user-module|vspm-user-module|libmemcpy"
-BB_MULTIMEDIA_TEST_MODULE = "fdpm-tp-user-module|mmngr-tp-user-module|\
-                             mmngrbuf-tp-user-module|s3ctl-tp-user-module|\
-							 vspm-tp-user-module"
+BB_MULTIMEDIA_TEST_MODULE = "fdpm-tp-user-module|mmngr-tp-user-module|mmngrbuf-tp-user-module|s3ctl-tp-user-module|vspm-tp-user-module"
 BB_GST_PLUGINS = "meta-renesas/meta-rcar-gen2/recipes-multimedia/gstreamer"
 MULTIMEDIA_BB = "${BB_MULTIMEDIA_KERNEL_MODULE}|${BB_MULTIMEDIA_USER_MODULE}|\
                  ${BB_MULTIMEDIA_TEST_MODULE}|${BB_GST_PLUGINS}"
