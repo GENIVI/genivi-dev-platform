@@ -87,10 +87,9 @@ URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
 * revision: 2745399f75d7564fcc586d0365ff73be47849d0e
 
-## The Renesas R-Car Gen2 Koelsch & Porter boards depend in addition on: ##
+## The Renesas R-Car Gen2 Silk & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
-* branch:   stevel/genivi-10
-* revision: f14dc3725cab24387f9f3acd8e5f6a500b42a73a
+* revision: b22c42eb736bef0253667094a457d74b7e630fa3
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
