@@ -13,6 +13,10 @@ LICENSE_FLAGS_WHITELIST  += "commercial"
 # Flag for Faytech Touch Monitor support, '1' will enable kernel driver patch
 #USE_FAYTECH_MONITOR = "1"
 
+PREFERRED_VERSION_audiomanager ?= "7.0"
+PREFERRED_VERSION_audiomanagerplugins ?= "7.0"
+
+
 # Disk Space Monitoring during the build
 #
 # Monitor the disk space during the build. If there is less that 1GB of space or less
