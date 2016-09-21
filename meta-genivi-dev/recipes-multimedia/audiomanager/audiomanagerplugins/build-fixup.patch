@@ -1,0 +1,245 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index aa885e5..70313f7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -54,7 +54,7 @@ IF(WITH_ROUTING_INTERFACE_CAPI)
+ ENDIF(WITH_ROUTING_INTERFACE_CAPI)
+ 
+ IF(WITH_ROUTING_INTERFACE_DBUS) 
+-		add_subdirectory(PluginRoutingInterfaceDbus)
++		add_subdirectory(PluginRoutingInterfaceDBus)
+ ENDIF(WITH_ROUTING_INTERFACE_DBUS) 
+         
+ add_custom_target(plugins-install
+diff --git a/PluginCommandInterfaceCAPI/cmake/FindAudioManager.cmake b/PluginCommandInterfaceCAPI/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginCommandInterfaceCAPI/cmake/FindAudioManager.cmake
++++ b/PluginCommandInterfaceCAPI/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/PluginCommandInterfaceCAPI/include/CAmCommandSenderCommon.h b/PluginCommandInterfaceCAPI/include/CAmCommandSenderCommon.h
+index 74af7ae..a12e65f 100644
+--- a/PluginCommandInterfaceCAPI/include/CAmCommandSenderCommon.h
++++ b/PluginCommandInterfaceCAPI/include/CAmCommandSenderCommon.h
+@@ -20,11 +20,11 @@
+ 
+ #include <memory>
+ #include "audiomanagertypes.h"
+-#include <v1_0/org/genivi/am/audiomanagertypes/__Anonymous__.hpp>
++#include <v1/org/genivi/am/audiomanagertypes/__Anonymous__.hpp>
+ 
+ using namespace am;
+ 
+-#define  am_types v1_0::org::genivi::am::audiomanagertypes::__Anonymous__
++#define  am_types v1::org::genivi::am::audiomanagertypes::__Anonymous__
+ 
+ /**
+  * The following functions convert the basics AudiomManager types from/to CommonAPI types.
+diff --git a/PluginCommandInterfaceCAPI/include/CAmCommandSenderService.h b/PluginCommandInterfaceCAPI/include/CAmCommandSenderService.h
+index 70c1397..73bad65 100644
+--- a/PluginCommandInterfaceCAPI/include/CAmCommandSenderService.h
++++ b/PluginCommandInterfaceCAPI/include/CAmCommandSenderService.h
+@@ -18,7 +18,7 @@
+ #ifndef CAMCOMMANDSENDERSERVICE_H_
+ #define CAMCOMMANDSENDERSERVICE_H_
+ 
+-#include <v1_0/org/genivi/am/commandinterface/CommandControlStubDefault.hpp>
++#include <v1/org/genivi/am/commandinterface/CommandControlStubDefault.hpp>
+ #include "CAmCommandSenderCommon.h"
+ #include "IAmCommand.h"
+ 
+@@ -30,7 +30,7 @@ namespace am {
+ /**
+  * A concrete stub implementation used by the command sender plug-in.
+  */
+-class CAmCommandSenderService: public v1_0::org::genivi::am::commandinterface::CommandControlStubDefault {
++class CAmCommandSenderService: public v1::org::genivi::am::commandinterface::CommandControlStubDefault {
+ 	IAmCommandReceive* mpIAmCommandReceive;
+ public:
+ 	CAmCommandSenderService();
+diff --git a/PluginCommandInterfaceCAPI/test/CAmCommandSenderCAPITest.h b/PluginCommandInterfaceCAPI/test/CAmCommandSenderCAPITest.h
+index 1479d85..1c72fac 100644
+--- a/PluginCommandInterfaceCAPI/test/CAmCommandSenderCAPITest.h
++++ b/PluginCommandInterfaceCAPI/test/CAmCommandSenderCAPITest.h
+@@ -24,10 +24,10 @@
+ #include "CAmTestCAPIWrapper.h"
+ #include "../include/CAmCommandSenderCAPI.h"
+ #include "MockIAmCommandReceive.h"
+-#include <v1_0/org/genivi/am/commandinterface/CommandControlProxy.hpp>
++#include <v1/org/genivi/am/commandinterface/CommandControlProxy.hpp>
+ 
+ #define UNIT_TEST 1
+-#define am_commandcontrol v1_0::org::genivi::am::commandinterface
++#define am_commandcontrol v1::org::genivi::am::commandinterface
+ 
+ using namespace testing;
+ 
+diff --git a/PluginCommandInterfaceCAPI/test/MockNotificationsClient.h b/PluginCommandInterfaceCAPI/test/MockNotificationsClient.h
+index ea9f904..d716a2b 100644
+--- a/PluginCommandInterfaceCAPI/test/MockNotificationsClient.h
++++ b/PluginCommandInterfaceCAPI/test/MockNotificationsClient.h
+@@ -22,7 +22,7 @@
+ #include "gtest/gtest.h"
+ #include "gmock/gmock.h"
+ #include "../include/CAmCommandSenderCommon.h"
+-#include <v1_0/org/genivi/am/commandinterface/CommandControlProxy.hpp>
++#include <v1/org/genivi/am/commandinterface/CommandControlProxy.hpp>
+ 
+ 
+ namespace am {
+diff --git a/PluginCommandInterfaceDbus/cmake/FindAudioManager.cmake b/PluginCommandInterfaceDbus/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginCommandInterfaceDbus/cmake/FindAudioManager.cmake
++++ b/PluginCommandInterfaceDbus/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/PluginControlInterface/cmake/FindAudioManager.cmake b/PluginControlInterface/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginControlInterface/cmake/FindAudioManager.cmake
++++ b/PluginControlInterface/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/PluginRoutingInterfaceAsync/cmake/FindAudioManager.cmake b/PluginRoutingInterfaceAsync/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginRoutingInterfaceAsync/cmake/FindAudioManager.cmake
++++ b/PluginRoutingInterfaceAsync/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/PluginRoutingInterfaceCAPI/cmake/FindAudioManager.cmake b/PluginRoutingInterfaceCAPI/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginRoutingInterfaceCAPI/cmake/FindAudioManager.cmake
++++ b/PluginRoutingInterfaceCAPI/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/PluginRoutingInterfaceCAPI/include/CAmLookupData.h b/PluginRoutingInterfaceCAPI/include/CAmLookupData.h
+index 773271f..6c1cd8d 100644
+--- a/PluginRoutingInterfaceCAPI/include/CAmLookupData.h
++++ b/PluginRoutingInterfaceCAPI/include/CAmLookupData.h
+@@ -25,7 +25,7 @@
+ #include "audiomanagertypes.h"
+ #include "IAmRouting.h"
+ #include "CAmRoutingSenderCommon.h"
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
+ 
+ #ifdef UNIT_TEST
+ #include "../test/IAmRoutingSenderBackdoor.h" //we need this for the unit test
+diff --git a/PluginRoutingInterfaceCAPI/include/CAmRoutingSenderCommon.h b/PluginRoutingInterfaceCAPI/include/CAmRoutingSenderCommon.h
+index c7399b6..faf6687 100644
+--- a/PluginRoutingInterfaceCAPI/include/CAmRoutingSenderCommon.h
++++ b/PluginRoutingInterfaceCAPI/include/CAmRoutingSenderCommon.h
+@@ -20,12 +20,12 @@
+ 
+ #include <memory>
+ #include "audiomanagertypes.h"
+-#include <v1_0/org/genivi/am/audiomanagertypes/__Anonymous__.hpp>
++#include <v1/org/genivi/am/audiomanagertypes/__Anonymous__.hpp>
+ 
+ using namespace am;
+ 
+-#define am_types v1_0::org::genivi::am::audiomanagertypes::__Anonymous__
+-#define am_routing_interface v0_1::org::genivi::am::routinginterface
++#define am_types v1::org::genivi::am::audiomanagertypes::__Anonymous__
++#define am_routing_interface v0::org::genivi::am::routinginterface
+ 
+ /**
+  * Utility functions
+diff --git a/PluginRoutingInterfaceCAPI/include/CAmRoutingService.h b/PluginRoutingInterfaceCAPI/include/CAmRoutingService.h
+index b545d8d..9a95111 100644
+--- a/PluginRoutingInterfaceCAPI/include/CAmRoutingService.h
++++ b/PluginRoutingInterfaceCAPI/include/CAmRoutingService.h
+@@ -19,7 +19,7 @@
+ #define CAMROUTINGSERVICE_H_
+ 
+ 
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlObserverStubDefault.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlObserverStubDefault.hpp>
+ #include "IAmRouting.h"
+ #include "CAmCommonAPIWrapper.h"
+ #include "CAmLookupData.h"
+diff --git a/PluginRoutingInterfaceCAPI/test/CAmRoutingInterfaceCAPITests.h b/PluginRoutingInterfaceCAPI/test/CAmRoutingInterfaceCAPITests.h
+index a3ea056..a000fe5 100644
+--- a/PluginRoutingInterfaceCAPI/test/CAmRoutingInterfaceCAPITests.h
++++ b/PluginRoutingInterfaceCAPI/test/CAmRoutingInterfaceCAPITests.h
+@@ -29,8 +29,8 @@
+ #include "../include/CAmRoutingSenderCommon.h"
+ #include "../include/CAmRoutingSenderCAPI.h"
+ #include "MockIAmRoutingReceive.h"
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlObserverProxy.hpp>
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlObserverProxy.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
+ 
+ using namespace testing;
+ 
+diff --git a/PluginRoutingInterfaceCAPI/test/CAmTestRoutingSenderService.h b/PluginRoutingInterfaceCAPI/test/CAmTestRoutingSenderService.h
+index ce4c27a..08e462d 100644
+--- a/PluginRoutingInterfaceCAPI/test/CAmTestRoutingSenderService.h
++++ b/PluginRoutingInterfaceCAPI/test/CAmTestRoutingSenderService.h
+@@ -20,9 +20,9 @@
+ 
+ #include "audiomanagertypes.h"
+ #include "../include/CAmRoutingSenderCommon.h"
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlStubDefault.hpp>
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlObserverProxy.hpp>
+-#include <v0_1/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlStubDefault.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlObserverProxy.hpp>
++#include <v0/org/genivi/am/routinginterface/RoutingControlProxy.hpp>
+ 
+ 
+ namespace am {
+diff --git a/PluginRoutingInterfaceDBus/cmake/FindAudioManager.cmake b/PluginRoutingInterfaceDBus/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100644
+--- a/PluginRoutingInterfaceDBus/cmake/FindAudioManager.cmake
++++ b/PluginRoutingInterfaceDBus/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"
+diff --git a/cmake/FindAudioManager.cmake b/cmake/FindAudioManager.cmake
+index ad97f23..f1dd343 100755
+--- a/cmake/FindAudioManager.cmake
++++ b/cmake/FindAudioManager.cmake
+@@ -1,6 +1,6 @@
+ find_path(AUDIOMANAGER_CMAKE_CONFIG_PATH 
+                  audiomanagerConfig.cmake
+-                 PATH_SUFFIXES audiomanager/cmake
++                 PATH_SUFFIXES cmake
+                  PATHS
+                  ${CMAKE_INSTALL_PATH}
+                  "${CMAKE_INSTALL_PREFIX}/lib"

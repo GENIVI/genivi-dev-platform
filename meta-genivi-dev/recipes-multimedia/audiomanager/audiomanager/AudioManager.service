@@ -1,0 +1,16 @@
+# Copyright (c) 2012 Wind River Systems, Inc.
+# AudioManager systemd service file
+
+[Unit]
+Description=AudioManager
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/lib/systemd/scripts/setup_amgr.sh
+
+[Install]
+WantedBy=multi-user.target
+

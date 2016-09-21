@@ -1,0 +1,60 @@
+From d214197c418945f8ae8ad72a7173c6b83a808ef0 Mon Sep 17 00:00:00 2001
+From: Clement Dransart <clement.dransart@awtce.be>
+Date: Fri, 17 Jun 2016 10:40:36 +0200
+Subject: [audiomanager][PATCH] audiomanager: fix lib install path for multilib
+
+Signed-off-by: Clement Dransart <clement.dransart@awtce.be>
+---
+ CMakeLists.txt | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d4e3cb5..0004b07 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -169,13 +169,13 @@ if(USE_BUILD_LIBS)
+ 	endif(NOT DEFINED CONTROLLER_PLUGIN)
+ else(USE_BUILD_LIBS)
+ 	if(NOT DEFINED DEFAULT_PLUGIN_COMMAND_DIR)
+-		set(DEFAULT_PLUGIN_COMMAND_DIR "${CMAKE_INSTALL_PREFIX}/lib/${LIB_INSTALL_SUFFIX}/command")
++		set(DEFAULT_PLUGIN_COMMAND_DIR "${CMAKE_INSTALL_LIBDIR}/command")
+ 	endif(NOT DEFINED DEFAULT_PLUGIN_COMMAND_DIR)
+ 	if(NOT DEFINED DEFAULT_PLUGIN_ROUTING_DIR)
+-		set(DEFAULT_PLUGIN_ROUTING_DIR "${CMAKE_INSTALL_PREFIX}/lib/${LIB_INSTALL_SUFFIX}/routing")
++		set(DEFAULT_PLUGIN_ROUTING_DIR "${CMAKE_INSTALL_LIBDIR}/routing")
+ 	endif(NOT DEFINED DEFAULT_PLUGIN_ROUTING_DIR)
+ 	if(NOT DEFINED CONTROLLER_PLUGIN)
+-		set(CONTROLLER_PLUGIN "${CMAKE_INSTALL_PREFIX}/lib/${LIB_INSTALL_SUFFIX}/control/libPluginControlInterface.so")
++		set(CONTROLLER_PLUGIN "${CMAKE_INSTALL_LIBDIR}/control/libPluginControlInterface.so")
+ 	endif(NOT DEFINED CONTROLLER_PLUGIN)
+ endif(USE_BUILD_LIBS)
+ 
+@@ -228,7 +228,7 @@ set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -DNDEBUG")
+ 
+ configure_package_config_file ( 
+     ${CMAKE_SOURCE_DIR}/cmake/audiomanagerConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/audiomanagerConfig.cmake
+-    INSTALL_DESTINATION lib/${LIB_INSTALL_SUFFIX}/cmake
++    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
+     PATH_VARS AUDIO_INCLUDE_FOLDER )
+                               
+ write_basic_package_version_file(
+@@ -237,14 +237,14 @@ write_basic_package_version_file(
+     COMPATIBILITY SameMajorVersion )
+                           
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/audiomanagerConfig.cmake 
+-    DESTINATION lib/${LIB_INSTALL_SUFFIX}/cmake
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
+     COMPONENT dev)    
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/config.h 
+     DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${LIB_INSTALL_SUFFIX}
+     COMPONENT dev)
+     
+ configure_file( ${CMAKE_SOURCE_DIR}/cmake/audiomanager.pc.in ${CMAKE_BINARY_DIR}/audiomanager.pc @ONLY )
+-install(FILES ${CMAKE_BINARY_DIR}/audiomanager.pc DESTINATION lib/pkgconfig COMPONENT devel)    
++install(FILES ${CMAKE_BINARY_DIR}/audiomanager.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig COMPONENT devel)
+ 
+ add_subdirectory (AudioManagerDaemon)
+ 
+-- 
+1.9.1
+
