@@ -50,7 +50,7 @@ Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
 * branch:   11.0
-* revision: 4248ecf683a27cbb75fa584e63cd786f18ad0013
+* revision: 28b25ef27eccc0a800a1cbd3d3ea2c8f8494ca1e
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
