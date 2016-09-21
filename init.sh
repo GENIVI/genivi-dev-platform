@@ -34,8 +34,8 @@ else
       printf '%s\n' "${supported[@]}"
       echo "You can either "
       echo "re-run with a supported target (or override this check with -f)"
-      echo "or get the gdp-ivi9 branch:"
-      echo "   git checkout origin/gdp-ivi9 and then re-run"
+      echo "or get the gdp-11 branch:"
+      echo "   git checkout origin/gdp-11 and then re-run"
       echo "   source init.sh $machine"
       unset "${variables[@]}"
       return
