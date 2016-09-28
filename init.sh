@@ -1,4 +1,11 @@
 #!/bin/bash
+# Note that this script is supposed to be sourced
+if [ ! -n "$BASH" ]
+then
+echo GDP and Yocto in general only works with bash as the interactive shell.
+echo Please retry with bash
+return
+fi
 
 # Parse target board & eula agreement from args
 
