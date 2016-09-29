@@ -22,4 +22,5 @@ RDEPENDS_${PN} += "\
     genivi-dev-platform-hmi \
     qml-example \
     gdp-hmi-mouse-test \
+    gdp-new-hmi \
     "
