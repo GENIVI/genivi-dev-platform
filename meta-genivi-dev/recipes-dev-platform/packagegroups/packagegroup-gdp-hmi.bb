@@ -18,4 +18,5 @@ RDEPENDS_${PN} += "\
     qml-example \
     gdp-hmi-mouse-test \
     gdp-new-hmi \
+    gdp-hmi-app-metadata \
     "
