@@ -1,0 +1,25 @@
+From fd889b5fa36e0de2e00d8faafbabc10d99413d11 Mon Sep 17 00:00:00 2001
+From: Tom Pollard <tom_pollard@hotmail.co.uk>
+Date: Tue, 4 Oct 2016 13:20:20 +0100
+Subject: [PATCH 1/1] Remove cxx11 strings
+
+---
+ plugins/hmi-controller/appmanager.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/hmi-controller/appmanager.cpp b/plugins/hmi-controller/appmanager.cpp
+index bf40501..308e6f0 100644
+--- a/plugins/hmi-controller/appmanager.cpp
++++ b/plugins/hmi-controller/appmanager.cpp
+@@ -63,7 +63,7 @@ void AppManager::loadApplications()
+     }
+ }
+ 
+-void AppManager::addToAppInfo(AppManager::AppInfo &appInfo, const std::__cxx11::string &key, const std::__cxx11::string value)
++void AppManager::addToAppInfo(AppManager::AppInfo &appInfo, const std::string &key, const std::string value)
+ {
+     if (key == "Name")
+         appInfo.name = value;
+-- 
+1.9.1
+

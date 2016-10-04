@@ -16,6 +16,9 @@ SYSTEMD_AUTO_ENABLE = "enable"
 SRC_URI_append ="\
     file://gdp-new-hmi.service \
     "
+SRC_URI_append_rcar-gen2 ="\
+    file://0001-Remove-cxx11-strings.patch \
+    "
 
 FILES_${PN} += "\
     ${libdir}/* \
