@@ -2,7 +2,7 @@
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 SUMMARY = "GENIVI DEV PLATFORM Historical Example App Metadata"
-DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon persistence-client-library"
+DEPENDS = "qtbase qtdeclarative dlt-daemon persistence-client-library"
 
 HOMEPAGE = "http://projects.genivi.org/genivi-demo-platform/"
 LICENSE  = "MPL-2.0"
