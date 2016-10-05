@@ -40,4 +40,8 @@ IMAGE_INSTALL_append_rcar-gen2 = " \
     libgbm-dev \
     "
 
-IMAGE_INSTALL_append_rpi = " mesa-megadriver"
+IMAGE_INSTALL_append_rpi = " \
+	init-ifupdown \
+	packagegroup-base \
+	mesa-megadriver \
+"
