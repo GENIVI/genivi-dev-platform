@@ -15,6 +15,8 @@ PACKAGES = "\
     "
 
 RDEPENDS_${PN} += "\
+    connectedhome \
+    fmradio \
     qml-example \
     gdp-hmi-mouse-test \
     gdp-new-hmi \
