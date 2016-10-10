@@ -15,11 +15,11 @@ PACKAGES = "\
     "
 
 RDEPENDS_${PN} += "\
-    gdp-hmi-background \
-    gdp-hmi-launcher \
-    gdp-hmi-launcher2 \
-    gdp-hmi-panel \
-    genivi-dev-platform-hmi \
+    connectedhome \
+    fmradio \
     qml-example \
     gdp-hmi-mouse-test \
+    gdp-new-hmi \
+    gdp-hmi-app-metadata \
+    hvac \
     "

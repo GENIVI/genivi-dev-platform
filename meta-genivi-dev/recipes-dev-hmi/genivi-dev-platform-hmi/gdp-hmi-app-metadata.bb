@@ -1,18 +1,17 @@
 # Copyright (C) 2015-2016 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-include genivi-dev-platform-hmi.inc
+SUMMARY = "GENIVI DEV PLATFORM Historical Example App Metadata"
+DEPENDS = "qtbase qtdeclarative dlt-daemon persistence-client-library"
 
-SUMMARY = "GENIVI Development Platform HMI - Launcher 2"
-DEPENDS = "qtbase qtdeclarative gdp-hmi-panel dlt-daemon persistence-client-library"
+HOMEPAGE = "http://projects.genivi.org/genivi-demo-platform/"
+LICENSE  = "MPL-2.0"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
+
+SRC_URI = "git://github.com/GENIVI/gdp-hmi.git"
+SRCREV  = "dcd70d67c656e6f457b1580bba3b3fe386ca3fbe"
 
 SRC_URI_append ="\
-    file://gdp-hmi-launcher2.service \
-    file://PowerOff.service \
-    file://StartLauncher.service \
-    file://StartLauncher.path \
-    file://start_launcher.sh \
-    file://power_off.sh \
     file://0001-gdp-hmi-launcher2-Change-the-name-of-Audiomanager-Mo.patch \
     "
 
@@ -29,17 +28,9 @@ inherit qmake5
 
 FILES_${PN} += "\
     ${datadir}/gdp/* \
-    ${libdir}/systemd/user/* \
-    ${bindir} \
-    /etc/systemd/user/* \
     "
 
 do_install_append() {
-	install -d ${D}${libdir}/systemd/user
-	install -m 0444 ${WORKDIR}/gdp-hmi-launcher2.service \
-	                ${D}${libdir}/systemd/user
-	install -m 0444 ${WORKDIR}/PowerOff.service \
-	                ${D}${libdir}/systemd/user
 	install -d ${D}${datadir}/gdp
 	install -m 0444 ${S}/content/images/hmi_icons_033115-1.png \
 		${D}${datadir}/gdp/hmi_icons_033115-1.png
@@ -80,24 +71,4 @@ do_install_append() {
 	install -m 0444 ${S}/content/images/hmi_icons_033115-6s.png \
 		${D}${datadir}/gdp/hmi_icons_033115-6s.png
 
-	install -m 0444 ${S}/content/images/arrow-right.png \
-		${D}${datadir}/gdp/arrow-right.png
-	install -m 0444 ${S}/content/images/background_lab.jpg \
-		${D}${datadir}/gdp/background_lab.jpg
-	install -m 0444 ${S}/content/images/spot.png \
-		${D}${datadir}/gdp/spot.png
-	install -m 0444 ${S}/content/images/powerOff.png \
-		${D}${datadir}/gdp/powerOff.png
-
-	install -d ${D}/etc/systemd/user
-	install -m 0444 ${WORKDIR}/StartLauncher.service \
-		${D}/etc/systemd/user
-	install -d ${D}/etc/systemd/user/default.target.wants
-	ln -sf /etc/systemd/user/StartLauncher.path \
-		${D}/etc/systemd/user/default.target.wants/StartLauncher.path
-	install -m 0444 ${WORKDIR}/StartLauncher.path \
-		${D}/etc/systemd/user
-	install install -d ${D}${bindir}
-	install -m 0755 ${WORKDIR}/start_launcher.sh ${D}/${bindir}
-	install -m 0755 ${WORKDIR}/power_off.sh ${D}/${bindir}
 }

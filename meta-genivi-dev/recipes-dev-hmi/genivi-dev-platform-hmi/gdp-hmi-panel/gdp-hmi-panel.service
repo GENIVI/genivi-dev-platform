@@ -1,8 +1,0 @@
-[Unit]
-Description=GENIVI Development Platform HMI - Panel
-Requires=gdp-hmi-controller.service
-After=gdp-hmi-controller.service
-
-[Service]
-Environment=LD_PRELOAD=/usr/lib/libEGL.so
-ExecStart=/usr/bin/gdp-hmi-panel
