@@ -2,7 +2,7 @@ SUMMARY = "automotive message broker"
 DESCRIPTION = "Automotive-message-broker abstracts the details of the network \
 away from applications and provides a standard API for applications to easily \
 get the required information"
-HOMEPGAE = "https://github.com/otcshare/automotive-message-broker/wiki"
+HOMEPAGE = "https://github.com/otcshare/automotive-message-broker/wiki"
 LICENSE = "LGPL-2.1"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b42382de5d854b9bb598acf2e8827de3"
 
