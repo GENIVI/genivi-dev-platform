@@ -15,6 +15,10 @@ SRC_URI_append ="\
 SRC_URI_append_qemux86-64 ="\
     file://0004-qml_example-Make-Graphic-working-on-Qemu-machine.patch \
     "
+SRC_URI_append_dragonboard-410c ="\
+    file://0004-qml_example-Make-Graphic-working-on-Qemu-machine.patch \
+    file://0001-Fix-broken-resolution-issue.patch;patchdir=${WORKDIR}/git \
+    "
 S = "${WORKDIR}/git/app/qml-example"
 
 inherit qmake5
