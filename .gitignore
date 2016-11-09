@@ -11,3 +11,4 @@ gdp-src-build/sstate-cache
 gdp-src-build/tmp/
 gdp-src-build/logs
 gdp-src-build/tmp-glibc
+gdp-src-build/toaster*
