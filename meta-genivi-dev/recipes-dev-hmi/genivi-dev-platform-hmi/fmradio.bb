@@ -1,13 +1,17 @@
 # Copyright (C) 2015-2016 GENIVI Alliance
+# Released under the MIT license (see COPYING.MIT for the terms)
 
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=815ca599c9df247a0c7f619bab123dad"
-SRC_URI = "git://github.com/RobertAJMarshall/FMRadio"
-SRCREV  = "257a1f0d6ab4a83c0588051ca6aaba22c9bf63b6"
+SRC_URI = "git://github.com/GENIVI/FMRadio"
+SRCREV  = "8da331f78fdca7a98f5b812c9f40231c868ed8f3"
 
 SUMMARY = "FM Radio"
 DEPENDS = "qtbase qtdeclarative"
 
+SRC_URI_append ="\
+    file://0001-fmradio-remove-absolute-include-path.patch \
+    "
 
 S = "${WORKDIR}/git"
 
