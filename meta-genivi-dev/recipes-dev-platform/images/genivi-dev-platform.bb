@@ -28,6 +28,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-fsa \
     packagegroup-gdp-gps \
     packagegroup-gdp-hmi \
+    packagegroup-iotivity \
     packagegroup-gdp-qt5 \
     packagegroup-gdp-rvi \
     packagegroup-gdp-dev \
