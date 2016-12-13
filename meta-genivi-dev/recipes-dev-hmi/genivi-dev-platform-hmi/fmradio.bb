@@ -10,6 +10,7 @@ SUMMARY = "FM Radio"
 DEPENDS = "qtbase qtdeclarative"
 
 SRC_URI_append ="\
+    file://0002-Changed-surface-id-of-FM-radio.patch \
     "
 
 S = "${WORKDIR}/git"
