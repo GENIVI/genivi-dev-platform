@@ -4,13 +4,12 @@
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=815ca599c9df247a0c7f619bab123dad"
 SRC_URI = "git://github.com/GENIVI/FMRadio"
-SRCREV  = "8da331f78fdca7a98f5b812c9f40231c868ed8f3"
+SRCREV  = "256c49af8719e2831a316e18240670df66ea2964"
 
 SUMMARY = "FM Radio"
 DEPENDS = "qtbase qtdeclarative"
 
 SRC_URI_append ="\
-    file://0001-fmradio-remove-absolute-include-path.patch \
     "
 
 S = "${WORKDIR}/git"
