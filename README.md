@@ -1,14 +1,14 @@
 GENIVI Development Platform
 ========================
 
-GENIVI Development Platform is the integration and delivery project that brings together all components developed by GENIVI experts and provides them to developers and users in a consumable way. You can find all the relevant information about GDP in the wiki:
+The GENIVI Development Platform integrates software components developed by GENIVI into a release that can be downloaded and run on popular hardware provides them to developers and users in a consumable way. More information on the GDP is below;
 * GDP [landing page](https://projects.genivi.org/gdp): GDP project home page.
 * GDP [Download page](https://projects.genivi.org/gdp/download): download GDP binaries, metadata and artifacts.
 * GDP [Master](https://projects.genivi.org/gdp/master): build GDP from scratch.
 * GDP [releases](https://projects.genivi.org/gdp/releases): information about GDP releases, target boards and peripherals.
 * GDP [management](https://projects.genivi.org/gdp/management): policies and other processes associated to the GDP project.
 
-Contribute to GDP
+Contributing to GDP
 ----------------------------
 
 Please see the  [MAINTAINERS](https://github.com/genivi/meta-genivi-dev/blob/master/MAINTAINERS) file for information on contacting them as well as instructions for submitting patches.
