@@ -7,8 +7,8 @@ Download an image for your platform below. The current release is GDP 11.
 [Download page](https://at.projects.genivi.org/wiki/display/GDP/GENIVI+Demo+Platform+%28GDP%29+Download+page)
 
 ### More information on the GDP is below;
-* GDP [landing page](https://projects.genivi.org/gdp): GDP project home page.
-* GDP [Master](https://projects.genivi.org/gdp/master): build GDP from scratch.
+* GDP [project home page](https://projects.genivi.org/gdp)
+* GDP [Master](https://projects.genivi.org/gdp/master): build the GDP from sources using Yocto
 * GDP [releases](https://projects.genivi.org/gdp/releases): information about GDP releases, target boards and peripherals.
 * GDP [management](https://projects.genivi.org/gdp/management): policies and other processes associated to the GDP project.
 
@@ -28,7 +28,6 @@ For information about the Yocto GENIVI Baseline, see [Yocto GENIVI Baseline webs
 
 genivi-dev-platform.git usage
 ------------------------------------
-
 This project uses submodules to pull in layer dependencies.
 It is advised to avoid using the --recursive option for the
 initial clone. 'master' is the default branch. Previous release
