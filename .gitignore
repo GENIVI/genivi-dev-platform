@@ -12,3 +12,4 @@ gdp-src-build/tmp/
 gdp-src-build/logs
 gdp-src-build/tmp-glibc
 gdp-src-build/toaster*
+gdp-src-build/developer.conf
