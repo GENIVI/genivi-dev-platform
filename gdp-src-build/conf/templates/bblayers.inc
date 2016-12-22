@@ -27,3 +27,8 @@ BBLAYERS_NON_REMOVABLE ?= " \
   ${OEROOT}/meta-yocto \
   ${OEROOT}/../meta-ivi/meta-ivi \
   "
+
+# Include local developer settings. This can be used to locally modify the
+# setup of mirrors, caching and any other bitbake variables.
+# The include statement has no effect if the file does not exist.
+include ${TOPDIR}/developer.conf
