@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Chromium browser
+Type=Application
+Icon=file:///usr/bin/chromium/product_logo_128.png
+Exec=/usr/bin/google-chrome
