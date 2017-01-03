@@ -1,0 +1,5 @@
+[Unit]
+Description=Chromium browser
+
+[Service]
+ExecStart=/usr/bin/google-chrome
