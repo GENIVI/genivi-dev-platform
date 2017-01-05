@@ -1,4 +1,4 @@
-SRC_URI = "git://github.com/GENIVI/hmi-layout-gdp.git;branch=ics-launcher-gdp"
+SRC_URI = "git://github.com/GENIVI/hmi-layout-gdp.git"
 SRCREV = "d0ca9d072012d8ac333537d9b922d9242e022efe"
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
