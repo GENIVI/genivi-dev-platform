@@ -5,6 +5,9 @@ SRC_URI += "\
     file://chromium.service \
 "
 
+# FIXME: workaround for https://at.projects.genivi.org/jira/browse/LM-2
+CHROMIUM_EXTRA_ARGS_append = " --window-size=1728,1080"
+
 do_install_append() {
     install -d ${D}${datadir}/applications/
     install -m 0444 ${WORKDIR}/chromium.app ${D}${datadir}/applications/
