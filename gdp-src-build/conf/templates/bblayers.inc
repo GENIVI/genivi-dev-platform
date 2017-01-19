@@ -14,12 +14,14 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-openembedded/meta-oe \
   ${TOPDIR}/../meta-openembedded/meta-filesystems \
   ${TOPDIR}/../meta-openembedded/meta-ruby \
+  ${TOPDIR}/../meta-openembedded/meta-gnome \
   ${TOPDIR}/../meta-qt5 \
   ${TOPDIR}/../meta-genivi-dev/meta-genivi-dev \
   ${TOPDIR}/../meta-rust \
   ${TOPDIR}/../meta-oic \
   ${TOPDIR}/../meta-erlang \
   ${TOPDIR}/../meta-rvi \
+  ${TOPDIR}/../meta-browser \
   "
 
 BBLAYERS_NON_REMOVABLE ?= " \
