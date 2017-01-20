@@ -19,7 +19,6 @@ BBCLASSEXTEND = "native"
 FILES_${PN} = " \
                 ${bindir}/sota_client \
                 ${bindir}/sota_start.sh \
-                ${bindir}/sota_sysinfo.sh \
                 ${sysconfdir}/sota_client.version \
                 ${sysconfdir}/sota_certificates \
                 ${systemd_unitdir}/system/sota_client.service \
@@ -116,8 +115,6 @@ DEPENDS += " openssl dbus "
 RDEPENDS_${PN} = " libcrypto \
                    libssl \
                    bash \
-                   lshw \
-                   jq \
                    "
 export SOTA_VERSION = "${PV}"
 
@@ -125,7 +122,6 @@ do_install() {
   install -d ${D}${bindir}
   install -m 0755 target/${TARGET_SYS}/release/sota_client ${D}${bindir}
   install -m 0755 run/sota_start.sh ${D}${bindir}
-  install -m 0755 run/sota_sysinfo.sh ${D}${bindir}
   install -m 0755 run/sota_ostree.sh ${D}${bindir}
 
   install -d ${D}${systemd_unitdir}/system
