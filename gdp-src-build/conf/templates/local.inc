@@ -2,7 +2,7 @@
 
 DISTRO ?= "poky-ivi-systemd"
 USE_GSTREAMER_1_00 ?= "1"
-PACKAGE_CLASSES ?= "package_ipk"
+PACKAGE_CLASSES ?= "package_rpm package_ipk"
 EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
 USER_CLASSES ?= "buildstats image-mklibs image-prelink"
 PATCHRESOLVE ?= "noop"
