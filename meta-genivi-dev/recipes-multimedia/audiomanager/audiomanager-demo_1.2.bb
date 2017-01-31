@@ -6,11 +6,10 @@ LIC_FILES_CHKSUM = "file://AudioManagerPoC/README;md5=be0fe05c89ff7a2632eb080f72
 
 DEPENDS = "qtbase qtdeclarative qtwebkit"
 
-BRANCH = "Intreprid_stable_branch"
-VERSION = "6.1"
+SRCREV = "daf851ee7a41d1b0572c0c95e15f61e427ce97f1"
 
 SRC_URI = "\
-    git://github.com/GENIVI/AudioManager.git;branch=${BRANCH};tag=${VERSION};protocol=http \
+    git://github.com/GENIVI/AudioManager.git;protocol=http \
     file://0001-AudioManagerPoC-GENIVI-Alliance-Audio-Manager-proof-.patch \
     file://0002-AudioManagerPoC-add-support-for-Wayland-ivi-shell.patch \
     file://AudioManager_PoC.service \
