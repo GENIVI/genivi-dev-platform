@@ -1,0 +1,17 @@
+# BBTravis CI configuration file
+language: python
+python: 2.7
+env:
+  matrix:
+  - TARGET=qemux86-64
+  - TARGET=raspberrypi2
+
+# Tests running commands
+script:
+  # make frontend_install_tests takes 17 min, so we only do it post submit
+  - title: build gdb
+    cmd: |
+        bash << EOF
+        source ./init.sh $TARGET
+        bitbake genivi-dev-platform
+        EOF
