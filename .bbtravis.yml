@@ -1,6 +1,5 @@
 # BBTravis CI configuration file
-language: python
-python: 2.7
+language: yocto
 env:
   global:
   - CPU_REQUIREMENTS=24
@@ -11,6 +10,10 @@ env:
   - TARGET=raspberrypi2
 
 # Tests running commands
+install:
+  - title: populate submodules
+    cmd: |
+        
 script:
   # make frontend_install_tests takes 17 min, so we only do it post submit
   - title: build gdb
