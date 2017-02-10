@@ -2,9 +2,12 @@
 language: python
 python: 2.7
 env:
+  CPU_REQUIREMENTS: "24"
+  MEM_REQUIREMENTS: "160000"
+  DOCKER_IMAGE: forestscribe/docker-buildworker
   matrix:
-  - TARGET=qemux86-64
-  - TARGET=raspberrypi2
+  - TARGET=qemux86-64 CPU_REQUIREMENTS=24 MEM_REQUIREMENTS=160000
+  - TARGET=raspberrypi2 CPU_REQUIREMENTS=24 MEM_REQUIREMENTS=160000
 
 # Tests running commands
 script:
