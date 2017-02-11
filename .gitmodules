@@ -38,3 +38,6 @@
 [submodule "meta-qcom"]
     path = meta-qcom
     url = git://git.yoctoproject.org/meta-qcom
+[submodule "meta-iot-web"]
+	path = meta-iot-web
+	url = https://github.com/ostroproject/meta-iot-web
