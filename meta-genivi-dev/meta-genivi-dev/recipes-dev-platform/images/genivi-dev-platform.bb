@@ -35,6 +35,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-qt5 \
     packagegroup-gdp-rvi \
     packagegroup-gdp-vsi \
+    packagegroup-gdp-sdl \
     packagegroup-gdp-dev \
     packagegroup-gdp-cdl \
     "
