@@ -32,6 +32,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-nodejs-runtime \
     packagegroup-gdp-qt5 \
     packagegroup-gdp-rvi \
+    packagegroup-gdp-sdl \
     packagegroup-gdp-dev \
     packagegroup-gdp-cdl \
     "
