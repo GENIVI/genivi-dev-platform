@@ -2,8 +2,8 @@
 language: yocto
 env:
   global:
-  - CPU_REQUIREMENTS=24
-  - MEM_REQUIREMENTS=16000
+  - CPU_REQUIREMENTS=16
+  - MEM_REQUIREMENTS=40000
   - DOCKER_IMAGE=forestscribe/docker-buildworker
   matrix:
   - TARGET=qemux86-64
