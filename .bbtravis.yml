@@ -2,7 +2,7 @@
 language: yocto
 env:
   global:
-  - CPU_REQUIREMENTS=16
+  - CPU_REQUIREMENTS=24
   - MEM_REQUIREMENTS=40000
   - DOCKER_IMAGE=forestscribe/docker-buildworker
   matrix:
@@ -12,9 +12,18 @@ env:
 # Tests running commands
 script:
   # make frontend_install_tests takes 17 min, so we only do it post submit
-  - title: build gdb
+  - title: build gdp
     cmd: |
         bash << EOF
         source ./init.sh $TARGET
         bitbake genivi-dev-platform
         EOF
+
+  - title: upload artifacts
+    cmd: python artifactory_upload.py
+
+uploads:
+- destdir: '%(ART_OUTPUT_URL)s/%(TARGET)s/'
+  files:
+    - gdp-src-build/tmp/deploy/images/%(TARGET)s/bzImage-%(TARGET)s.bin
+    - gdp-src-build/tmp/deploy/images/%(TARGET)s/genivi-dev-platform-%(TARGET)s.ext4
