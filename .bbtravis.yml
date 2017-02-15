@@ -13,7 +13,7 @@ env:
 script:
   # make frontend_install_tests takes 17 min, so we only do it post submit
   - title: clean old build
-    cmd: rm -rf gdp-src-build/tmp/deploy
+    cmd: rm -rf gdp-src-build/tmp/
 
   - title: build gdp
     cmd: |
