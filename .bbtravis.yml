@@ -7,19 +7,18 @@ env:
   - DOCKER_IMAGE=forestscribe/docker-buildworker
   matrix:
   - TARGET=qemux86-64
-  - TARGET=raspberrypi2
+  - TARGET=raspberrypi3
 
 # Tests running commands
 script:
-  # make frontend_install_tests takes 17 min, so we only do it post submit
   - title: clean old build
-    cmd: rm -rf gdp-src-build/tmp/deploy
+    cmd: rm -rf gdp-src-build/tmp/
 
   - title: build gdp
     cmd: |
         bash << EOF
         source ./init.sh $TARGET
-        bitbake genivi-dev-platform
+        bitbake -v genivi-dev-platform
         EOF
 
   - title: log output deploy directory
@@ -33,3 +32,4 @@ uploads:
   files:
     - gdp-src-build/tmp/deploy/images/%(TARGET)s/bzImage-%(TARGET)s.bin
     - gdp-src-build/tmp/deploy/images/%(TARGET)s/genivi-dev-platform-%(TARGET)s.ext4
+    - gdp-src-build/tmp/deploy/images/%(TARGET)s/genivi-dev-platform-%(TARGET)s.rpi-sdimg
