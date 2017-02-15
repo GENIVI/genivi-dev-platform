@@ -129,9 +129,3 @@ must be downloaded. Once booted, issue the following command on the board:
 ```
 # cd /usr/share/navit/maps/ && wget http://www.navit-project.org/switzerland.bin
 ```
-
-Enable touch support on the GENIVI AMM Faytech V2 monitor add to local.inc:
-
-```
-USE_FAYTECH_MONITOR = "1"
-```
