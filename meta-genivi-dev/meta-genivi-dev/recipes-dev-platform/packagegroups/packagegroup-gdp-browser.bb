@@ -16,4 +16,5 @@ ALLOW_EMPTY_${PN} = "1"
 RDEPENDS_${PN} += "\
     browser-poc \
     genivi-browser-test-hmi-precompiled \
+    chromium-wayland \
     "
