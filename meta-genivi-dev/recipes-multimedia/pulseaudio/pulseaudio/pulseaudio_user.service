@@ -5,7 +5,7 @@ After=dbus.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/pulseaudio -p /usr/lib/pulse-8.0/modules/ -n -F /etc/pulse/am_poc.pa
+ExecStart=/usr/bin/pulseaudio -p /usr/lib/pulse-9.0/modules/ -n -F /etc/pulse/am_poc.pa
 Restart=always
 RestartSec=5
 TimeoutSec=5

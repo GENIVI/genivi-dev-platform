@@ -12,7 +12,7 @@ do_install_append_intel-corei7-64() {
 
 do_install_append() {
     cp ${WORKDIR}/am_poc.pa ${D}/etc/pulse
-    mkdir -p ${D}//etc/systemd/user
+    mkdir -p ${D}/etc/systemd/user
     cp ${WORKDIR}/pulseaudio_user.service ${D}/etc/systemd/user/pulseaudio.service
     mkdir -p ${D}/etc/systemd/user/default.target.wants
     ln -sf /etc/systemd/user/pulseaudio.service ${D}/etc/systemd/user/default.target.wants/pulseaudio.service
