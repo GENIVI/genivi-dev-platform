@@ -12,12 +12,18 @@ env:
 # Tests running commands
 script:
   # make frontend_install_tests takes 17 min, so we only do it post submit
+  - title: clean old build
+    cmd: rm -rf gdp-src-build/tmp/deploy
+
   - title: build gdp
     cmd: |
         bash << EOF
         source ./init.sh $TARGET
         bitbake genivi-dev-platform
         EOF
+
+  - title: log output deploy directory
+    cmd: find gdp-src-build/tmp/deploy
 
   - title: upload artifacts
     cmd: python artifactory_upload.py
