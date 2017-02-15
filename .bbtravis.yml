@@ -33,3 +33,4 @@ uploads:
   files:
     - gdp-src-build/tmp/deploy/images/%(TARGET)s/bzImage-%(TARGET)s.bin
     - gdp-src-build/tmp/deploy/images/%(TARGET)s/genivi-dev-platform-%(TARGET)s.ext4
+    - gdp-src-build/tmp/deploy/images/%(TARGET)s/genivi-dev-platform-%(TARGET)s.rpi-sdimg
