@@ -8,6 +8,7 @@ env:
   matrix:
   - TARGET=qemux86-64
   - TARGET=raspberrypi3
+  - TARGET=intel-corei7-64
 
 # Tests running commands
 script:
