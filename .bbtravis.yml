@@ -16,11 +16,10 @@ script:
     cmd: rm -rf gdp-src-build/tmp/
 
   - title: build gdp
+    shell: bash
     cmd: |
-        bash << EOF
         source ./init.sh $TARGET
         bitbake -v genivi-dev-platform
-        EOF
 
   - title: log output deploy directory
     cmd: find gdp-src-build/tmp/deploy
