@@ -29,6 +29,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-gps \
     packagegroup-gdp-hmi \
     packagegroup-iotivity \
+    packagegroup-nodejs-runtime \
     packagegroup-gdp-qt5 \
     packagegroup-gdp-rvi \
     packagegroup-gdp-dev \
