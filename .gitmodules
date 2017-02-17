@@ -20,6 +20,9 @@
 	path = meta-oic
 	url = http://git.yoctoproject.org/git/meta-oic.git
 	branch = 1.0.1
+[submodule "meta-iot-web"]
+	path = meta-iot-web
+	url = https://github.com/ostroproject/meta-iot-web
 [submodule "meta-rvi"]
 	path = meta-rvi
 	url = git://github.com/GENIVI/meta-rvi.git
