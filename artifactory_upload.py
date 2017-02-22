@@ -4,6 +4,8 @@ import argh
 import requests
 import yaml
 
+del os.environ["http_proxy"]
+del os.environ["https_proxy"]
 
 @argh.dispatch_command
 def main(art_output_url=None, target=None):
