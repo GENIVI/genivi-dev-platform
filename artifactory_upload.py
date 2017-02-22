@@ -6,6 +6,7 @@ import yaml
 
 del os.environ["http_proxy"]
 del os.environ["https_proxy"]
+del os.environ["ALL_PROXY"]
 
 @argh.dispatch_command
 def main(art_output_url=None, target=None):
