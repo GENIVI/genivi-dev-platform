@@ -3,7 +3,7 @@
 	url = http://github.com/genivi/meta-genivi-dev.git
 [submodule "meta-ivi"]
 	path = meta-ivi
-	url = http://github.com/Forestscribe/meta-ivi.git
+	url = http://github.com/genivi/meta-ivi.git
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = git://github.com/meta-qt5/meta-qt5.git
@@ -38,6 +38,10 @@
 [submodule "meta-qcom"]
     path = meta-qcom
     url = git://git.yoctoproject.org/meta-qcom
+[submodule "meta-browser"]
+	path = meta-browser
+	url = git://github.com/OSSystems/meta-browser.git
 [submodule "meta-radioservice"]
 	path = meta-radioservice
 	url = https://github.com/Forestscribe/meta-radioservice.git
+
