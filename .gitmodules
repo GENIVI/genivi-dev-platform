@@ -38,6 +38,10 @@
 [submodule "meta-qcom"]
     path = meta-qcom
     url = git://git.yoctoproject.org/meta-qcom
+[submodule "meta-browser"]
+	path = meta-browser
+	url = git://github.com/OSSystems/meta-browser.git
 [submodule "meta-radioservice"]
 	path = meta-radioservice
 	url = https://github.com/Forestscribe/meta-radioservice.git
+

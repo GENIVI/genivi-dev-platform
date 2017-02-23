@@ -10,9 +10,6 @@ LICENSE_FLAGS_WHITELIST  += "commercial"
 
 #INCOMPATIBLE_LICENSE ?= "GPLv3"
 
-# Flag for Faytech Touch Monitor support, '1' will enable kernel driver patch
-#USE_FAYTECH_MONITOR = "1"
-
 PREFERRED_VERSION_audiomanager ?= "7.0"
 PREFERRED_VERSION_audiomanagerplugins ?= "7.0"
 
