@@ -11,10 +11,6 @@ MACHINE ?= "m3ulcb"
 #SOC_FAMILY = "r8a7795"
 SOC_FAMILY ?= "r8a7796"
 
-# Add systemd configuration
-DISTRO_FEATURES_append = " systemd"
-VIRTUAL-RUNTIME_init_manager = "systemd"
-
 # Linaro GCC
 GCCVERSION = "linaro-5.2"
 
@@ -31,7 +27,6 @@ MACHINE_FEATURES_append = " gsx"
 MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/libgles2"
 
 # for Wayland/Weston
-DISTRO_FEATURES_append = " pam"
 PREFERRED_PROVIDER_virtual/libgles1 = ""
 PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
 PREFERRED_PROVIDER_virtual/egl = "gles-user-module"
