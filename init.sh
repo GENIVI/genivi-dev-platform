@@ -17,8 +17,8 @@ fi
 
 echo "You selected target $choice"
 
-declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
-declare -a supported=("qemux86-64" "porter" "minnowboard" "raspberrypi2" "raspberrypi3" "dragonboard-410c" "silk")
+declare -a targets=("intel-corei7-64" "qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c")
+declare -a supported=("intel-corei7-64" "qemux86-64" "porter" "minnowboard" "raspberrypi2" "raspberrypi3" "dragonboard-410c" "silk")
 declare -a variables=("choice" "eula" "machine" "modules" "bsp" "bsparr" "supported" "targets" "variables")
 
 for i in ${targets[@]}; do
@@ -74,7 +74,7 @@ echo "Local & bblayers conf set for $machine"
 # bsp submodule layer
 declare -A bsparr
 
-bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["porter"]="meta-renesas" ["silk"]="meta-renesas" ["dragonboard-410c"]="meta-qcom" )
+bsparr+=( ["intel-corei7-64"]="meta-intel" ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["porter"]="meta-renesas" ["silk"]="meta-renesas" ["dragonboard-410c"]="meta-qcom" )
 
 modules=($(git submodule | awk '{ print $2 }'))
 for i in ${bsparr[@]}; do

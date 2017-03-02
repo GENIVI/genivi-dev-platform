@@ -15,7 +15,7 @@
 	url = git://git.yoctoproject.org/poky
 [submodule "meta-rust"]
 	path = meta-rust
-	url = git://github.com/meta-rust/meta-rust.git
+	url = git://github.com/Forestscribe/meta-rust.git
 [submodule "meta-oic"]
 	path = meta-oic
 	url = http://git.yoctoproject.org/git/meta-oic.git
@@ -44,3 +44,10 @@
 [submodule "meta-browser"]
 	path = meta-browser
 	url = git://github.com/OSSystems/meta-browser.git
+[submodule "meta-radioservice"]
+	path = meta-radioservice
+	url = https://github.com/Forestscribe/meta-radioservice.git
+
+[submodule "meta-uitest"]
+	path = meta-uitest
+	url = https://github.com/Forestscribe/meta-uitest.git
