@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Convenient script to create commit for update of submodules.
+#
+# NOTE: This script can only handle one submodule update. In the spirit of
+# keeping commits atomic, we typically shouldn't update multiple submodules in
+# the same commit anyway.
+#
+# Author: Zeeshan Ali <zeeshan.ali@pelagicore.com>
+
+SHORTLOG=${1}
+if test -z "${SHORTLOG}"; then
+    echo -e "Usage:\n"
+    echo "${0} COMMIT_SUMMARY"
+    exit -1
+fi
+
+CHANGED_MOD=$(git submodule status | grep '^+' | tr -d + | head -n 1)
+if test -z "${CHANGED_MOD}"; then
+    echo "No module updated."
+    exit -2
+fi
+
+SUBMODULE=$(echo ${CHANGED_MOD} | cut -d' ' -f2)
+NEWCOMMIT=$(echo ${CHANGED_MOD} | cut -d' ' -f1)
+OLDCOMMIT=$(git diff ${SUBMODULE}|grep "^-Subproject"|cut -d' ' -f3)
+
+MSG=$(echo "${SUBMODULE}: ${SHORTLOG}")
+MSG+=$'\n\n'
+MSG+=$(git -C ${SUBMODULE} log --format="%h %s" ${OLDCOMMIT}..${NEWCOMMIT})
+
+git commit -s -m "${MSG}" "${SUBMODULE}"
