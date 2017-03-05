@@ -49,12 +49,12 @@ do_install () {
     cp -r ${S}/* ${D}${libdir}/${PN}
 
     install -d ${D}${systemd_system_unitdir}
-    install -c "${WORKDIR}/package_manager.service" ${D}${systemd_system_unitdir}
-    install -c "${WORKDIR}/partition_manager.service" ${D}${systemd_system_unitdir}
-    install -c "${WORKDIR}/module_loader_ecu1.service" ${D}${systemd_system_unitdir}
-    install -c "${WORKDIR}/software_loading_manager.service" ${D}${systemd_system_unitdir}
-    install -c "${WORKDIR}/lifecycle_manager.service" ${D}${systemd_system_unitdir}
+    install -m 0644 -c "${WORKDIR}/package_manager.service" ${D}${systemd_system_unitdir}
+    install -m 0644 -c "${WORKDIR}/partition_manager.service" ${D}${systemd_system_unitdir}
+    install -m 0644 -c "${WORKDIR}/module_loader_ecu1.service" ${D}${systemd_system_unitdir}
+    install -m 0644 -c "${WORKDIR}/software_loading_manager.service" ${D}${systemd_system_unitdir}
+    install -m 0644 -c "${WORKDIR}/lifecycle_manager.service" ${D}${systemd_system_unitdir}
 
     install -d ${D}${sysconfdir}/dbus-1/system.d/
-    install -c "${WORKDIR}/org.genivi.SoftwareLoadingManager.conf" ${D}${sysconfdir}/dbus-1/system.d
+    install -m 0644 -c "${WORKDIR}/org.genivi.SoftwareLoadingManager.conf" ${D}${sysconfdir}/dbus-1/system.d
 }

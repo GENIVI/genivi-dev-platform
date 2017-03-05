@@ -125,7 +125,7 @@ do_install() {
   install -m 0755 run/sota_ostree.sh ${D}${bindir}
 
   install -d ${D}${systemd_unitdir}/system
-  install -c ${S}/run/sota_client_yocto.service ${D}${systemd_unitdir}/system/sota_client.service
+  install -m 0644 -c ${S}/run/sota_client_yocto.service ${D}${systemd_unitdir}/system/sota_client.service
 
   install -d ${D}${sysconfdir}
   install -c ${S}/run/sota_certificates ${D}${sysconfdir}
