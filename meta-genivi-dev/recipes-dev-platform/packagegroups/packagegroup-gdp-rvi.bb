@@ -16,4 +16,6 @@ ALLOW_EMPTY_${PN} = "1"
 RDEPENDS_${PN} += "\
     rvi \
     genivi-swm \
+    rvi-default-config \
+    aktualizr \
     "
