@@ -16,3 +16,13 @@ do_install_append() {
             ${D}${bindir}/${BPN}/product_logo_$size.png
     done
 }
+
+# Raspberry Pi workarounds
+
+COMPATIBLE_MACHINE_armv7ve = "(.*)"
+
+# Apply same TUNE_FEATURES as in an armv7a build
+ARMFPABI_armv7ve = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'arm_float_abi=hard', 'arm_float_abi=softfp', d)}"
+
+# Remove cortexa7 optimization that conflicts with Chromium's hardcoded ARM flags
+TUNE_FEATURES_remove_armv7ve = "cortexa7"
