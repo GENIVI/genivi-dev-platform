@@ -1,0 +1,36 @@
+# Please note that the device ID has to be changed. Please have a look at GENIVI wiki for details.
+
+[core]
+server = "https://localhost"
+polling = false
+polling_sec = 10
+
+[device]
+uuid = "c2855cbb-20fc-4672-9505-ec839ac789e6"
+system_info = "system_info.sh"
+packages_dir = "/tmp/"
+package_manager = "off"
+certificates_path = "/etc/sota_certificates"
+
+[gateway]
+console = false
+dbus = true
+http = false
+rvi = true
+socket = false
+websocket = false
+
+[rvi]
+client = "http://127.0.0.1:8901"
+client_config = "/etc/rvi/conf.json"
+# node_host = "38.101.164.230"
+storage_dir = "/var/sota"
+timeout = 20
+
+[dbus]
+name = "org.genivi.SotaClient"
+path = "/org/genivi/SotaClient"
+interface = "org.genivi.SotaClient"
+software_manager = "org.genivi.SoftwareLoadingManager"
+software_manager_path = "/org/genivi/SoftwareLoadingManager"
+timeout = 60
