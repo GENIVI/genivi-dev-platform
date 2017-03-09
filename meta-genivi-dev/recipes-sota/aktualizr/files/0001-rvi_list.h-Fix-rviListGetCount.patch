@@ -1,0 +1,30 @@
+From 1b7f9671eba91081c7f3cc2cbb44ce1bd30b7fdf Mon Sep 17 00:00:00 2001
+From: Leon Anavi <leon.anavi@konsulko.com>
+Date: Fri, 10 Mar 2017 20:41:38 +0200
+Subject: [PATCH] rvi_list.h: Fix rviListGetCount
+
+Make rviListGetCount a static inline function to
+avoid issues with multiple definitions while
+building Aktualizr.
+
+Signed-off-by: Leon Anavi <leon.anavi@konsulko.com>
+---
+ third_party/rvi_lib/src/rvi_list.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/third_party/rvi_lib/src/rvi_list.h b/third_party/rvi_lib/src/rvi_list.h
+index e0e55a4..28e448b 100644
+--- a/third_party/rvi_lib/src/rvi_list.h
++++ b/third_party/rvi_lib/src/rvi_list.h
+@@ -36,7 +36,7 @@ int rviListRemove ( TRviList* list, void* record );
+ 
+ int rviListRemoveHead ( TRviList* list, void** record );
+ 
+-inline unsigned int rviListGetCount ( TRviList* list )
++static inline unsigned int rviListGetCount ( TRviList* list )
+ {
+     return list->count;
+ }
+-- 
+2.7.4
+
