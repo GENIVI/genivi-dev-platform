@@ -49,29 +49,25 @@ for each supported target, check [here](https://at.projects.genivi.org/wiki/disp
 Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
-* branch:   11.0
-* revision: 28b25ef27eccc0a800a1cbd3d3ea2c8f8494ca1e
+* branch:   12.0 (N-1.0 tag)
+* revision: f00d9517e12366d3d3208e011c58fe978570ef0b
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
 * revision: d715f2c1d340fa38f8a9860acc73de5e14a38b75
 
 URI: git://git.openembedded.org/meta-openembedded
-* layers:   meta-oe, meta-ruby, meta-filesystems
-* branch:   krogoth
-* revision: 247b1267bbe95719cd4877d2d3cfbaf2a2f4865a
+* layers:   meta-oe, meta-ruby, meta-filesystems, meta-python
+* branch:   morty
+* revision: 1efa5d623bc64659b57389e50be2568b1355d5f7
 
 URI: git://git.yoctoproject.org/poky
-* branch:   krogoth
-* revision: 12eb72ee3b02f826a156ff4e396c770f2b93571e
-
-URI: git://github.com/jmesmon/meta-rust.git
-* branch: master
-* revision: f13ac9d48ae928b761d7be204fa8f877d41e7099
+* branch:   morty
+* revision: 6a1f33cc40bfac33cf030fe41e1a8efd1e5fad6f
 
 URI: git://git.yoctoproject.org/git/meta-oic.git
 * branch: 1.0.1
-* revision: 69146eaf8bc05c74c377e731b7e16d82854a4659
+* revision: b9ba736871b8f8b741cc9c1d88dda56e63a35091
 
 URI: git://github.com/GENIVI/meta-rvi.git
 * branch: master
@@ -84,31 +80,31 @@ URI: git://github.com/joaohf/meta-erlang.git
 ## The Raspberry Pi 2,3 boards depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
-* branch:   master
-* revision: 4c02c7ce07121c2f5367204445f93199d828bb10
+* branch:   morty
+* revision: 5de45f285e15770300f5b496ff16dec5c6c44e4a
 
 ## The Renesas R-Car Gen3 M3/H3 Starter Kit boards depend in addition on: ##
 URI: https://github.com/slawr/renesas-rcar-gen3.git
 * branch: genivi-11
-* revision: 4758a558bb3badd7108b04b8c43a8a3fbe61b958
+* revision: fd9a7c36813cc3fd1761cfffee28349450064578
 
 URI: https://git.linaro.org/openembedded/meta-linaro.git
 * branch: krogoth
-* revision: 2f51d38048599d9878f149d6d15539fb97603f8f
+* revision: fd9a7c36813cc3fd1761cfffee28349450064578
 
 ## The Renesas R-Car Gen2 Silk & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
-* revision: b22c42eb736bef0253667094a457d74b7e630fa3
+* revision: 4758a558bb3badd7108b04b8c43a8a3fbe61b958
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
-* branch: krogoth
-* revision: b8c199201ffe026485a14e1fcfc398e2b3551512
+* branch: morty
+* revision: 6add41510412ca196efb3e4f949d403a8b6f35d7
 
 ## The Qualcomm Dragonboard 410c depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-qcom
-* branch: krogoth
-* revision: 19ff1853a764ee1014f4e7a295e030b6ddc10612
+* branch: morty
+* revision: aa12bb958cdf4bb4a696357dd3ff2deea99cd962
 
 Supported Machines
 ------------------
