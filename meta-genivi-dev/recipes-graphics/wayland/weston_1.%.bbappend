@@ -20,11 +20,6 @@ RDEPENDS_${PN}_append_vexpressa9 = " mesa-megadriver"
 
 EXTRA_OECONF_append_vexpressa9 = " WESTON_NATIVE_BACKEND=fbdev-backend.so"
 
-EXTRA_OECONF_remove_rpi = "\
-	--enable-rpi-compositor \
-    WESTON_NATIVE_BACKEND=rpi-backend.so \
-"
-
 EXTRA_OECONF_append_rpi = "\
     WESTON_NATIVE_BACKEND=drm-backend.so \
     --disable-static \
