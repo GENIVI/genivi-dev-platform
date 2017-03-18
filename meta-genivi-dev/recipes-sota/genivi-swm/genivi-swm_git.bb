@@ -1,7 +1,7 @@
 DESCRIPTION = "Genivi Software Loading Manager"
 SECTION = "base"
 LICENSE = "MPL-2.0"
-LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=8d2127b230519ce4ad2c16070bdeb7b3"
+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=b278a92d2c1509760384428817710378"
 
 SRCREV = "1ccca6c731da1e26752fbf2d2cdef18fe7e7fbb3"
 SRC_URI = "\

@@ -1,7 +1,7 @@
 SUMMARY = "Storm is an object-relational mapper (ORM) for Python developed at Canonical"
 HOMEPAGE = "https://pypi.python.org/pypi/storm"
 LICENSE = "LGPL-2.1"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=e91355d8a6f8bd8f7c699d62863c7303"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=2d5025d4aa3495befef8f17206a5b0a1"
 
 SRC_URI = "https://launchpad.net/storm/trunk/0.20/+download/storm-0.20.tar.gz"
 SRC_URI[md5sum] = "8628503141f0f06c0749d607ac09b9c7"
