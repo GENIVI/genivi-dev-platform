@@ -1,7 +1,7 @@
 SRC_URI = "git://github.com/GENIVI/hmi-layout-gdp.git"
 SRCREV = "79a4f69e7588a6efc4b4c95abec7794216588087"
 LICENSE  = "MPL-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=815ca599c9df247a0c7f619bab123dad"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
 DEPENDS = "dbus-c++ systemd wayland-ivi-extension qtquick1 qtbase"
 
