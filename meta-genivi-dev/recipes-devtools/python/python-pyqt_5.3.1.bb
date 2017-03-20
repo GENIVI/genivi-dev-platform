@@ -65,10 +65,12 @@ EXTRA_QMAKEVARS_POST += "\
 "
 
 do_generate_prepend() {
-    cp ${WORKDIR}/dbus.pro dbus/
+    cp ${WORKDIR}/dbus.pro ${S}/dbus/
 }
 
 do_configure_prepend() {
+    cd ${S}
+
     cp ${WORKDIR}/qpycore.pro qpy/QtCore/
     cp ${WORKDIR}/qpygui.pro qpy/QtGui/
     if [ -e qpy/QtCore/qpycore_post_init.cpp.in ]
