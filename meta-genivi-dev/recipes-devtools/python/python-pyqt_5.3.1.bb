@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "\
     file://LICENSE;md5=027a10affabd63483e5a6ef03ed8590a \
 "
 
-DEPENDS = "sip-native python-sip python-dbus qtbase qtdeclarative qtsvg qtwebkit"
+DEPENDS = "sip-native python-sip python3-dbus qtbase qtdeclarative qtsvg qtwebkit"
 RDEPENDS_${PN} = "python-core"
 
 PYQT_OE_VERSION = "Qt_5_3_1"
