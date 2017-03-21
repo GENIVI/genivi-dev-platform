@@ -27,6 +27,6 @@ OLDCOMMIT=$(git diff ${SUBMODULE}|grep "^-Subproject"|cut -d' ' -f3)
 
 MSG=$(echo "${SUBMODULE}: ${SHORTLOG}")
 MSG+=$'\n\n'
-MSG+=$(git -C ${SUBMODULE} log --format="%h %s" ${OLDCOMMIT}..${NEWCOMMIT})
+MSG+=$(git -C ${SUBMODULE} log --no-merges --format="%h %s" ${OLDCOMMIT}..${NEWCOMMIT})
 
 git commit -s -m "${MSG}" "${SUBMODULE}"
