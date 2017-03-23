@@ -17,7 +17,7 @@ fi
 
 echo "You selected target $choice"
 
-declare -a targets=("qemux86-64" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c" "r-car-m3-starter-kit")
+declare -a targets=("qemux86-64" "koelsch" "porter" "raspberrypi2" "raspberrypi3" "minnowboard" "silk" "dragonboard-410c" "r-car-m3-starter-kit")
 declare -a supported=("qemux86-64" "porter" "minnowboard" "raspberrypi2" "raspberrypi3" "dragonboard-410c" "silk" "r-car-m3-starter-kit")
 declare -a variables=("choice" "eula" "machine" "modules" "bsp" "bsparr" "supported" "targets" "variables")
 
@@ -74,7 +74,7 @@ echo "Local & bblayers conf set for $machine"
 # bsp submodule layer
 declare -A bsparr
 
-bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["porter"]="meta-renesas" ["silk"]="meta-renesas" ["dragonboard-410c"]="meta-qcom" ["r-car-m3-starter-kit"]="renesas-rcar-gen3")
+bsparr+=( ["minnowboard"]="meta-intel" ["raspberrypi2"]="meta-raspberrypi" ["raspberrypi3"]="meta-raspberrypi" ["koelsch"]="meta-renesas" ["porter"]="meta-renesas" ["silk"]="meta-renesas" ["dragonboard-410c"]="meta-qcom" ["r-car-m3-starter-kit"]="renesas-rcar-gen3")
 
 modules=($(git submodule | awk '{ print $2 }'))
 for i in ${bsparr[@]}; do
