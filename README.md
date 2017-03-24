@@ -87,6 +87,15 @@ URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   master
 * revision: 4c02c7ce07121c2f5367204445f93199d828bb10
 
+## The Renesas R-Car Gen3 M3/H3 Starter Kit boards depend in addition on: ##
+URI: https://github.com/slawr/renesas-rcar-gen3.git
+* branch: genivi-11
+* revision: 4758a558bb3badd7108b04b8c43a8a3fbe61b958
+
+URI: https://git.linaro.org/openembedded/meta-linaro.git
+* branch: krogoth
+* revision: 2f51d38048599d9878f149d6d15539fb97603f8f
+
 ## The Renesas R-Car Gen2 Silk & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
 * revision: b22c42eb736bef0253667094a457d74b7e630fa3
@@ -109,6 +118,7 @@ We aim to support the builds for these machines:
 * Renesas R-Car Gen2 (R-Car M2)  - machine: koelsch
 * Renesas R-Car Gen2 (R-Car M2)  - machine: porter
 * Renesas R-Car Gen2 (R-Car E2)  - machine: silk
+* Renesas R-Car Gen3 (R-Car M3)  - machine: r-car-m3-starter-kit
 * Intel Minnowboard MAX (x86-64) - machine: minnowboard
 * Raspberry Pi 2                 - machine: raspberrypi2
 * Raspberry Pi 3                 - machine: raspberrypi3
