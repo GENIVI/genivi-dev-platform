@@ -10,7 +10,7 @@ inherit cmake systemd
 
 S = "${WORKDIR}/git"
 
-SRCREV = "2c9aabbfd84851309845b4623bb2f20682d47117"
+SRCREV = "95405ab5e3828daf954fdd8bd5774ccb58cf75bb"
 
 SRC_URI = " \
     git://github.com/advancedtelematic/aktualizr \
