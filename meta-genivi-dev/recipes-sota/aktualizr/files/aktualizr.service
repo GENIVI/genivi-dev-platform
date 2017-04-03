@@ -8,6 +8,7 @@ Requires=network-online.target
 RestartSec=5
 Restart=on-failure
 TimeoutStopSec=5
+ExecStartPre=/bin/echo "Loading, please wait..."
 ExecStartPre=/bin/sleep 45
 ExecStart=/usr/bin/aktualizr --config /etc/sota.toml
 
