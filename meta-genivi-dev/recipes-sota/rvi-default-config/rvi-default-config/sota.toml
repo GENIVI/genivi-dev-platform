@@ -23,7 +23,7 @@ websocket = false
 [rvi]
 client = "http://127.0.0.1:8901"
 client_config = "/etc/rvi/conf.json"
-# node_host = "38.101.164.230"
+node_host = "sota.genivi.org"
 storage_dir = "/var/sota"
 timeout = 20
 
