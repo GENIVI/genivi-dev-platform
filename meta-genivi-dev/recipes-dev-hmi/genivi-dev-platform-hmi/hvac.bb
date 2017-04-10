@@ -4,7 +4,7 @@
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 SRC_URI = "git://github.com/GENIVI/HVAC"
-SRCREV  = "ac15a42ce45379f7f80d0b5cc5a830a447239238"
+SRCREV  = "b5f215a90d7c32e75de6a5cc621f5bbc9e5617a0"
 
 SUMMARY = "HVAC"
 DEPENDS = "qtbase qtdeclarative dbus"
@@ -24,15 +24,16 @@ do_install_append() {
         install -m 0444 ${S}/com.genivi.gdp.hvac.svg \
                         ${D}/opt/com.genivi.gdp.hvac/share/icons/com.genivi.gdp.hvac.svg
 	install -d ${D}/usr/share/applications/
-        install -m 0444 ${S}/com.genivi.gdp.hvac.app \
-                        ${D}/usr/share/applications/com.genivi.gdp.hvac.app
+        install -m 0444 ${S}/com.genivi.gdp.hvac.desktop \
+                        ${D}/usr/share/applications/com.genivi.gdp.hvac.desktop
 	install -d ${D}${libdir}/systemd/user
-	install -m 0444 ${S}/com.genivi.gdp.hvac.service \
-	                ${D}${libdir}/systemd/user/
 }
 
 FILES_${PN} += "\
     /opt/* \
+    ${libdir} \
+    ${libdir}/systemd \
+    ${libdir}/systemd/user \
     ${libdir}/systemd/user/* \
     /usr/share/* \
     "

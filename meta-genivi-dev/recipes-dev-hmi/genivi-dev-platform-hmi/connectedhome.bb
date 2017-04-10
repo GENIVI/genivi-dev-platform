@@ -4,7 +4,7 @@
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 SRC_URI = "git://github.com/GENIVI/connected-home"
-SRCREV  = "1bd1ec84ff730c2c8872781aab4733a9ffd32f1e"
+SRCREV  = "d839c4efb39ae0ad90e596d824564a0a27cf8ed7"
 
 SUMMARY = "Connected Home"
 DEPENDS = "qtbase qtdeclarative"
