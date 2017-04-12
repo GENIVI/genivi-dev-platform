@@ -1,8 +1,11 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+DEPENDS += "libgbm mesa"
+
 SRC_URI += "\
     file://0001-seccomp-bpf-Allow-MADV_FREE-in-madvise-2.patch \
     file://google-chrome.desktop \
+    file://fix-egl-version.patch \
 "
 
 # FIXME: workaround for https://at.projects.genivi.org/jira/browse/LM-2
@@ -21,6 +24,10 @@ do_install_append() {
 # Raspberry Pi workarounds
 
 COMPATIBLE_MACHINE_armv7ve = "(.*)"
+
+# Renesas workarounds
+
+COMPATIBLE_MACHINE_m3ulcb = "(.*)"
 
 # Apply same TUNE_FEATURES as in an armv7a build
 ARMFPABI_armv7ve = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'arm_float_abi=hard', 'arm_float_abi=softfp', d)}"
