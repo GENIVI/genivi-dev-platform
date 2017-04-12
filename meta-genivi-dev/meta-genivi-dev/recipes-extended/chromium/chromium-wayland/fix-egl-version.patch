@@ -1,0 +1,13 @@
+Index: chromium-53.0.2785.143/ozone/wayland/wayland.gyp
+===================================================================
+--- chromium-53.0.2785.143.orig/ozone/wayland/wayland.gyp
++++ chromium-53.0.2785.143/ozone/wayland/wayland.gyp
+@@ -22,7 +22,7 @@
+         'WAYLAND_VERSION': '1.4.0',
+         'MESA_VERSION': '9.1.3',
+         'wayland_packages': [
+-          'egl >= <(MESA_VERSION)',
++          'egl = 1.2.1',
+           'wayland-client >= <(WAYLAND_VERSION)',
+           'wayland-cursor >= <(WAYLAND_VERSION)',
+           'wayland-egl >= <(MESA_VERSION)',
