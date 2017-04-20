@@ -8,6 +8,7 @@ SRCREV  = "ac15a42ce45379f7f80d0b5cc5a830a447239238"
 
 SUMMARY = "HVAC"
 DEPENDS = "qtbase qtdeclarative dbus"
+RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
 
 S = "${WORKDIR}/git"
 
