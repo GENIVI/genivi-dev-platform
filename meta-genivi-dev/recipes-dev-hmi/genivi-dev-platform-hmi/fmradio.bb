@@ -8,6 +8,7 @@ SRCREV  = "256c49af8719e2831a316e18240670df66ea2964"
 
 SUMMARY = "FM Radio"
 DEPENDS = "qtbase qtdeclarative"
+RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
 
 SRC_URI_append ="\
     file://0002-Changed-surface-id-of-FM-radio.patch \
