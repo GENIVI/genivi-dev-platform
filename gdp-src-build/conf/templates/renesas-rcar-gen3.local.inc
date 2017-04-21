@@ -12,9 +12,9 @@ MACHINE ?= "m3ulcb"
 SOC_FAMILY ?= "r8a7796"
 
 # Linaro GCC
-GCCVERSION = "linaro-5.2"
+GCCVERSION = "linaro-5.3"
 
-PACKAGE_CLASSES = "package_ipk"
+PACKAGE_CLASSES = "package_rpm"
 
 # add the static lib to SDK toolchain
 SDKIMAGE_FEATURES_append = " staticdev-pkgs"
