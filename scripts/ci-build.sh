@@ -229,16 +229,19 @@ set -x
 if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
   cd renesas-rcar-gen3
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
+  cd -
 fi
 
 if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
   cd meta-renesas/meta-rcar-gen2
   ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
   ./copy_mm_software_lcb.sh /var/go/sgx_bin/
+  cd -
 fi
 set +x
 
 # INIT
+cd "$BASEDIR"
 echo "Running init.sh"
 if [[ "$TARGET" == "dragonboard-410c" ]]; then
   source ./init.sh $TARGET accept-eula -f
