@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # (C) 2017 Gunnar Andersson
 # LICENSE: MPLv2
@@ -61,7 +61,11 @@ define_with_default() {
   fi
 }
 
-stop_if_failure() { [[ "$fail" == "true" ]] && exit 1 ; }
+stop_if_failure() {
+  if [[ "$fail" == "true" ]] ; then
+    exit 1
+  fi
+}
 
 stop_immediately() {
   echo "Fatal error occurred - stopping ci-build script"
