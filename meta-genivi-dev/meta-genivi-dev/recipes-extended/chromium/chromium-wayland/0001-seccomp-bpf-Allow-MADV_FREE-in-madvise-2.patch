@@ -1,0 +1,50 @@
+From 65180d3bfbec6fb3d0ed2ca7961094fb38452832 Mon Sep 17 00:00:00 2001
+From: "raphael.kubo.da.costa" <raphael.kubo.da.costa@intel.com>
+Date: Wed, 9 Nov 2016 09:46:13 -0800
+Subject: [PATCH] seccomp-bpf: Allow MADV_FREE in madvise(2)
+
+The seccomp filter was assuming MADV_DONTNEED and MADV_FREE were the
+same thing, but they are not. In particular, a separate MADV_FREE macro
+was introduced in Linux 4.5, and glibc started defining it in its
+headers since 2.24 with this commit:
+
+https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=981569c74cbb6bafa2ddcefa6dd9dbdc938ff1c8
+
+Blink's PageAllocator.cpp sets MADV_FREE to MADV_DONTNEED if the former
+is not defined as a macro. On systems with glibc >= 2.24, this no longer
+happens and MADV_FREE will be rejected by the madvise seccomp filter,
+leading to a crash in Blink's decommitSystemPages().
+
+R=jln@chromium.org,jorgelo@chromium.org,mdempsky@chromium.org,rickyz@chromium.org
+
+Review-Url: https://codereview.chromium.org/2490893002
+Cr-Commit-Position: refs/heads/master@{#430965}
+---
+ sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc b/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
+index af47269..88a9326 100644
+--- a/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
++++ b/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
+@@ -174,9 +174,15 @@ ResultExpr EvaluateSyscallImpl(int fs_denied_errno,
+   }
+ 
+   if (sysno == __NR_madvise) {
+-    // Only allow MADV_DONTNEED (aka MADV_FREE).
++    // Only allow MADV_DONTNEED and MADV_FREE.
+     const Arg<int> advice(2);
+-    return If(advice == MADV_DONTNEED, Allow()).Else(Error(EPERM));
++    return If(AnyOf(advice == MADV_DONTNEED
++#if defined(MADV_FREE)
++                    // MADV_FREE was introduced in Linux 4.5 and started being
++                    // defined in glibc 2.24.
++                    , advice == MADV_FREE
++#endif
++                    ), Allow()).Else(Error(EPERM));
+   }
+ 
+ #if defined(__i386__) || defined(__x86_64__) || defined(__mips__) || \
+-- 
+2.7.4
+
