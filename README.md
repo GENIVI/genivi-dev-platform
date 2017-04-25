@@ -50,61 +50,49 @@ Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
 * branch:   12.0 (N-1.0 tag)
-* revision: f00d9517e12366d3d3208e011c58fe978570ef0b
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
-* revision: d715f2c1d340fa38f8a9860acc73de5e14a38b75
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems, meta-python
 * branch:   morty
-* revision: 1efa5d623bc64659b57389e50be2568b1355d5f7
 
 URI: git://git.yoctoproject.org/poky
 * branch:   morty
-* revision: 6a1f33cc40bfac33cf030fe41e1a8efd1e5fad6f
 
 URI: git://git.yoctoproject.org/git/meta-oic.git
 * branch: 1.0.1
-* revision: b9ba736871b8f8b741cc9c1d88dda56e63a35091
 
 URI: git://github.com/GENIVI/meta-rvi.git
 * branch: master
-* revision: de9d548fe35e2cee8688faaae910b4f6f7fea17e
 
 URI: git://github.com/joaohf/meta-erlang.git
 * branch: master
-* revision: 4d7eacc8e6593934ed5b0c8abc3d3e9dc339d849
 
 ## The Raspberry Pi 2,3 boards depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
 * branch:   morty
-* revision: 5de45f285e15770300f5b496ff16dec5c6c44e4a
 
 ## The Renesas R-Car Gen3 M3/H3 Starter Kit boards depend in addition on: ##
 URI: https://github.com/slawr/renesas-rcar-gen3.git
 * branch: genivi-11
-* revision: fd9a7c36813cc3fd1761cfffee28349450064578
 
 URI: https://git.linaro.org/openembedded/meta-linaro.git
 * branch: krogoth
-* revision: fd9a7c36813cc3fd1761cfffee28349450064578
 
 ## The Renesas R-Car Gen2 Silk & Porter boards depend in addition on: ##
 URI: git://github.com/slawr/meta-renesas.git
-* revision: 4758a558bb3badd7108b04b8c43a8a3fbe61b958
+* branch: genivi-11-bsp-1.10.0
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
 * branch: morty
-* revision: 6add41510412ca196efb3e4f949d403a8b6f35d7
 
 ## The Qualcomm Dragonboard 410c depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-qcom
 * branch: morty
-* revision: aa12bb958cdf4bb4a696357dd3ff2deea99cd962
 
 Supported Machines
 ------------------
