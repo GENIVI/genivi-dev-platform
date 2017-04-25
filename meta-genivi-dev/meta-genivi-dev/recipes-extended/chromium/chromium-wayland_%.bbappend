@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "\
+    file://0001-seccomp-bpf-Allow-MADV_FREE-in-madvise-2.patch \
     file://google-chrome.desktop \
 "
 
