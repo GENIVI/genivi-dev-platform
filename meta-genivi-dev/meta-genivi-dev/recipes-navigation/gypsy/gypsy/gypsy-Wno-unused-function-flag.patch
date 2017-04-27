@@ -1,0 +1,13 @@
+diff --git a/configure.ac b/configure.ac
+index 24a346f..c327d9b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -58,7 +58,7 @@ AC_MSG_RESULT([$with_user])
+ AS_AC_EXPAND(LIBEXECDIR, $libexecdir)
+ AS_AC_EXPAND(DAEMON_USER, $with_user)
+
+-CFLAGS="$CFLAGS -g -Wall -Werror -Wno-format"
++CFLAGS="$CFLAGS -g -Wall -Werror -Wno-format -Wno-unused-function"
+
+ GTK_DOC_CHECK([1.6])
+ # TODO: add --with-xsltproc argument to override PATH
