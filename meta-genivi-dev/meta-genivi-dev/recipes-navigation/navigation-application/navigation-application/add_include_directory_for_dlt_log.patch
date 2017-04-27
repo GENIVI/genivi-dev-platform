@@ -1,0 +1,12 @@
+diff --git a/src/hmi/hmi-launcher/CMakeLists.txt b/src/hmi/hmi-launcher/CMakeLists.txt
+index 38a7e46..ef7fc4a 100644
+--- a/src/hmi/hmi-launcher/CMakeLists.txt
++++ b/src/hmi/hmi-launcher/CMakeLists.txt
+@@ -53,6 +53,7 @@ include_directories(
+     ${QT5_NETWORK_INCLUDE_DIRS}
+     ${DBUS_INCLUDE_DIRS}
+     ${NAVIGATION_COMMON_DIR}
++    ../../fuel-stop-advisor/
+ )
+ 
+ message(STATUS "${DBUS_INCLUDE_DIRS}")
