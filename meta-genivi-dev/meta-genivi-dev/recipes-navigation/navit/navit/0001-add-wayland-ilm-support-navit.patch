@@ -343,22 +343,6 @@ diff -urN navit/.gitignore navit/.gitignore
 @@ -1,2 +0,0 @@
 -/.gitk-tmp.*
 -/CMakeLists.txt.user*
-diff -urN navit/navit/graphics/Makefile.am navit/navit/graphics/Makefile.am
---- navit/navit/graphics/Makefile.am	2014-10-20 15:21:05.133431904 +0200
-+++ navit/navit/graphics/Makefile.am	2014-09-23 12:53:02.000000000 +0200
-@@ -2,9 +2,9 @@
- if GRAPHICS_ANDROID
-   SUBDIRS+=android
- endif
--if GRAPHICS_GTK_DRAWING_AREA
--  SUBDIRS+=gtk_drawing_area
--endif
-+#if GRAPHICS_GTK_DRAWING_AREA
-+#  SUBDIRS+=gtk_drawing_area
-+#endif
- if GRAPHICS_NULL
-   SUBDIRS+=null
- endif
 diff -urN navit/navit/graphics/opengl/CMakeLists.txt navit/navit/graphics/opengl/CMakeLists.txt
 --- navit/navit/graphics/opengl/CMakeLists.txt	2014-10-20 15:21:04.565431914 +0200
 +++ navit/navit/graphics/opengl/CMakeLists.txt	2014-09-23 12:53:02.000000000 +0200
@@ -1075,7 +1059,7 @@ index 290a1e9..2f74ecf 100755
 -      endif(HAVE_FREEIMAGE)
 -      set_with_reason(graphics/opengl "Found OpenGL" TRUE ${GRAPHICS_OPENGL_LIBRARY})
 +      set(GRAPHICS_OPENGL_LIBRARY ${OPENGL_gl_LIBRARY};${OPENGL_glu_LIBRARY};${GLUT_glut_LIBRARY})
-+   elseif (OPENGL_FOUND AND OPENGL_INCLUDE_DIR AND USE_OPENGLES2)
++   elseif (OPENGL_FOUND AND OPENGLES2_INCLUDE_DIR AND USE_OPENGLES2)
 +      message (STATUS "opengl found: ${OPENGLES2_glesv2_LIBRARY}")
 +      include_directories(${OPENGLES2_INCLUDE_DIR};${WAYLAND_INCLUDE_DIRS})
 +      set(USE_OPENGLES TRUE)

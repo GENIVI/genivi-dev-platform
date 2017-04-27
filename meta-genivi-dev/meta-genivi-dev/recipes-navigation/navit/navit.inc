@@ -62,12 +62,7 @@ FILES_${PN}-graphics-sdl = " ${libdir}/${PN}/graphics/libgraphics_sdl.so "
 FILES_${PN}-graphics-opengl = " ${libdir}/${PN}/graphics/libgraphics_opengl.so "
 FILES_${PN}-graphics-qt = " ${libdir}/${PN}/graphics/libgraphics_qt_qpainter.so "
 FILES_${PN}-graphics-gtk = " ${libdir}/${PN}/graphics/libgraphics_gtk_drawing_area.so "
-FILES_${PN}-icons = "/usr/share/${PN}/xpm/"
-
-do_configure_prepend() {
-    # MOC=`$PKG_CONFIG QtGui --variable=moc_location` returns only /usr/bin/moc4 which is not available on hosts without Qt
-    sed -i "s#MOC=#MOC=${STAGING_DIR_NATIVE}#g" ${S}/configure.in
-}
+FILES_${PN}-icons = "/usr/share/${PN}/icons/"
 
 EXTRA_OECMAKE = "-DSAMPLE_MAP=n -DDISABLE_QT=1 -Dvehicle/null=1 -Dgraphics/qt_qpainter=0"
 
@@ -98,13 +93,12 @@ do_install() {
     install -d ${D}/${libdir}/${PN}/vehicle
     install ${PN}/vehicle/demo/.libs/libvehicle_demo.so ${D}/${libdir}/${PN}/vehicle
     install ${PN}/vehicle/file/.libs/libvehicle_file.so ${D}/${libdir}/${PN}/vehicle
-    install ${PN}/vehicle/gpsd/.libs/libvehicle_gpsd.so ${D}/${libdir}/${PN}/vehicle
     install ${PN}/vehicle/gpsd_dbus/.libs/libvehicle_gpsd_dbus.so ${D}/${libdir}/${PN}/vehicle
     install ${PN}/vehicle/gypsy/.libs/libvehicle_gypsy.so ${D}/${libdir}/${PN}/vehicle
     install ${PN}/vehicle/null/.libs/libvehicle_null.so ${D}/${libdir}/${PN}/vehicle
 
     install -d ${D}${includedir}/${PN}
-    install -m 0755 ${B}/config.h ${D}${includedir}/${PN}
+    install -m 0755 ${B}/config.h ${D}${includedir}
     install -m 0755 ${S}/${PN}/*.h ${D}${includedir}/${PN}
 
     install -d ${D}${libdir}/${PN}/cmake
@@ -124,8 +118,8 @@ do_install() {
     install -m 0755 ${WORKDIR}/*.xml ${D}${datadir}/${PN}
     mv ${D}${datadir}/${PN}/switzerland.xml ${D}${datadir}/${PN}/maps
 
-    install -d ${D}/${datadir}/${PN}/xpm
-    install ${B}/${PN}/xpm/*.png ${D}/${datadir}/${PN}/xpm
+    install -d ${D}/${datadir}/${PN}/icons
+    install ${B}/${PN}/icons/*.png ${D}/${datadir}/${PN}/icons
 }
 
 python do_package_prepend () {
