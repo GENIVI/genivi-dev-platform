@@ -9,7 +9,7 @@ After=syslog.target
 [Service]
 Type=dbus
 BusName=org.automotive.message.broker
-ExecStart=/usr/bin/ambd
+ExecStart=/usr/bin/ambd --config /etc/ambd/logreplayerconfig.in.json
 
 [Install]
 WantedBy=multi-user.target
