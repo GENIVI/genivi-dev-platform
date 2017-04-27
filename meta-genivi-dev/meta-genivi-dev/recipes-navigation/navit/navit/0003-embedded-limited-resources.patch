@@ -1,0 +1,13 @@
+diff --git a/navit/navit_shipped.xml b/navit/navit_shipped.xml
+index 8c2d16e..ccbbe13 100644
+--- a/navit/navit_shipped.xml
++++ b/navit/navit_shipped.xml
+@@ -20,7 +20,7 @@
+ 	<!-- Example of setting the debug level for a single function.  -->
+ 	<debug name="navit:do_draw" dbg_level="error"/>
+ 	<!-- This is here so one can copy&paste the contents of popup menus --> 
+-	<debug name="navit:popup_printf_cb" dbg_level="debug"/>
++	<debug name="navit:popup_printf_cb" dbg_level="error"/>
+ 	<!-- Example for logging timing/profiling information. Note the prefix "profile:".
+ 	<debug name="profile:navit:do_draw" dbg_level="debug"/>
+ 	-->
