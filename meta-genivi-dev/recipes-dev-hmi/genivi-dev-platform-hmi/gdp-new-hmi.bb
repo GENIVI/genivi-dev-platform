@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/GENIVI/hmi-layout-gdp.git"
-SRCREV = "7de635f5d3daa25fcd104d15d6a0aac678b15121"
+SRCREV = "5ea7b14a09ecadf05c1c0459718549e2ab596854"
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
