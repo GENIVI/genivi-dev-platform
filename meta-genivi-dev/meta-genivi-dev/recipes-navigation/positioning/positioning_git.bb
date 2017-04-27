@@ -97,7 +97,9 @@ FILES_${PN}-repl = "${bindir}/log-replayer \
                     ${datadir}/${PN}/*.log "
 FILES_${PN}-repl-test = "${bindir}/test-log-replayer "
 
-FILES_${PN}-enhpos = "${bindir}/enhanced-position-service "
+FILES_${PN}-enhpos = "${bindir}/enhanced-position-service \
+                      ${libdir}/systemd/user/*.service"
+
 FILES_${PN}-enhpos-test = "${bindir}/enhanced-position-client \
                            ${bindir}/enhanced-position-service-compliance-test "
 
