@@ -3,9 +3,9 @@ SECTION = "base"
 LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=b278a92d2c1509760384428817710378"
 
-SRCREV = "1ccca6c731da1e26752fbf2d2cdef18fe7e7fbb3"
+SRCREV = "987c2f77da7e8bcfa212b47b6723497c7acc8f46"
 SRC_URI = "\
-    git://github.com/advancedtelematic/genivi_swm;branch=gdp-build;protocol=https \
+    git://github.com/GENIVI/genivi_swm;branch=master;protocol=https \
     file://package_manager.service \
     file://partition_manager.service \
     file://lifecycle_manager.service \
@@ -26,6 +26,7 @@ FILES_${PN} = " \
     ${systemd_system_unitdir}/software_loading_manager.service \
     ${systemd_system_unitdir}/lifecycle_manager.service \
     ${sysconfdir}/dbus-1/system.d/org.genivi.SoftwareLoadingManager.conf \
+    ${bindir}/sota-demo-reset.sh \
     "
 
 DEPENDS = "systemd"
@@ -57,4 +58,7 @@ do_install () {
 
     install -d ${D}${sysconfdir}/dbus-1/system.d/
     install -m 0644 -c "${WORKDIR}/org.genivi.SoftwareLoadingManager.conf" ${D}${sysconfdir}/dbus-1/system.d
+
+    install -d ${D}${bindir}
+    install -m 0755 -c "${S}/nano_samples_rpi/sota-demo-reset.sh" ${D}${bindir}
 }
