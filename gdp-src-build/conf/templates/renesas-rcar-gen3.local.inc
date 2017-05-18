@@ -2,7 +2,7 @@
 include local.inc
 
 # Add R-Car Gfx and MMP packages to install
-IMAGE_INSTALL_append_rcar-gen3 = "libdrm-kms kernel-module-gles gles-user-module libgbm-dev packagegroup-gstreamer1.0-plugins weston-bin kernel-module-pvrsrvkm"
+IMAGE_INSTALL_append_rcar-gen3 = "libdrm-kms kernel-module-gles gles-user-module libgbm-dev packagegroup-gstreamer1.0-plugins weston-bin kernel-module-pvrsrvkm packagegroup-graphics-libegl"
 
 MACHINE ?= "m3ulcb"
 
