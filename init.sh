@@ -1,4 +1,11 @@
-# Note that this script is supposed to be sourced
+# Note that this script is supposed to be sourced,
+# and only works with bash or zsh, not a vanilla bourne shell
+
+if [ -z "$BASH_VERSION" -a -z "$ZSH_VERSION" ] ; then
+    echo This sript only works with bash or zsh as the interactive shell.
+    echo Please retry with bash or zsh.
+    return 1
+fi
 
 function setupGitSubmodules() {
     local choice=$1
