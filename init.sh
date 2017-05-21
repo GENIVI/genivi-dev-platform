@@ -15,24 +15,22 @@ function setupGitSubmodules() {
     echo "You selected target $choice"
 
     local targets=(
-        "qemux86-64"
+        "dragonboard-410c"
         "koelsch"
-        "porter"
-        "raspberrypi2"
-        "raspberrypi3"
         "minnowboard"
-        "silk"
-        "dragonboard-410c"
-        "r-car-m3-starter-kit")
-    local supported=(
+        "porter"
         "qemux86-64"
-        "porter"
-        "minnowboard"
+        "r-car-m3-starter-kit"
         "raspberrypi2"
         "raspberrypi3"
+        "silk")
+    local supported=(
         "dragonboard-410c"
-        "silk"
-        "r-car-m3-starter-kit")
+        "minnowboard"
+        "qemux86-64"
+        "r-car-m3-starter-kit"
+        "raspberrypi2"
+        "raspberrypi3")
     local modules=()
     local target=""
 
