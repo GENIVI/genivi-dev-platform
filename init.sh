@@ -83,9 +83,6 @@ function setupGitSubmodules() {
 
     echo "Local & bblayers conf set for $machine"
 
-    # init really makes sense only the first time
-    # and after that is redundant, only require target
-    # bsp submodule layer
     declare -A bsparr
     bsparr["minnowboard"]="meta-intel"
     bsparr["raspberrypi2"]="meta-raspberrypi"
@@ -105,14 +102,8 @@ function setupGitSubmodules() {
 
     git submodule init "${modules[@]}"
 
-    # git submodule sync helpfully rewrites your remotes (typically "origin")
-    # inside the submodules :) I bet this helpfulness will drive some power
-    # users mad, but for most users this will reduce instead of add confusion
     git submodule sync "${modules[@]}"
 
-    # update here could help ensure people get the right checked out version
-    # after they have switched branches. However learning how submodules work
-    # is better (because they are not that user friendly otherwise...))
     git submodule update "${modules[@]}"
 
     return 0
