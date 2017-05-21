@@ -83,7 +83,10 @@ function setupGitSubmodules() {
 
     echo "Local & bblayers conf set for $machine"
 
+    # Define hardware-dependent layers.
+    # Multiple layers can be specified for a machine if space-separated.
     declare -A bsparr
+    bsparr["qemux86-64"]=""
     bsparr["minnowboard"]="meta-intel"
     bsparr["raspberrypi2"]="meta-raspberrypi"
     bsparr["raspberrypi3"]="meta-raspberrypi"
@@ -91,11 +94,28 @@ function setupGitSubmodules() {
     bsparr["porter"]="meta-renesas"
     bsparr["silk"]="meta-renesas"
     bsparr["dragonboard-410c"]="meta-qcom"
-    bsparr["r-car-m3-starter-kit"]="renesas-rcar-gen3"
+    bsparr["r-car-m3-starter-kit"]="meta-linaro renesas-rcar-gen3"
 
+    # This looks somewhat complex but the intention is to clone only needed
+    # submodules.  The module list is calculated as : all the submodules we
+    # have (as reported by git) *minus* BSP-related layers that are NOT
+    # relevant for the chosen $machine.  In other words - loop through all BSP
+    # layers and delete them from array unless they are the layer (or layers)
+    # defined for this $machine.
     modules=($(git submodule | awk '{ print $2 }'))
+
     for i in ${bsparr[@]}; do
-        if [[ "$machine" == "qemux86-64" ]] || [[ $i != ${bsparr[${machine}]} ]] ; then
+        local found=false
+
+        # Multiple BSP layers per machine are supported so loop over them just in case
+        for bsp in ${bsparr[${machine}]} ; do
+            if [[ $i == $bsp ]] ; then
+                found=true
+            fi
+        done
+
+        if ! $found ; then
+            # This BSP is not for the $machine, so delete it from the list
             modules=(${modules[@]//*$i*})
         fi
     done
