@@ -34,57 +34,57 @@ function setupGitSubmodules() {
         "silk"
         "r-car-m3-starter-kit")
     local modules=()
-    local machine=""
+    local target=""
 
     for i in ${targets[@]}
     do
         if [[ $i == $choice ]]
         then
-            machine=$choice
-            echo "$machine is a valid target"
+            target=$choice
+            echo "$target is a valid target"
             break
         fi
     done
 
-    if test -z "$machine" ; then
-        echo "An invalid target name was given of $choice, available targets are:"
+    if test -z "$target" ; then
+        echo "An invalid or empty target name was given: $choice  Available targets are:"
         printf '%s\n' "${targets[@]}"
-        echo "Usage: source init.sh target [accept-eula] [-f]"
+        echo -e "\nUsage: source init.sh <target> [accept-eula] [-f]"
         return 1
     else
-        if [[ ! ${supported[@]} =~ "$machine" ]] && [[ ${!#} != "-f" ]]; then
+        if [[ ! ${supported[@]} =~ "$target" ]] && [[ ${!#} != "-f" ]]; then
             echo "However currently, only the following targets are officially supported:"
             printf '%s\n' "${supported[@]}"
             echo "You can either "
             echo "re-run with a supported target (or override this check with -f)"
             echo "or get the gdp-11 branch:"
             echo "   git checkout origin/gdp-11 and then re-run"
-            echo "   source init.sh $machine"
+            echo "   source init.sh $target"
             return 1
         fi
     fi
 
-    if [[ "$machine" == "dragonboard-410c" ]] && test -z "$eula" ; then
+    if [[ "$target" == "dragonboard-410c" ]] && test -z "$eula" ; then
         echo "Building GDP for DragonBoard 410c requires Qualcomm EULA acceptance."
         echo "See http://git.yoctoproject.org/cgit/cgit.cgi/meta-qcom/tree/conf/EULA for details."
         echo "Please re-run init.sh with additional 'accept-eula' argument"
         return 1
     fi
 
-    echo "Generating bitbake configuration files for $machine"
+    echo "Generating bitbake configuration files for $target"
 
-    cp gdp-src-build/conf/templates/${machine}.local.conf gdp-src-build/conf/local.conf
-    cp gdp-src-build/conf/templates/${machine}.bblayers.conf gdp-src-build/conf/bblayers.conf
+    cp gdp-src-build/conf/templates/${target}.local.conf gdp-src-build/conf/local.conf
+    cp gdp-src-build/conf/templates/${target}.bblayers.conf gdp-src-build/conf/bblayers.conf
 
     # Accept EULA in local.conf
-    if [[ $machine == "dragonboard-410c" ]] ; then
+    if [[ $target == "dragonboard-410c" ]] ; then
         echo "ACCEPT_EULA_dragonboard-410c = "'"1"'"" >> gdp-src-build/conf/local.conf
     fi
 
-    echo "Local & bblayers conf set for $machine"
+    echo "Local & bblayers conf set for $target"
 
     # Define hardware-dependent layers.
-    # Multiple layers can be specified for a machine if space-separated.
+    # Multiple layers can be specified for a target if space-separated.
     declare -A bsparr
     bsparr["qemux86-64"]=""
     bsparr["minnowboard"]="meta-intel"
@@ -99,23 +99,23 @@ function setupGitSubmodules() {
     # This looks somewhat complex but the intention is to clone only needed
     # submodules.  The module list is calculated as : all the submodules we
     # have (as reported by git) *minus* BSP-related layers that are NOT
-    # relevant for the chosen $machine.  In other words - loop through all BSP
+    # relevant for the chosen $target.  In other words - loop through all BSP
     # layers and delete them from array unless they are the layer (or layers)
-    # defined for this $machine.
+    # defined for this $target.
     modules=($(git submodule | awk '{ print $2 }'))
 
     for i in ${bsparr[@]}; do
         local found=false
 
-        # Multiple BSP layers per machine are supported so loop over them just in case
-        for bsp in ${bsparr[${machine}]} ; do
+        # Multiple BSP layers per target are supported so loop over them just in case
+        for bsp in ${bsparr[${target}]} ; do
             if [[ $i == $bsp ]] ; then
                 found=true
             fi
         done
 
         if ! $found ; then
-            # This BSP is not for the $machine, so delete it from the list
+            # This BSP is not for the $target, so delete it from the list
             modules=(${modules[@]//*$i*})
         fi
     done
