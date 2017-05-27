@@ -6,8 +6,10 @@
 # User warning!
 
 # A casual user will need to read the script to understand what the first
-# parameter shall be to make it run:
+# parameter shall be to make it actually run:
 #
+
+# Fail script unless you give the magic value:
 if [[ "$1" != CI_FLAG ]]; then
 
   cat <<EOT
@@ -15,13 +17,15 @@ if [[ "$1" != CI_FLAG ]]; then
 READ THIS: This script was not designed for personal use.
 
 If you still use it, you hereby agree to any applicable End-User License
-Agreement (EULA) of the corresponding BSPs that are used.
+Agreement (EULA) of the corresponding BSPs that are used.  You must read
+and understand the obligations by studying the script.
 
-It is still a useful script but a few things could be destructive if you use
-this in your development environment instead of a "throw-away" environment like
-CI.
+It is still a useful script but a few things could be destructive, e.g.
+"git reset --hard" if you use this in your development environment instead of
+a throw-away environment like CI.
 
-Please make sure you read the script to understand what it does!
+Please make sure you commit/backup local changes and read the script to
+understand what it does!
 
 After that I hope you enjoy using it.
 
@@ -40,7 +44,10 @@ AGENT_STANDARD_SGX_GEN3_LOCATION="/var/go/sgx_bin_gen3"
 
 # ---- Helper functions ----
 
-# This is some trickery, but quite useful
+fail=false
+
+# This is some trickery, but quite useful.
+# Return the value of a variable whose name is stored in another variable
 deref() { eval echo \$$1 ; }
 
 ensure_var_is_defined() {
@@ -91,8 +98,8 @@ stage_artifact() {
   shift
 
   if [[ -z "$1" ]] ; then
-      echo "Skipped an artifact pattern that matched nothing"
-      return
+    echo "Skipped an artifact pattern that matched nothing"
+    return
   fi
 
   for f in $@ ; do  # <- could be empty glob list
@@ -237,7 +244,7 @@ stop_if_failure
 git_gdp="https://github.com/GENIVI/genivi-dev-platform"
 branch="master"
 
-# For copying graphics
+# Special case: Use porter script to copy graphics drivers for koelsch
 if [[ "$TARGET" == "koelsch" ]]; then
   GFX_MACHINE=porter
 else
@@ -311,7 +318,7 @@ git config user.email no_email@genivigo.com
 # CIAT system but there are multiple ways to override it provided here.
 
 if [[ -n "$FORK" ]]; then
-  echo "***** NOTE: OVERRIDING REPOSITORY WITH \$FORK DEFINITION *****"
+  echo "***** NOTE: OVERRIDING REPOSITORY WITH \$FORK = $FORK *****"
   git remote set-url origin "$FORK"
   git fetch
   # V *danger* V.  One reason why you should not use this script if it's not in CI
@@ -322,17 +329,17 @@ if [[ -n "$FORK" ]]; then
 fi
 
 if [[ -n "$BRANCH" ]]; then
-  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$BRANCH DEFINITION *****"
+  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$BRANCH = $BRANCH *****"
   git checkout $BRANCH
 fi
 
 if [[ -n "$TAG" ]]; then
-  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$TAG DEFINITION *****"
+  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$TAG = $TAG *****"
   git checkout $TAG
 fi
 
 if [[ -n "$COMMIT" ]]; then
-  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$COMMIT DEFINITION *****"
+  echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$COMMIT = $COMMIT *****"
   git checkout $COMMIT
 fi
 
@@ -344,14 +351,13 @@ done
 
 # Remind us exactly what submodules hashes are used (this is already stated by
 # go.cd when fetching materials, but materials can be overriden by FORK /
-# BRANCH / TAG / COMMIT
+# BRANCH / TAG / COMMIT environment variables
 echo "Submodules:"
 git submodule sync    # Because submodules may have changed
-git submodule update  # Because submodules may have changed
+git submodule update  # Because submodules may have changed during override
 git submodule status
 
 # Deal with special setup, copy binary drivers etc.
-set -x
 if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
   cd meta-renesas
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
@@ -359,16 +365,18 @@ if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
 fi
 
 if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
+  echo "Copying binary graphics drivers for $GFX_MACHINE"
   cd meta-renesas/meta-rcar-gen2
   ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
   ./copy_mm_software_lcb.sh /var/go/sgx_bin/
   cd -
 fi
-set +x
 
 # INIT
 cd "$BASEDIR"
 echo "Running init.sh"
+
+# By using this script you accept the EULA (see top of script)
 if [[ "$TARGET" == "dragonboard-410c" ]]; then
   source ./init.sh $TARGET accept-eula -f
 else
