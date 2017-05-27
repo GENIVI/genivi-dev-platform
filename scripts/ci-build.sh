@@ -110,6 +110,103 @@ stage_artifact() {
   done
 }
 
+
+# Layer version overrides:
+# Find and evaluate environment variables of type
+
+# LAYER_<layername>_FORK
+# LAYER_<layername>_COMMIT
+# LAYER_<layername>_BRANCH
+# LAYER_<layername>_TAG
+
+# *NOTE*  Variables cannot have dashes in name therefore, underscores must be
+# used!  For example: LAYER_meta_browser_COMMIT for meta-browser layer
+
+# If an override variable is defined, build with this version of the layer
+# instead.  If multiple conflicting values, then the most specific override
+# (commit) wins
+
+layer_override() {
+  local name=$1 suffix var_name value d
+
+  # Variables cannot have dashes in name therefore, underscores must be
+  # used.  For example: LAYER_meta_browser_COMMIT for meta-browser layer
+  clean_name=$(echo "$name" | sed 's/-/_/g')
+
+  # First FORK...
+  var_name="LAYER_${clean_name}_FORK"
+  value=$(deref "$var_name")
+  if [ -n "$value" ] ; then
+    echo "***** NOTE: OVERRIDING LAYER $name USING \$${var_name} = $value *****"
+    d="$PWD"
+    cd $name || echo "Layer name wrong?  Can't cd to dir : $name"
+    echo "Fetching from $value"
+    git remote add temp_fork "$value"
+    git fetch temp_fork
+
+    # Master is assumed, but it is likely overridden by a COMMIT/TAG/BRANCH
+    # value below. but this could fail.
+    echo "NOTE: Assuming master branch for now (might be overridden later)"
+    echo "NOTE: This will fail if no master branch exists in $value"
+    echo "+ git reset temp_fork/master --hard"
+    git reset temp_fork/master --hard
+    cd "$d"
+  fi
+
+  # ...then the others
+  for suffix in COMMIT TAG BRANCH ; do
+    var_name="LAYER_${clean_name}_${suffix}"
+    value=$(deref "$var_name")
+    if [ -n "$value" ] ; then
+      echo "***** NOTE: OVERRIDING LAYER $name USING \$${var_name} = $value *****"
+      d="$PWD"
+      cd $name || echo "Layer name wrong?  Can't cd to dir : $name"
+      git fetch
+      git checkout "$value"
+      cd "$d"
+      break  # First one wins, priority order: COMMIT >= TAG >= BRANCH
+    fi
+  done
+}
+
+# Because of the order they are called we can't use output from the
+# layer_override function above, so we have some repeated code here.
+print_layer_overrides() {
+  local names="$1" name clean_name suffix var_name value d
+
+  for name in $names ; do
+    clean_name=$(echo "$name" | sed 's/-/_/g')
+    for suffix in COMMIT TAG BRANCH ; do
+      var_name="LAYER_${clean_name}_${suffix}"
+      value=$(deref "$var_name")
+      if [ -n "$value" ] ; then
+        echo "$var_name = $value"
+      fi
+    done
+  done
+}
+
+
+# FIXME: Asking git to list submodules would be better
+LAYERS="
+meta-browser
+meta-erlang
+meta-genivi-dev
+meta-intel
+meta-iot-web
+meta-ivi
+meta-linaro
+meta-oic
+meta-openembedded
+meta-qcom
+meta-qt5
+meta-raspberrypi
+meta-renesas
+meta-rvi
+poky
+renesas-rcar-gen3
+"
+
 # ---- Main program ----
 
 D=$(dirname "$0")
@@ -177,8 +274,10 @@ echo Configuration:
 echo
 echo "TARGET = $TARGET"
 echo "BRANCH = $BRANCH"
+echo "TAG = $TAG"
 echo "COMMIT = $COMMIT"
-echo "RELEASE = $RELEASE"
+echo "RELEASE = $RELEASE (currently unused)"
+print_layer_overrides "$LAYERS"
 echo
 echo "BUILD_SDK = $BUILD_SDK"
 echo "COPY_LICENSES" = "$COPY_LICENSES"
@@ -236,6 +335,12 @@ if [[ -n "$COMMIT" ]]; then
   echo "***** NOTE: OVERRIDING CHOSEN COMMIT USING \$COMMIT DEFINITION *****"
   git checkout $COMMIT
 fi
+
+# Do version override on sublayers (if any such overrides defined)
+
+for l in $LAYERS ; do
+  layer_override $l
+done
 
 # Remind us exactly what submodules hashes are used (this is already stated by
 # go.cd when fetching materials, but materials can be overriden by FORK /
