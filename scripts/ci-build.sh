@@ -222,7 +222,8 @@ fi
 # go.cd when fetching materials, but materials can be overriden by FORK /
 # BRANCH / TAG / COMMIT
 echo "Submodules:"
-git submodule
+git submodule update  # Because submodules may have changed
+git submodule status
 
 # Deal with special setup, copy binary drivers etc.
 set -x
