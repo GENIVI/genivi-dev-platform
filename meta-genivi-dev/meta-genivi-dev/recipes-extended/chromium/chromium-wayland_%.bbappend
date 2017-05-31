@@ -1,12 +1,13 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-DEPENDS += "libgbm mesa"
+DEPENDS += "mesa"
+DEPENDS_append_rcar-gen3 = " libgbm"
 
 SRC_URI += "\
     file://0001-seccomp-bpf-Allow-MADV_FREE-in-madvise-2.patch \
     file://google-chrome.desktop \
-    file://fix-egl-version.patch \
 "
+SRC_URI_append_rcar-gen3 = " file://fix-egl-version.patch"
 
 # FIXME: workaround for https://at.projects.genivi.org/jira/browse/LM-2
 CHROMIUM_EXTRA_ARGS_append = " --window-size=1728,1080"
