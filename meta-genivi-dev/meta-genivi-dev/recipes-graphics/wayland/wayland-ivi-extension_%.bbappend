@@ -6,6 +6,7 @@ FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 SRC_URI_append = "\
     file://EGLWLInputEventExample.service \
     file://EGLWLMockNavigation.service \
+    file://0001-ilmControl-fix-memory-corruption-at-input-listener.patch \
     "
 
 FILES_${PN} += "\
