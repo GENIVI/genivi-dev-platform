@@ -486,6 +486,12 @@ if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
   set -e
 fi
 
-echo Artifacts in staging/
-ls -R staging/
+echo "Artifacts in staging/"
+ls -al staging/
+echo
+echo "...in staging/images/ :"
+ls -al staging/images
+echo
+echo -n "Counting entries in staging/licenses : "
+ls staging/licenses | wc -l
 
