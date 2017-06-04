@@ -294,7 +294,6 @@ shopt -s nullglob
 stage_artifact mv gdp-src-build/tmp/deploy/licenses
 stage_artifact mv gdp-src-build/tmp/deploy/licenses/genivi-dev-platform*/license.manifest
 stage_artifact mv gdp-src-build/tmp/deploy/sdk*
-stage_artifact cp gdp-src-build/tmp/deploy/images/*/*
 stage_artifact cp gdp-src-build/tmp/deploy/images/*
 stage_artifact cp gdp-src-build/conf/*.conf
 stage_artifact cp logs.tar.gz
@@ -311,7 +310,7 @@ echo 'For conf , see files *.conf, and any diff below' >>$build_info_file
 git diff gdp-src-build/conf/templates/*.inc >>$build_info_file
 
 mkdir -p staging/images
-mv staging/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*} staging/images/ 2>/dev/null || true
+mv staging/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*,*201*.iso,*.dtd} staging/images/ 2>/dev/null || true
 
 echo Artifacts in staging/
 ls -R staging/
