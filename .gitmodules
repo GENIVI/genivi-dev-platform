@@ -53,3 +53,6 @@
 [submodule "meta-ivi-renesas"]
 	path = meta-ivi-renesas
 	url = https://github.com/GENIVI/meta-ivi-renesas.git
+[submodule "meta-sdl"]
+	path = meta-sdl
+	url = git://github.com/gunnarx/meta-sdl.git
