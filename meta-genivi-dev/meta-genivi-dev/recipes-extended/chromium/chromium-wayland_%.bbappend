@@ -35,3 +35,13 @@ ARMFPABI_armv7ve = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard',
 
 # Remove cortexa7 optimization that conflicts with Chromium's hardcoded ARM flags
 TUNE_FEATURES_remove_armv7ve = "cortexa7"
+
+# Multi-seat implementation
+
+SRC_URI_remove = " git://github.com/01org/ozone-wayland.git;destsuffix=${OZONE_WAYLAND_GIT_DESTSUFFIX};branch=${OZONE_WAYLAND_GIT_B\
+RANCH};rev=${OZONE_WAYLAND_GIT_SRCREV} file://chromium-wayland/0006-Remove-GBM-support-from-wayland.gyp.patch"
+
+OZONE_WAYLAND_GIT_FORK   = "git://github.com/jaragunde/ozone-wayland.git"
+OZONE_WAYLAND_GIT_BRANCH = "wip/multi-seat"
+OZONE_WAYLAND_GIT_SRCREV = "3af3d4eee5f48a420e90fae6de54594ec31d27d6"
+SRC_URI_append = " ${OZONE_WAYLAND_GIT_FORK};destsuffix=${OZONE_WAYLAND_GIT_DESTSUFFIX};branch=${OZONE_WAYLAND_GIT_BRANCH};rev=${OZONE_WAYLAND_GIT_SRCREV}"
