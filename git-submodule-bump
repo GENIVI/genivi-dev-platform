@@ -8,7 +8,7 @@
 #
 # Author: Zeeshan Ali <zeeshan.ali@pelagicore.com>
 
-SHORTLOG=${1}
+SHORTLOG="$*"
 if test -z "${SHORTLOG}"; then
     echo "Usage: ${0} <commit summary>"
     exit 1
@@ -29,4 +29,4 @@ MSG="${SUBMODULE}: ${SHORTLOG}
 $(git -C ${SUBMODULE} log --no-merges --format="%h %s" ${OLDCOMMIT}..${NEWCOMMIT})
 "
 
-git commit -s -m "${MSG}" "${SUBMODULE}"
+git commit -s -e -m "${MSG}" "${SUBMODULE}"
