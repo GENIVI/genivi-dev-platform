@@ -1,0 +1,16 @@
+Index: PyQt-gpl-5.3.1/sip/QtGui/qguiapplication.sip
+===================================================================
+--- PyQt-gpl-5.3.1.orig/sip/QtGui/qguiapplication.sip	2014-07-04 12:09:35.000000000 +0300
++++ PyQt-gpl-5.3.1/sip/QtGui/qguiapplication.sip	2014-09-12 10:41:43.826879629 +0300
+@@ -227,9 +227,11 @@
+ %If (Qt_5_2_0 -)
+     static Qt::ApplicationState applicationState();
+ %End
++%If (PyQt_SessionManager)
+ %If (Qt_5_2_0 -)
+     static void sync();
+ %End
++%End
+ %If (Qt_5_3_0 -)
+     static void setWindowIcon(const QIcon &icon);
+ %End

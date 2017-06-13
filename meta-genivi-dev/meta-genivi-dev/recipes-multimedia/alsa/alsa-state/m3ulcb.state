@@ -1,0 +1,641 @@
+state.rsnddai0ak4613h {
+
+	control.1 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume1'
+
+		value.0 153
+
+		value.1 153
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -5100
+
+			dbvalue.1 -5100
+
+		}
+
+	}
+
+	control.2 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume2'
+
+		value.0 128
+
+		value.1 128
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -6350
+
+			dbvalue.1 -6350
+
+		}
+
+	}
+
+	control.3 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume3'
+
+		value.0 153
+
+		value.1 153
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -5100
+
+			dbvalue.1 -5100
+
+		}
+
+	}
+
+	control.4 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume4'
+
+		value.0 128
+
+		value.1 128
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -6350
+
+			dbvalue.1 -6350
+
+		}
+
+	}
+
+	control.5 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume5'
+
+		value.0 153
+
+		value.1 153
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -5100
+
+			dbvalue.1 -5100
+
+		}
+
+	}
+
+	control.6 {
+
+		iface MIXER
+
+		name 'Digital Playback Volume6'
+
+		value.0 128
+
+		value.1 128
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 255'
+
+			dbmin -9999999
+
+			dbmax 0
+
+			dbvalue.0 -6350
+
+			dbvalue.1 -6350
+
+		}
+
+	}
+
+	control.7 {
+
+		iface MIXER
+
+		name 'DVC Out Playback Volume'
+
+		value.0 5033164
+
+		value.1 5033164
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 8388607'
+
+		}
+
+	}
+
+	control.8 {
+
+		iface MIXER
+
+		name 'DVC Out Mute Switch'
+
+		value.0 false
+
+		value.1 false
+
+		comment {
+
+			access 'read write'
+
+			type BOOLEAN
+
+			count 2
+
+		}
+
+	}
+
+	control.9 {
+
+		iface MIXER
+
+		name 'DVC Out Ramp Switch'
+
+		value false
+
+		comment {
+
+			access 'read write'
+
+			type BOOLEAN
+
+			count 1
+
+		}
+
+	}
+
+	control.10 {
+
+		iface MIXER
+
+		name 'DVC Out Ramp Up Rate'
+
+		value '128 dB/1 step'
+
+		comment {
+
+			access 'read write'
+
+			type ENUMERATED
+
+			count 1
+
+			item.0 '128 dB/1 step'
+
+			item.1 '64 dB/1 step'
+
+			item.2 '32 dB/1 step'
+
+			item.3 '16 dB/1 step'
+
+			item.4 '8 dB/1 step'
+
+			item.5 '4 dB/1 step'
+
+			item.6 '2 dB/1 step'
+
+			item.7 '1 dB/1 step'
+
+			item.8 '0.5 dB/1 step'
+
+			item.9 '0.25 dB/1 step'
+
+			item.10 '0.125 dB/1 step'
+
+			item.11 '0.125 dB/2 steps'
+
+			item.12 '0.125 dB/4 steps'
+
+			item.13 '0.125 dB/8 steps'
+
+			item.14 '0.125 dB/16 steps'
+
+			item.15 '0.125 dB/32 steps'
+
+			item.16 '0.125 dB/64 steps'
+
+			item.17 '0.125 dB/128 steps'
+
+			item.18 '0.125 dB/256 steps'
+
+			item.19 '0.125 dB/512 steps'
+
+			item.20 '0.125 dB/1024 steps'
+
+			item.21 '0.125 dB/2048 steps'
+
+			item.22 '0.125 dB/4096 steps'
+
+			item.23 '0.125 dB/8192 steps'
+
+		}
+
+	}
+
+	control.11 {
+
+		iface MIXER
+
+		name 'DVC Out Ramp Down Rate'
+
+		value '128 dB/1 step'
+
+		comment {
+
+			access 'read write'
+
+			type ENUMERATED
+
+			count 1
+
+			item.0 '128 dB/1 step'
+
+			item.1 '64 dB/1 step'
+
+			item.2 '32 dB/1 step'
+
+			item.3 '16 dB/1 step'
+
+			item.4 '8 dB/1 step'
+
+			item.5 '4 dB/1 step'
+
+			item.6 '2 dB/1 step'
+
+			item.7 '1 dB/1 step'
+
+			item.8 '0.5 dB/1 step'
+
+			item.9 '0.25 dB/1 step'
+
+			item.10 '0.125 dB/1 step'
+
+			item.11 '0.125 dB/2 steps'
+
+			item.12 '0.125 dB/4 steps'
+
+			item.13 '0.125 dB/8 steps'
+
+			item.14 '0.125 dB/16 steps'
+
+			item.15 '0.125 dB/32 steps'
+
+			item.16 '0.125 dB/64 steps'
+
+			item.17 '0.125 dB/128 steps'
+
+			item.18 '0.125 dB/256 steps'
+
+			item.19 '0.125 dB/512 steps'
+
+			item.20 '0.125 dB/1024 steps'
+
+			item.21 '0.125 dB/2048 steps'
+
+			item.22 '0.125 dB/4096 steps'
+
+			item.23 '0.125 dB/8192 steps'
+
+		}
+
+	}
+
+	control.12 {
+
+		iface MIXER
+
+		name 'SRC Out Rate Switch'
+
+		value false
+
+		comment {
+
+			access 'read write'
+
+			type BOOLEAN
+
+			count 1
+
+		}
+
+	}
+
+	control.13 {
+
+		iface MIXER
+
+		name 'SRC Out Rate'
+
+		value 0
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 1
+
+			range '0 - 192000'
+
+		}
+
+	}
+
+	control.14 {
+
+		iface MIXER
+
+		name 'DVC In Capture Volume'
+
+		value.0 0
+
+		value.1 0
+
+		comment {
+
+			access 'read write'
+
+			type INTEGER
+
+			count 2
+
+			range '0 - 8388607'
+
+		}
+
+	}
+
+	control.15 {
+
+		iface MIXER
+
+		name 'DVC In Mute Switch'
+
+		value.0 false
+
+		value.1 false
+
+		comment {
+
+			access 'read write'
+
+			type BOOLEAN
+
+			count 2
+
+		}
+
+	}
+
+	control.16 {
+
+		iface MIXER
+
+		name 'DVC In Ramp Switch'
+
+		value false
+
+		comment {
+
+			access 'read write'
+
+			type BOOLEAN
+
+			count 1
+
+		}
+
+	}
+
+	control.17 {
+
+		iface MIXER
+
+		name 'DVC In Ramp Up Rate'
+
+		value '128 dB/1 step'
+
+		comment {
+
+			access 'read write'
+
+			type ENUMERATED
+
+			count 1
+
+			item.0 '128 dB/1 step'
+
+			item.1 '64 dB/1 step'
+
+			item.2 '32 dB/1 step'
+
+			item.3 '16 dB/1 step'
+
+			item.4 '8 dB/1 step'
+
+			item.5 '4 dB/1 step'
+
+			item.6 '2 dB/1 step'
+
+			item.7 '1 dB/1 step'
+
+			item.8 '0.5 dB/1 step'
+
+			item.9 '0.25 dB/1 step'
+
+			item.10 '0.125 dB/1 step'
+
+			item.11 '0.125 dB/2 steps'
+
+			item.12 '0.125 dB/4 steps'
+
+			item.13 '0.125 dB/8 steps'
+
+			item.14 '0.125 dB/16 steps'
+
+			item.15 '0.125 dB/32 steps'
+
+			item.16 '0.125 dB/64 steps'
+
+			item.17 '0.125 dB/128 steps'
+
+			item.18 '0.125 dB/256 steps'
+
+			item.19 '0.125 dB/512 steps'
+
+			item.20 '0.125 dB/1024 steps'
+
+			item.21 '0.125 dB/2048 steps'
+
+			item.22 '0.125 dB/4096 steps'
+
+			item.23 '0.125 dB/8192 steps'
+
+		}
+
+	}
+
+	control.18 {
+
+		iface MIXER
+
+		name 'DVC In Ramp Down Rate'
+
+		value '128 dB/1 step'
+
+		comment {
+
+			access 'read write'
+
+			type ENUMERATED
+
+			count 1
+
+			item.0 '128 dB/1 step'
+
+			item.1 '64 dB/1 step'
+
+			item.2 '32 dB/1 step'
+
+			item.3 '16 dB/1 step'
+
+			item.4 '8 dB/1 step'
+
+			item.5 '4 dB/1 step'
+
+			item.6 '2 dB/1 step'
+
+			item.7 '1 dB/1 step'
+
+			item.8 '0.5 dB/1 step'
+
+			item.9 '0.25 dB/1 step'
+
+			item.10 '0.125 dB/1 step'
+
+			item.11 '0.125 dB/2 steps'
+
+			item.12 '0.125 dB/4 steps'
+
+			item.13 '0.125 dB/8 steps'
+
+			item.14 '0.125 dB/16 steps'
+
+			item.15 '0.125 dB/32 steps'
+
+			item.16 '0.125 dB/64 steps'
+
+			item.17 '0.125 dB/128 steps'
+
+			item.18 '0.125 dB/256 steps'
+
+			item.19 '0.125 dB/512 steps'
+
+			item.20 '0.125 dB/1024 steps'
+
+			item.21 '0.125 dB/2048 steps'
+
+			item.22 '0.125 dB/4096 steps'
+
+			item.23 '0.125 dB/8192 steps'
+
+		}
+
+	}
+
+}

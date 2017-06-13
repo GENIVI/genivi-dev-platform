@@ -1,0 +1,60 @@
+From 8955fe846f224fa7cc8c2fd6965999d1aa08a43b Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Fri, 1 Jul 2016 00:13:57 +0900
+Subject: [PATCH] add support for IVI-Surface-ID property
+
+---
+ src/client/qwaylandwindow.cpp |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
+index 2dd58e8..db4ed89 100644
+--- a/src/client/qwaylandwindow.cpp
++++ b/src/client/qwaylandwindow.cpp
+@@ -30,6 +30,7 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
++#include <unistd.h>
+ 
+ #include "qwaylandwindow_p.h"
+ 
+@@ -41,6 +42,7 @@
+ #include "qwaylandshellsurface_p.h"
+ #include "qwaylandwlshellsurface_p.h"
+ #include "qwaylandxdgsurface_p.h"
++#include "qwaylandivisurface_p.h"
+ #include "qwaylandsubsurface_p.h"
+ #include "qwaylandabstractdecoration_p.h"
+ #include "qwaylandwindowmanagerintegration_p.h"
+@@ -57,6 +59,8 @@
+ 
+ #include <QtCore/QDebug>
+ 
++#define IVI_SURFACE_ID 8000
++
+ QT_BEGIN_NAMESPACE
+ 
+ namespace QtWaylandClient {
+@@ -123,7 +127,17 @@ void QWaylandWindow::initWindow()
+             mSubSurfaceWindow = new QWaylandSubSurface(this, p, ss);
+         }
+     } else if (shouldCreateShellSurface()) {
+-        mShellSurface = mDisplay->createShellSurface(this);
++        if (mDisplay->shellIvi()) {
++            unsigned int id = 0;
++            QVariant value = window()->property("IVI-Surface-ID");
++            if (value.isValid()) {
++                id = value.toUInt();
++            } else {
++                id = IVI_SURFACE_ID + getpid();
++            }
++            mShellSurface = new QWaylandIviSurface(mDisplay->shellIvi()->surface_create(id, object()), this);
++        } else
++            mShellSurface = mDisplay->createShellSurface(this);
+     }
+ 
+     if (mShellSurface) {
+-- 
+1.7.9.5
+

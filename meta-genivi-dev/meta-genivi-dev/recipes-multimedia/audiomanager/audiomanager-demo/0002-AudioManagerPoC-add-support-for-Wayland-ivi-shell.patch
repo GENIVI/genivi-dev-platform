@@ -1,0 +1,57 @@
+From 80bacdf93b381232f572bc18c6511176fd9ba5e9 Mon Sep 17 00:00:00 2001
+From: Holger Behrens <holger.behrens@windriver.com>
+Date: Wed, 4 Feb 2015 12:05:13 +0100
+Subject: [meta-ivi-demo][PATCH] AudioManagerPoC: add support for Wayland
+ ivi-shell
+
+Signed-off-by: Holger Behrens <holger.behrens@windriver.com>
+---
+ AudioManagerPoC/business_logic/src/main.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/AudioManagerPoC/business_logic/src/main.cpp b/AudioManagerPoC/business_logic/src/main.cpp
+index 3bdd518..9209586 100644
+--- a/AudioManagerPoC/business_logic/src/main.cpp
++++ b/AudioManagerPoC/business_logic/src/main.cpp
+@@ -2,7 +2,7 @@
+  * SPDX license identifier: MPL-2.0
+  *
+  * Copyright (C) 2011-2014, Wind River Systems
+- * Copyright (C) 2014, GENIVI Alliance
++ * Copyright (C) 2014,2015, GENIVI Alliance
+  *
+  * This file is part of GENIVI AudioManager PoC.
+  *
+@@ -25,6 +25,7 @@
+  *                             lock on the same file since the first instance
+  *                             owns it and it will quit with an appropriate
+  *                             message.
++ * 04.02.2015, Holger Behrens, add support for Wayland ivi-shell
+  */
+ 
+ #include <QApplication>
+@@ -43,8 +44,13 @@
+ #include "business_logic/include/volumechart.h"
+ #include "business_logic/include/audioManagerInterface.h"
+ 
++#define AM_POC_SURFACE_ID 20
++
+ int main(int argc, char *argv[])
+ {
++    setenv("QT_QPA_PLATFORM", "wayland", 1); // force to use wayland plugin
++    setenv("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1", 1);
++
+     QApplication app(argc, argv);
+     int pid_file = open("/var/run/AudioManager_PoC.pid", O_CREAT | O_RDWR, 0666);
+     if(pid_file != -1)
+@@ -62,6 +68,7 @@ int main(int argc, char *argv[])
+         {
+             QQuickView view;
+             QMLButtonEventsReceiver rec(&view);
++            view.setProperty("IVI-Surface-ID", AM_POC_SURFACE_ID);
+             view.rootContext()->setContextProperty("QMLButtonEventsReceiver", &rec);
+             view.engine()->addImageProvider(QLatin1String("volumes"), new volumechart());
+             view.setSource(QUrl("qrc:/presentation_layer/main.qml"));
+-- 
+2.2.2
+

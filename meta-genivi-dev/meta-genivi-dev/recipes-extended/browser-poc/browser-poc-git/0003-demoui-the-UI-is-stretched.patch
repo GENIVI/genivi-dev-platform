@@ -1,0 +1,50 @@
+From 516fd8d0e9b6be5f496ba596245d82a8f86a86bc Mon Sep 17 00:00:00 2001
+From: sebastien baudouin <sebastien.baudouin@windriver.com>
+Date: Mon, 30 Mar 2015 17:06:20 +0200
+Subject: [PATCH 3/4] demoui: the UI is stretched
+
+This commit removes the call to setGeometry that is causing the UI ito be
+stretched up to full screen resolution.
+---
+ demoui/main.cpp                                                | 5 +++--
+ demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp | 8 ++++----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/demoui/main.cpp b/demoui/main.cpp
+index 80ec63f..a0eac2c 100644
+--- a/demoui/main.cpp
++++ b/demoui/main.cpp
+@@ -31,10 +31,11 @@ int main(int argc, char *argv[])
+ 
+     viewer->setMainQmlFile(QStringLiteral("qml/demoui/main.qml"));
+     viewer->setFlags(Qt::WindowStaysOnTopHint|Qt::FramelessWindowHint);
+-    viewer->setGeometry(0, 0, 1024, 80);
+-    viewer->show();
++    //viewer->setGeometry(0, 0, 1024, 80);
+ 
+     QObject::connect((QObject*)viewer->rootObject(), SIGNAL(bookmarksopen(bool)),(QObject*)viewer, SLOT(changeGeometry(bool)));
+ 
++    viewer->showFullScreen();
++
+     return app.exec();
+ }
+diff --git a/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp b/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp
+index 0153f08..e3e8948 100644
+--- a/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp
++++ b/demoui/qtquick2applicationviewer/qtquick2applicationviewer.cpp
+@@ -68,8 +68,8 @@ void QtQuick2ApplicationViewer::addImportPath(const QString &path)
+ }
+ 
+ void QtQuick2ApplicationViewer::changeGeometry(bool open) {
+-    if(open)
+-        setGeometry(0, 0, 1024, 256);
+-    else
+-       setGeometry(0, 0, 1024, 80);
++    //if(open)
++    //    setGeometry(0, 0, 1024, 256);
++    //else
++    //   setGeometry(0, 0, 1024, 80);
+ }
+-- 
+1.9.1
+

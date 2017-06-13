@@ -1,0 +1,11 @@
+[Unit]
+Description=Weston reference Wayland compositor
+After=dbus.service rc.pvr.service
+
+[Service]
+ExecStart=/usr/bin/weston-launch -u root -- --idle-time=4294967
+ExecStop=/usr/bin/killall -s KILL weston
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

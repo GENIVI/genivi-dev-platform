@@ -1,0 +1,41 @@
+From 940e932af0c8bc5d535899113e38c1a33f9c1201 Mon Sep 17 00:00:00 2001
+From: sebastien baudouin <sebastien.baudouin@windriver.com>
+Date: Tue, 28 Apr 2015 17:16:21 +0200
+Subject: [PATCH] Demoui: Make Graphic working for Qemu machine
+
+Those changes are not needed intheory but unfortunately, without it graphic is
+not working
+---
+ demoui/main.cpp | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/demoui/main.cpp b/demoui/main.cpp
+index a0eac2c..29df545 100644
+--- a/demoui/main.cpp
++++ b/demoui/main.cpp
+@@ -20,6 +20,10 @@
+ #include <QtQml>
+ #include <QQuickItem>
+ 
++//For QEMU
++#include <QScreen>
++#include <QQuickWindow>
++
+ int main(int argc, char *argv[])
+ {
+     QGuiApplication app(argc, argv);
+@@ -37,5 +41,11 @@ int main(int argc, char *argv[])
+ 
+     viewer->showFullScreen();
+ 
++    //For Qemu only
++    QSize size = app.primaryScreen()->size();
++    viewer->rootObject()->setWidth(size.width());
++    viewer->rootObject()->setHeight(size.height());
++    viewer->show();
++
+     return app.exec();
+ }
+-- 
+1.9.1
+

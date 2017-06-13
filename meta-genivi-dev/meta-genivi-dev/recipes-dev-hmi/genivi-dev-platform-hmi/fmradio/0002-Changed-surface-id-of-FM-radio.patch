@@ -1,0 +1,26 @@
+From 52d04d1a14904366c3b343e8b9811764005cb1a1 Mon Sep 17 00:00:00 2001
+From: DunderRoffe <viktor@sjolind.se>
+Date: Tue, 6 Dec 2016 09:54:48 +0100
+Subject: [PATCH] Changed surface id of FM-radio
+
+---
+ main.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main.cpp b/main.cpp
+index d548673..60e9b0e 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -3,7 +3,7 @@
+ 
+ //#include <systemd/sd-journal.h>
+ 
+-#define FM_RADIO_SURFACE_ID 3
++#define FM_RADIO_SURFACE_ID 9
+ 
+ int main(int argc, char *argv[])
+ {
+-- 
+2.7.4
+
+

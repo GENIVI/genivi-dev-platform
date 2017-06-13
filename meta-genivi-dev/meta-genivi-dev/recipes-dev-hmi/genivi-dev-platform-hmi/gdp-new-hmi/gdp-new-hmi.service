@@ -1,0 +1,13 @@
+[Unit]
+Description=GENIVI Development Platform HMI
+Requires=dbus.service
+After=weston.service
+
+[Service]
+Environment=LD_PRELOAD=/usr/lib/libEGL.so
+ExecStart=/opt/gdp-hmi/bin/gdp-hmi -platform wayland
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

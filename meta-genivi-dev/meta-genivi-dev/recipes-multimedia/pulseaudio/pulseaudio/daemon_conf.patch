@@ -1,0 +1,23 @@
+Index: pulseaudio-5.0/src/daemon/daemon.conf.in
+===================================================================
+--- pulseaudio-5.0.orig/src/daemon/daemon.conf.in	2014-01-23 20:57:55.000000000 +0200
++++ pulseaudio-5.0/src/daemon/daemon.conf.in	2014-10-13 16:02:28.370170957 +0300
+@@ -90,3 +90,18 @@
+ ; enable-deferred-volume = yes
+ ; deferred-volume-safety-margin-usec = 8000
+ ; deferred-volume-extra-delay-usec = 0
++
++enable-shm=yes
++shm-size-bytes=8388608 #8MB # setting this 0 will use the system-default, usually 64 MiB
++exit-idle-time=-1
++high-priority=yes
++nice-level=-11
++realtime-scheduling=yes
++realtime-priority=5
++resample-method=trivial
++flat-volumes=no
++default-sample-format = s16le
++default-sample-rate = 44100
++default-sample-channels = 2
++default-fragment-size-msec = 3
++default-fragments = 8

@@ -1,0 +1,19 @@
+commit 809d22d73bc8c03829e2be3df7470d3c6544587a
+Author: Tom Pollard <tom.pollard@codethink.co.uk>
+Date:   Mon Oct 19 15:19:01 2015 +0100
+
+    Changed include path to fix with AM7.0
+
+diff --git a/audiomanagerdbusinterface.h b/audiomanagerdbusinterface.h
+index 3ed4549..7b25aad 100644
+--- a/audiomanagerdbusinterface.h
++++ b/audiomanagerdbusinterface.h
+@@ -32,7 +32,7 @@
+ #include <QtDBus/QDBusMetaType>
+ #include <QtDBus/QDBusReply>
+ #include <QFile>
+-#include <audiomanagertypes.h>
++#include <audiomanager/audiomanagertypes.h>
+ 
+ 
+ typedef struct

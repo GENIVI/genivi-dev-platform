@@ -1,0 +1,32 @@
+Index: weston-1.5.0/ivi-shell/weston.ini.in
+===================================================================
+--- weston-1.5.0.orig/ivi-shell/weston.ini.in	2014-10-06 13:10:31.972155915 +0300
++++ weston-1.5.0/ivi-shell/weston.ini.in	2014-10-06 13:14:32.180148892 +0300
+@@ -13,7 +13,7 @@
+ workspace-layer-id=3000
+ application-layer-id=4000
+ 
+-background-image=@abs_top_builddir@/data/background.png
++background-image=@abs_top_builddir@/data/GDP_Background.png
+ background-id=1001
+ panel-image=@abs_top_builddir@/data/panel.png
+ panel-id=1002
+@@ -33,14 +33,14 @@
+ [ivi-launcher]
+ workspace-id=0
+ icon-id=4001
+-icon=@abs_top_builddir@/data/icon_ivi_flower.png
+-path=@abs_top_builddir@/clients/weston-flower
++icon=@abs_top_builddir@/data/GDP_Browser_Button.png
++path=@abs_top_builddir@/clients/start_browser-poc.sh
+ 
+ [ivi-launcher]
+ workspace-id=0
+ icon-id=4002
+-icon=@abs_top_builddir@/data/icon_ivi_clickdot.png
+-path=@abs_top_builddir@/clients/weston-clickdot
++icon=@abs_top_builddir@/data/GDP_AM_Button.png
++path=@abs_top_builddir@/clients/start_am-poc.sh
+ 
+ [ivi-launcher]
+ workspace-id=1

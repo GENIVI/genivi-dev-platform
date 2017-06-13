@@ -1,0 +1,50 @@
+This file contains a list of maintainers for the meta-genivi-dev layer.
+
+Please submit any patches against meta-genivi-dev to the maintainers
+(cc:ing the genivi-projects mailing list (genivi-projects@lists.genivi.org))
+with '[meta-genivi-dev]' in subject
+
+You may also contact the maintainers directly and cc the list in case you have any questions
+on a particular meta-genivi-dev topic, but please try to do the following
+first:
+
+  - Look in the Genivi Development Platform JIRA
+    https://at.projects.genivi.org/jira/projects/GDP/issues
+    to see if a problem has already been reported
+
+  - Look through recent entries of the genivi-projects mailing list archives
+    (http://lists.genivi.org/pipermail/genivi-projects/) to see if other
+    people have run into similar problems or had similar questions
+    answered.
+
+  - Ask for advice in #automotive on the Freenode IRC network
+
+When creating patches, please use something like:
+    git format-patch -s --subject-prefix='meta-genivi-dev][PATCH' origin
+
+When sending patches, please use something like:
+    git send-email --to=<$maintainer address> \
+                   --cc=genivi-projects@lists.genivi.org <generated patch>
+
+Please refer to:
+https://at.projects.genivi.org/wiki/display/PROJ/How+to+contribute+to+GENIVI for some
+useful guidelines to be followed when submitting patches to GENIVI.
+
+
+Descriptions of section entries:
+
+    M: Mail patches to: FullName <address@domain>
+    F: Files and directories with wildcard patterns.
+        A trailing slash includes all files and subdirectory files.
+        F: meta-genivi-dev/    all files in and below meta-genivi-dev
+        F: meta-genivi-dev/*   all files in meta-genivi-dev
+                                but not below
+    One pattern per line. Multiple F: lines acceptable.
+
+Please keep this list in alphabetical order.
+
+M: Changhyeok Bae <changhyeok.bae@gmail.com>
+F: meta-genivi-dev/
+
+M: Zeeshan Ali <zeeshan.ali@pelagicore.com>
+F: meta-genivi-dev/
