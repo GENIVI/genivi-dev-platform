@@ -60,3 +60,8 @@ set-default-sink null
 # Make the specified source (identified by its symbolic name) the default source.
 set-default-source null-monitor
 
+# Used o support sound over bluetooth
+load-module module-bluetooth-discover headset=auto
+load-module module-switch-on-connect
+load-module module-bluetooth-policy a2dp_source=1
+
