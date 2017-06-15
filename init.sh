@@ -132,4 +132,6 @@ if setupGitSubmodules $1 $2 $3 ; then
     source poky/oe-init-build-env gdp-src-build
     echo
     echo "Now run:  bitbake genivi-dev-platform"
+else
+    return 1
 fi
