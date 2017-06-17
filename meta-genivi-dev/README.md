@@ -49,17 +49,20 @@ for each supported target, check [here](https://at.projects.genivi.org/wiki/disp
 Layer Dependency List
 ---------------------
 URI: git://git.yoctoproject.org/meta-ivi
-* branch:   12.0 (N-1.0 tag)
+* branch:   13.0
 
 URI: https://github.com/meta-qt5/meta-qt5.git
 * branch:   krogoth
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems, meta-python
-* branch:   morty
+* branch:   pyro
 
 URI: git://git.yoctoproject.org/poky
-* branch:   morty
+* branch:   pyro
+
+URI: git://git.yoctoproject.org/meta-gplv2
+* branch:   pyro
 
 URI: git://git.yoctoproject.org/git/meta-oic.git
 * branch: 1.0.1
@@ -73,7 +76,7 @@ URI: git://github.com/joaohf/meta-erlang.git
 ## The Raspberry Pi 2,3 boards depends in addition on: ##
 
 URI: git://git.yoctoproject.org/meta-raspberrypi
-* branch:   morty
+* branch:   pyro
 
 ## The Renesas R-Car Gen3 M3/H3 Starter Kit boards depend in addition on: ##
 URI: https://github.com/slawr/renesas-rcar-gen3.git
@@ -97,11 +100,11 @@ URI: git://github.com/slawr/meta-renesas.git
 
 ## The Intel Minnowboard MAX depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-intel
-* branch: morty
+* branch: pyro
 
 ## The Qualcomm Dragonboard 410c depends in addition on: ##
 URI: git://git.yoctoproject.org/meta-qcom
-* branch: morty
+* branch: pyro
 
 Supported Machines
 ------------------
