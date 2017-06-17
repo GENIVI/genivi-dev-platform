@@ -7,6 +7,9 @@
 [submodule "meta-openembedded"]
 	path = meta-openembedded
 	url = git://git.openembedded.org/meta-openembedded
+[submodule "meta-gplv2"]
+    path = meta-gplv2
+    url = git://git.yoctoproject.org/meta-gplv2
 [submodule "poky"]
 	path = poky
 	url = git://git.yoctoproject.org/poky
