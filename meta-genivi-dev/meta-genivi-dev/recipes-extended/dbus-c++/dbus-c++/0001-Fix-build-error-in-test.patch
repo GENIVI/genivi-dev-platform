@@ -1,0 +1,34 @@
+From b2cffcf661de10a4f2639eea0dbd43b55e3d879f Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Sat, 17 Jun 2017 13:30:13 +0900
+Subject: [PATCH] Fix build error in test
+
+Due to missing -lpthread, build error is occurred.
+
+[Error]
+/home/changhyeok.bae/work/ivi/gdp-pyro/gdp-src-build/tmp/hosttools/ld:
+TestApp-TestApp.o: undefined reference to symbol
+'pthread_create@@GLIBC_2.2.5'
+//lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO
+//missing from command line
+
+Signed-off-by: Changhyeok Bae <changhyeok.bae@gmail.com>
+---
+ test/functional/Test1/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/functional/Test1/Makefile.am b/test/functional/Test1/Makefile.am
+index 3269751..7667de8 100644
+--- a/test/functional/Test1/Makefile.am
++++ b/test/functional/Test1/Makefile.am
+@@ -30,6 +30,7 @@ TestApp_SOURCES = \
+ 
+ TestApp_LDADD = \
+ 	$(top_builddir)/src/libdbus-c++-1.la \
++	-lpthread \
+ 	$(PTHREAD_LIBS) \
+ 	$(RT_LIBS)
+ 
+-- 
+1.9.1
+
