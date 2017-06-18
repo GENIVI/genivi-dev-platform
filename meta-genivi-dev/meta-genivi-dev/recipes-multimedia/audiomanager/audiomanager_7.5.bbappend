@@ -3,7 +3,6 @@ FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 DEPENDS_append = " pulseaudio"
 
 SRC_URI_append = "\
-	file://sqlite_database_handler_change_mainVolume_to_volume.patch \
     file://AudioManager_user.service \
     file://0001-Temporarily-code-block.patch \
 "
