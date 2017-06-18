@@ -10,10 +10,6 @@ LICENSE_FLAGS_WHITELIST  += "commercial"
 
 #INCOMPATIBLE_LICENSE ?= "GPLv3"
 
-PREFERRED_VERSION_audiomanager ?= "7.0"
-PREFERRED_VERSION_audiomanagerplugins ?= "7.0"
-
-
 # Disk Space Monitoring during the build
 #
 # Monitor the disk space during the build. If there is less that 1GB of space or less
