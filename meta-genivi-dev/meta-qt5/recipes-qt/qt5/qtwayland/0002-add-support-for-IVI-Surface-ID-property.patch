@@ -1,14 +1,14 @@
-From 8955fe846f224fa7cc8c2fd6965999d1aa08a43b Mon Sep 17 00:00:00 2001
-From: Changhyeok Bae <changhyeok.bae@lge.com>
-Date: Fri, 1 Jul 2016 00:13:57 +0900
-Subject: [PATCH] add support for IVI-Surface-ID property
+From 9428aa1564c02b5841c49627c7ccd0bceffc9d8d Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Mon, 19 Jun 2017 01:48:57 +0900
+Subject: [PATCH 2/2] add support for IVI-Surface-ID property
 
 ---
- src/client/qwaylandwindow.cpp |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ src/client/qwaylandwindow.cpp | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/src/client/qwaylandwindow.cpp b/src/client/qwaylandwindow.cpp
-index 2dd58e8..db4ed89 100644
+index 8885c0e..0146c6a 100644
 --- a/src/client/qwaylandwindow.cpp
 +++ b/src/client/qwaylandwindow.cpp
 @@ -30,6 +30,7 @@
@@ -36,7 +36,7 @@ index 2dd58e8..db4ed89 100644
  QT_BEGIN_NAMESPACE
  
  namespace QtWaylandClient {
-@@ -123,7 +127,17 @@ void QWaylandWindow::initWindow()
+@@ -123,9 +127,19 @@ void QWaylandWindow::initWindow()
              mSubSurfaceWindow = new QWaylandSubSurface(this, p, ss);
          }
      } else if (shouldCreateShellSurface()) {
@@ -53,8 +53,11 @@ index 2dd58e8..db4ed89 100644
 +        } else
 +            mShellSurface = mDisplay->createShellSurface(this);
      }
- 
+-
++        
      if (mShellSurface) {
+         // Set initial surface title
+         mShellSurface->setTitle(window()->title());
 -- 
-1.7.9.5
+1.9.1
 
