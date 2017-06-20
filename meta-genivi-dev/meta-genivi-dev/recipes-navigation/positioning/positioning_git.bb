@@ -40,7 +40,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "dbus dbus-c++ dbus-c++-native dlt-daemon gpsd"
+DEPENDS = "dbus dbus-c++ dbus-c++-native dlt-daemon gpsd libxslt-native"
 
 inherit cmake pkgconfig 
 
