@@ -1,26 +1,25 @@
-From 9cf1db27878a02307febce96ff23487a15d30ecb Mon Sep 17 00:00:00 2001
-From: a629114 <a629114@aw.atos.net>
-Date: Thu, 1 Sep 2016 16:34:31 +0200
-Subject: [PATCH] Correct label on RPI
+From eb42545e66d05fce084d9ec74c8fbd926a5f74f0 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Thu, 22 Jun 2017 15:35:15 +0900
+Subject: [PATCH 1/2] Correct label on RPI
 
+Signed-off-by: a629114 <a629114@aw.atos.net>
 ---
- src/controls/Label.qml | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ src/controls/Label.qml | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/src/controls/Label.qml b/src/controls/Label.qml
-index b07e96d..9835df3 100644
+index 7174b28..121c3c1 100644
 --- a/src/controls/Label.qml
 +++ b/src/controls/Label.qml
-@@ -82,8 +82,7 @@ Text {
- 
+@@ -83,7 +83,6 @@ Text {
      id: label
-     color: pal.windowText
--    activeFocusOnTab: false
+     color: SystemPaletteSingleton.windowText(enabled)
+     activeFocusOnTab: false
 -    renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
-+    activeFocusOnTab: false    
-     SystemPalette {
-         id: pal
-         colorGroup: enabled ? SystemPalette.Active : SystemPalette.Disabled
+     Accessible.name: text
+     Accessible.role: Accessible.StaticText
+ }
 -- 
-2.1.4
+1.9.1
 
