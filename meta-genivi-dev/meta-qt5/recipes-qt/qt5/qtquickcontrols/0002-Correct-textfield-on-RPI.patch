@@ -1,8 +1,9 @@
-From a62b5180444055b05b9723f125fb5312d514e733 Mon Sep 17 00:00:00 2001
-From: a629114 <a629114@aw.atos.net>
-Date: Thu, 1 Sep 2016 16:39:35 +0200
+From c4feac3e1914f4e9e591a2cb00e95ad1d8f6ca07 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Thu, 22 Jun 2017 15:37:57 +0900
 Subject: [PATCH 2/2] Correct textfield on RPI
 
+Signed-off-by: a629114 <a629114@aw.atos.net>
 ---
  src/controls/TextField.qml | 3 ---
  1 file changed, 3 deletions(-)
@@ -29,5 +30,5 @@ index c5d5d2b..fbe5581 100644
  
          EnterKey.type: control.EnterKey.type
 -- 
-2.1.4
+1.9.1
 
