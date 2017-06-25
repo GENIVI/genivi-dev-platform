@@ -33,3 +33,13 @@ BB_DISKMON_DIRS = "\
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
+
+require conf/distro/include/security_flags.inc
+
+# Fixme: these pkgs are bronken while enable security_flags
+SECURITY_CFLAGS_pn-dbus-c++ = "${SECURITY_NO_PIE_CFLAGS}"
+SECURITY_CFLAGS_pn-lttng-ust = "${SECURITY_NO_PIE_CFLAGS}"
+SECURITY_CFLAGS_pn-python-uinput = "${SECURITY_NO_PIE_CFLAGS}"
+SECURITY_CFLAGS_pn-python-storm = "${SECURITY_NO_PIE_CFLAGS}"
+SECURITY_CFLAGS_pn-persistence-administrator = ""
+SECURITY_LDFLAGS_pn-persistence-administrator = ""
