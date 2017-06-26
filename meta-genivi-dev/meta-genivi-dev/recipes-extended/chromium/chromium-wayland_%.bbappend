@@ -31,6 +31,10 @@ COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_m3ulcb = "(.*)"
 COMPATIBLE_MACHINE_h3ulcb = "(.*)"
 
+# Try other armv8 / 64 bit, like Dragonboard
+COMPATIBLE_MACHINE_dragonboard-410c = "(.*)"
+
+
 # Apply same TUNE_FEATURES as in an armv7a build
 ARMFPABI_armv7ve = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'arm_float_abi=hard', 'arm_float_abi=softfp', d)}"
 
