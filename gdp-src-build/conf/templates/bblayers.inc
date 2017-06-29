@@ -18,6 +18,9 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-openembedded/meta-python \
   ${TOPDIR}/../meta-qt5 \
   ${TOPDIR}/../meta-genivi-dev/meta-genivi-dev \
+  ${TOPDIR}/../meta-genivi-dev/meta-ivi \
+  ${TOPDIR}/../meta-genivi-dev/meta-qt5 \
+  ${TOPDIR}/../meta-genivi-dev/meta-rvi \
   ${TOPDIR}/../meta-oic \
   ${TOPDIR}/../meta-iot-web \
   ${TOPDIR}/../meta-erlang \
