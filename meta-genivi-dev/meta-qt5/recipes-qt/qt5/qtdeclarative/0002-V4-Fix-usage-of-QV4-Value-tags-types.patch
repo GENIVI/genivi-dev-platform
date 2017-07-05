@@ -1,0 +1,210 @@
+From 4e6c53b7e1ffc83bd0b0626f7c00a7820f431ee2 Mon Sep 17 00:00:00 2001
+From: Erik Verbruggen <erik.verbruggen@qt.io>
+Date: Wed, 12 Oct 2016 11:15:09 +0200
+Subject: [PATCH 2/2] V4: Fix usage of QV4::Value tags/types
+
+These two were mixed, but have completely different values.
+
+Task-number: QTBUG-56471
+Change-Id: Ifbf6da3032335ea89bfbc3acde17f64a571b9dc0
+Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
+---
+ src/qml/jit/qv4isel_masm.cpp        |  6 +++---
+ src/qml/jsruntime/qv4arraydata.cpp  | 29 +++++++++++++++++------------
+ src/qml/jsruntime/qv4persistent.cpp |  2 +-
+ src/qml/jsruntime/qv4value_p.h      | 19 +++++++++++++++++++
+ src/qml/memory/qv4mm.cpp            |  2 +-
+ 5 files changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/src/qml/jit/qv4isel_masm.cpp b/src/qml/jit/qv4isel_masm.cpp
+index 1913b39..05afc1e 100644
+--- a/src/qml/jit/qv4isel_masm.cpp
++++ b/src/qml/jit/qv4isel_masm.cpp
+@@ -965,7 +965,7 @@ void InstructionSelection::swapValues(IR::Expr *source, IR::Expr *target)
+                 tag = QV4::Value::Integer_Type_Internal;
+                 break;
+             default:
+-                tag = QV4::Value::Undefined_Type;
++                tag = 31337; // bogus value
+                 Q_UNREACHABLE();
+             }
+             _as->store32(Assembler::TrustedImm32(tag), addr);
+@@ -1412,7 +1412,7 @@ void InstructionSelection::visitCJump(IR::CJump *s)
+             Address temp = _as->loadAddress(Assembler::ScratchRegister, s->cond);
+             Address tag = temp;
+             tag.offset += QV4::Value::tagOffset();
+-            Assembler::Jump booleanConversion = _as->branch32(Assembler::NotEqual, tag, Assembler::TrustedImm32(QV4::Value::Boolean_Type));
++            Assembler::Jump booleanConversion = _as->branch32(Assembler::NotEqual, tag, Assembler::TrustedImm32(QV4::Value::Boolean_Type_Internal));
+ 
+             Address data = temp;
+             data.offset += QV4::Value::valueOffset();
+@@ -1576,7 +1576,7 @@ void InstructionSelection::visitRet(IR::Ret *s)
+                     tag = QV4::Value::Boolean_Type_Internal;
+                     break;
+                 default:
+-                    tag = QV4::Value::Undefined_Type;
++                    tag = 31337; // bogus value
+                     Q_UNREACHABLE();
+                 }
+                 _as->or64(Assembler::TrustedImm64(tag << 32),
+diff --git a/src/qml/jsruntime/qv4arraydata.cpp b/src/qml/jsruntime/qv4arraydata.cpp
+index ec0e611..776b54a 100644
+--- a/src/qml/jsruntime/qv4arraydata.cpp
++++ b/src/qml/jsruntime/qv4arraydata.cpp
+@@ -94,7 +94,7 @@ Q_STATIC_ASSERT(sizeof(Heap::ArrayData) == sizeof(Heap::SparseArrayData));
+ static Q_ALWAYS_INLINE void storeValue(ReturnedValue *target, uint value)
+ {
+     Value v;
+-    v.setTagValue(Value::fromReturnedValue(*target).tag(), value);
++    v.setEmpty(value);
+     *target = v.asReturnedValue();
+ }
+ 
+@@ -183,6 +183,7 @@ void ArrayData::realloc(Object *o, Type newType, uint requested, bool enforceAtt
+     } else {
+         sparse->sparse = new SparseArray;
+         lastFree = &sparse->freeList;
++        storeValue(lastFree, 0);
+         for (uint i = 0; i < toCopy; ++i) {
+             if (!sparse->arrayData[i].isEmpty()) {
+                 SparseArrayNode *n = sparse->sparse->insert(i);
+@@ -203,6 +204,8 @@ void ArrayData::realloc(Object *o, Type newType, uint requested, bool enforceAtt
+         }
+         storeValue(lastFree, UINT_MAX);
+     }
++
++    Q_ASSERT(Value::fromReturnedValue(sparse->freeList).isEmpty());
+     // ### Could explicitly free the old data
+ }
+ 
+@@ -351,12 +354,12 @@ void SparseArrayData::free(Heap::ArrayData *d, uint idx)
+     Value *v = d->arrayData + idx;
+     if (d->attrs && d->attrs[idx].isAccessor()) {
+         // double slot, free both. Order is important, so we have a double slot for allocation again afterwards.
+-        v[1].setTagValue(Value::Empty_Type, Value::fromReturnedValue(d->freeList).value());
+-        v[0].setTagValue(Value::Empty_Type, idx + 1);
++        v[1].setEmpty(Value::fromReturnedValue(d->freeList).emptyValue());
++        v[0].setEmpty(idx + 1);
+     } else {
+-        v->setTagValue(Value::Empty_Type, Value::fromReturnedValue(d->freeList).value());
++        v->setEmpty(Value::fromReturnedValue(d->freeList).emptyValue());
+     }
+-    d->freeList = idx;
++    d->freeList = Primitive::emptyValue(idx).asReturnedValue();
+     if (d->attrs)
+         d->attrs[idx].clear();
+ }
+@@ -394,9 +397,9 @@ uint SparseArrayData::allocate(Object *o, bool doubleSlot)
+             Q_ASSERT(dd->arrayData[Value::fromReturnedValue(*last).value()].value() != Value::fromReturnedValue(*last).value());
+             if (dd->arrayData[Value::fromReturnedValue(*last).value()].value() == (Value::fromReturnedValue(*last).value() + 1)) {
+                 // found two slots in a row
+-                uint idx = Value::fromReturnedValue(*last).uint_32();
++                uint idx = Value::fromReturnedValue(*last).emptyValue();
+                 Value lastV = Value::fromReturnedValue(*last);
+-                lastV.setTagValue(lastV.tag(), dd->arrayData[lastV.value() + 1].value());
++                lastV.setEmpty(dd->arrayData[lastV.emptyValue() + 1].value());
+                 *last = lastV.rawValue();
+                 dd->attrs[idx] = Attr_Accessor;
+                 return idx;
+@@ -410,7 +413,8 @@ uint SparseArrayData::allocate(Object *o, bool doubleSlot)
+         }
+         uint idx = Value::fromReturnedValue(dd->freeList).value();
+         Q_ASSERT(idx != UINT_MAX);
+-        dd->freeList = dd->arrayData[idx].uint_32();
++        dd->freeList = dd->arrayData[idx].asReturnedValue();
++        Q_ASSERT(Value::fromReturnedValue(dd->freeList).isEmpty());
+         if (dd->attrs)
+             dd->attrs[idx] = Attr_Data;
+         return idx;
+@@ -465,13 +469,14 @@ bool SparseArrayData::del(Object *o, uint index)
+ 
+     if (isAccessor) {
+         // free up both indices
+-        dd->arrayData[pidx + 1].setTagValue(Value::Empty_Type, Value::fromReturnedValue(dd->freeList).value());
+-        dd->arrayData[pidx].setTagValue(Value::Undefined_Type, pidx + 1);
++        dd->arrayData[pidx + 1].setEmpty(Value::fromReturnedValue(dd->freeList).emptyValue());
++        dd->arrayData[pidx].setEmpty(pidx + 1);
+     } else {
+-        dd->arrayData[pidx].setTagValue(Value::Empty_Type, Value::fromReturnedValue(dd->freeList).value());
++        Q_ASSERT(dd->type == Heap::ArrayData::Sparse);
++        dd->arrayData[pidx].setEmpty(Value::fromReturnedValue(dd->freeList).emptyValue());
+     }
+ 
+-    dd->freeList = pidx;
++    dd->freeList = Primitive::emptyValue(pidx).asReturnedValue();
+     dd->sparse->erase(n);
+     return true;
+ }
+diff --git a/src/qml/jsruntime/qv4persistent.cpp b/src/qml/jsruntime/qv4persistent.cpp
+index fd3bd1f..3f70a41 100644
+--- a/src/qml/jsruntime/qv4persistent.cpp
++++ b/src/qml/jsruntime/qv4persistent.cpp
+@@ -133,7 +133,7 @@ PersistentValueStorage::Iterator &PersistentValueStorage::Iterator::operator++()
+     while (p) {
+         while (index < kEntriesPerPage - 1) {
+             ++index;
+-            if (static_cast<Page *>(p)->values[index].tag() != QV4::Value::Empty_Type)
++            if (!static_cast<Page *>(p)->values[index].isEmpty())
+                 return *this;
+         }
+         index = -1;
+diff --git a/src/qml/jsruntime/qv4value_p.h b/src/qml/jsruntime/qv4value_p.h
+index 02425c5..9c18199 100644
+--- a/src/qml/jsruntime/qv4value_p.h
++++ b/src/qml/jsruntime/qv4value_p.h
+@@ -223,6 +223,17 @@ public:
+         setTagValue(Empty_Type_Internal, quint32(i));
+     }
+ 
++    Q_ALWAYS_INLINE void setEmpty(quint32 i)
++    {
++        setTagValue(Empty_Type_Internal, i);
++    }
++
++    Q_ALWAYS_INLINE quint32 emptyValue()
++    {
++        Q_ASSERT(isEmpty());
++        return quint32(value());
++    }
++
+     enum Type {
+         Undefined_Type,
+         Managed_Type,
+@@ -527,6 +538,7 @@ ReturnedValue Heap::Base::asReturnedValue() const
+ struct Q_QML_PRIVATE_EXPORT Primitive : public Value
+ {
+     inline static Primitive emptyValue();
++    inline static Primitive emptyValue(uint v);
+     static inline Primitive fromBoolean(bool b);
+     static inline Primitive fromInt32(int i);
+     inline static Primitive undefinedValue();
+@@ -556,6 +568,13 @@ inline Primitive Primitive::emptyValue()
+     return v;
+ }
+ 
++inline Primitive Primitive::emptyValue(uint e)
++{
++    Primitive v;
++    v.setEmpty(e);
++    return v;
++}
++
+ inline Primitive Primitive::nullValue()
+ {
+     Primitive v;
+diff --git a/src/qml/memory/qv4mm.cpp b/src/qml/memory/qv4mm.cpp
+index 4592dd5..2fdc5fc 100644
+--- a/src/qml/memory/qv4mm.cpp
++++ b/src/qml/memory/qv4mm.cpp
+@@ -454,7 +454,7 @@ void MemoryManager::sweep(bool lastSweep)
+         remainingWeakQObjectWrappers.reserve(pendingCount);
+         for (int i = 0; i < pendingCount; ++i) {
+             Value *v = m_pendingFreedObjectWrapperValue.at(i);
+-            if (v->tag() == Value::Undefined_Type)
++            if (v->isUndefined() || v->isEmpty())
+                 PersistentValueStorage::free(v);
+             else
+                 remainingWeakQObjectWrappers.append(v);
+-- 
+1.9.1
+
