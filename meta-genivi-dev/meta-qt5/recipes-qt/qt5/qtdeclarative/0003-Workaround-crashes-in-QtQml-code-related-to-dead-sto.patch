@@ -1,0 +1,49 @@
+From fbf7e6ef7cadda3702bc22468822fae0a8a9a4a4 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@lge.com>
+Date: Wed, 15 Feb 2017 17:56:54 +0900
+Subject: [PATCH] Workaround crashes in QtQml code related to dead-store
+ elimination
+
+When compiled in release mode with GCC 6, QtQml may crash.
+This is because the C++ compiler is more aggressive about dead-store
+elimination in situations where a memory store to a location precedes
+the construction of an object at that memory location.
+
+The QV4::MemoryManager::allocate{Managed,Object} functions allocate
+memory and write to it before the caller does a placement new to
+construct an object in the same memory. The compiler considers these
+writes before the constructor as "dead stores" and eliminates them.
+
+The -fno-lifetime-dse compiler flag is added to disable this more
+aggressive dead-store eliminiation optimization.
+
+This is a temporary workaround until a proper solution is found.
+
+Upstream-Status: Accepted
+
+Task-number: QTBUG-55482
+Change-Id: I7dbae6e9e613e53ce5fb25957c449bc6657803b5
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Signed-off-by: Jonathan Liu <net147@gmail.com>
+---
+ src/qml/qml.pro | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/qml/qml.pro b/src/qml/qml.pro
+index e30c39c..50258c6 100644
+--- a/src/qml/qml.pro
++++ b/src/qml/qml.pro
+@@ -16,6 +16,10 @@ exists("qqml_enable_gcov") {
+     LIBS_PRIVATE += -lgcov
+ }
+ 
++greaterThan(QT_GCC_MAJOR_VERSION, 5) {
++    QMAKE_CXXFLAGS += -fno-delete-null-pointer-checks -fno-lifetime-dse
++}
++
+ QMAKE_DOCS = $$PWD/doc/qtqml.qdocconf
+ 
+ # 2415: variable "xx" of static storage duration was declared but never referenced
+-- 
+2.9.2
+
