@@ -296,7 +296,10 @@ stage_artifact mv gdp-src-build/tmp/deploy/licenses/genivi-dev-platform*/license
 stage_artifact mv gdp-src-build/tmp/deploy/sdk*
 stage_artifact cp gdp-src-build/tmp/deploy/images/*
 stage_artifact cp gdp-src-build/conf/*.conf
-stage_artifact cp logs.tar.gz
+stage_artifact mv logs.tar.gz
+stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/genivi-dev-platform/files-in-image.txt
+stage_artifact mv gdp-src-build/buildhistory
+stage_artifact mv gdp-src-build/tmp/buildstats
 
 # Environment contains alot of variables from Go.CD that specify the built
 # version/hash, and other metadata.  Let's store them for future reference.
