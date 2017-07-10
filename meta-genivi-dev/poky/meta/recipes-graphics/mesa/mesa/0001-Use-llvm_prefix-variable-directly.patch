@@ -1,0 +1,25 @@
+From 0b316ee830765eb1d68cdece5fd4c991e9fba96c Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Sat, 8 Jul 2017 15:22:09 +0900
+Subject: [PATCH] Use $llvm_prefix variable directly
+
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index ac110e8..d094ca6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -896,7 +896,7 @@ fi
+ 
+ if test -z "$LLVM_CONFIG"; then
+     if test -n "$llvm_prefix"; then
+-        AC_PATH_TOOL([LLVM_CONFIG], [llvm-config], [no], ["$llvm_prefix/bin"])
++        AC_PATH_TOOL([LLVM_CONFIG], [llvm-config], [no], ["$llvm_prefix"])
+     else
+         AC_PATH_TOOL([LLVM_CONFIG], [llvm-config], [no])
+     fi
+-- 
+1.9.1
+
