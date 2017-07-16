@@ -284,11 +284,14 @@ if [[ "$BUILD_SDK" == "true" ]]; then
   bitbake meta-ide-support
 fi
 
+cd "$BASEDIR"
 rm -f logs.tar logs.tar.gz
 find gdp-src-build/tmp/work \( -name "*.log" -o -name "log.*" -o -name "run.*" \) -print0 | xargs -0 tar uf logs.tar || true
 gzip logs.tar || true
 
-cd "$BASEDIR"
+# Soften up the failure requirements here.  Maybe sometimes
+# some things can't be staged, which is probably ok.
+set +e
 rm -rf staging
 shopt -s nullglob
 stage_artifact mv gdp-src-build/tmp/deploy/licenses
@@ -300,6 +303,7 @@ stage_artifact mv logs.tar.gz
 stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/genivi-dev-platform/files-in-image.txt
 stage_artifact mv gdp-src-build/buildhistory
 stage_artifact mv gdp-src-build/tmp/buildstats
+set -e
 
 # Environment contains alot of variables from Go.CD that specify the built
 # version/hash, and other metadata.  Let's store them for future reference.
