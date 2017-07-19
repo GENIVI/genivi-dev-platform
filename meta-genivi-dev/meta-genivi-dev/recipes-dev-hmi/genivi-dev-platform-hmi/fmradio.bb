@@ -8,7 +8,7 @@ SRCREV  = "7d30d07884921affc89901185db2ef743fb41909"
 
 SUMMARY = "FM Radio"
 DEPENDS = "qtbase qtdeclarative"
-RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
+RDEPENDS_${PN} = "qtquickcontrols-qmlplugins bubblewrap"
 
 SRC_URI_append ="\
     file://com.genivi.gdp.fmradio.desktop \
