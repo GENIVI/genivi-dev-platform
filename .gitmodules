@@ -47,3 +47,6 @@
 [submodule "meta-renesas"]
 	path = meta-renesas
 	url = https://github.com/slawr/meta-renesas.git
+[submodule "meta-flatpak"]
+	path = meta-flatpak
+	url = https://github.com/klihub/meta-flatpak
