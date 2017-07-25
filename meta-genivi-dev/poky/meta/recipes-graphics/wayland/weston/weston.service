@@ -6,6 +6,8 @@ After=dbus.service rc.pvr.service
 ExecStart=/usr/bin/weston-launch -u root -- --idle-time=4294967
 ExecStop=/usr/bin/killall -s KILL weston
 Type=simple
+Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target
