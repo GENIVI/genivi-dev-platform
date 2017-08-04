@@ -1,0 +1,12 @@
+diff --git a/configure.ac b/configure.ac
+index 50165fe..6f71c34 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -92,6 +92,7 @@ AC_CONFIG_FILES([Makefile
+                  NodeStateManager/Makefile 
+                  NodeStateAccess/Makefile 
+                  NodeStateMachineTest/Makefile 
++                 SimpleNodeStateMachine/Makefile
+                  NodeStateMachineStub/Makefile 
+                  NodeStateManager/config/nodestatemanager-daemon.service 
+                  NodeStateManager/config/org.genivi.NodeStateManager.LifeCycleControl.service 
