@@ -135,6 +135,15 @@ define_with_default SGX_GEN_3_DRIVERS $AGENT_STANDARD_SGX_GEN3_LOCATION
 define_with_default SOURCE_ARCHIVE false
 define_with_default STANDARD_RELEASE_BUILD false
 
+# The following only apply to temporary (local) dirs.  If any of
+# REUSE_STANDARD_{DL,SSTATE}_DIR is defined then those directories will be
+# used no matter what. Those reusable DL/SSTATE dirs are never cleared by
+# this script.
+define_with_default KEEP_DOWNLOADS false
+define_with_default KEEP_SSTATE false
+
+define_with_default KEEP_TMP false
+
 stop_if_failure
 
 git_gdp="https://github.com/GENIVI/genivi-dev-platform"
@@ -196,11 +205,22 @@ echo "STANDARD_RELEASE_BUILD" = "$STANDARD_RELEASE_BUILD"
 # build steps
 cd "$BASEDIR/gdp-src-build"
 
-# If DL/SSTATE are to be reused it is only through. the use of
-# REUSE_STANDARD_DL_DIR and REUSE_STANDARD_SSTATE_DIR -  I.e. if any are left
-# in the build directory we assume they shall be wiped out and not reused.
+# If DL/SSTATE are to be reused it is normally by the use of
+# REUSE_STANDARD_DL_DIR and REUSE_STANDARD_SSTATE_DIR.  Local dirs left in the
+# build directory are therefore normally wiped, unless these environment
+# variables say otherwise.
 
-rm -rf tmp downloads cache sstate-cache
+if [[ "$KEEP_DOWNLOADS" != "true" ]] ; then
+  rm -rf downloads
+fi
+
+if [[ "$KEEP_SSTATE" != "true" ]]; then
+   rm -rf cache sstate-cache
+fi
+
+if [[ "$KEEP_TMP" != "true" ]]; then
+   rm -rf tmp
+fi
 
 cd "$BASEDIR"
 
