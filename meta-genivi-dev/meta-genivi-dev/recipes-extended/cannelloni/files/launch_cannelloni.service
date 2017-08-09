@@ -1,0 +1,9 @@
+[Unit]
+Description=Launch cannelloni at system start
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/launch_cannelloni.sh
+
+[Install]
+WantedBy=multi-user.target
