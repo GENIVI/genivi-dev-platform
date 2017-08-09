@@ -21,4 +21,5 @@ RDEPENDS_${PN} += "\
     gdp-new-hmi \
     gdp-hmi-app-metadata \
     hvac \
+    bluetoothpairingapp \
     "
