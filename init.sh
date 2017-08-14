@@ -128,25 +128,8 @@ function setupGitSubmodules() {
 }
 
 
-# Without a UTF-8 locale, the following complaint will be made by bitbake:
-# "Please use a locale setting which supports utf-8.
-#  Python can't change the filesystem locale after loading so we need a utf-8
-#  when python starts or things won't work."
-#
-# Most interactive terminals might have a reasonable locale set, but just in
-# case it is not, why not just fix it?
-function setLocale() {
-  env | egrep ^LC_ | egrep -q 'utf8|utf-8'
-  if [ $? -ne 0 ] ; then
-    echo "WARNING: Your locale did not look like UTF-8 enabled so it was now set to: LC_ALL=en_US.utf-8"
-    export LC_ALL=en_US.utf-8
-  fi
-}
-
-
 if setupGitSubmodules $1 $2 $3 ; then
     source poky/oe-init-build-env gdp-src-build
-    setLocale
     echo
     echo "Now run:  bitbake genivi-dev-platform"
 else
