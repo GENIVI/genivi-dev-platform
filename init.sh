@@ -92,7 +92,7 @@ function setupGitSubmodules() {
     bsparr["porter"]="meta-renesas"
     bsparr["silk"]="meta-renesas"
     bsparr["dragonboard-410c"]="meta-qcom"
-    bsparr["r-car-m3-starter-kit"]="meta-linaro renesas-rcar-gen3"
+    bsparr["r-car-m3-starter-kit"]="meta-linaro meta-renesas"
 
     # This looks somewhat complex but the intention is to clone only needed
     # submodules.  The module list is calculated as : all the submodules we
