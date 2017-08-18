@@ -41,9 +41,9 @@
 [submodule "meta-browser"]
 	path = meta-browser
 	url = git://github.com/OSSystems/meta-browser.git
-[submodule "renesas-rcar-gen3"]
-	path = renesas-rcar-gen3
-	url = https://github.com/slawr/renesas-rcar-gen3.git
 [submodule "meta-linaro"]
 	path = meta-linaro
 	url = https://git.linaro.org/openembedded/meta-linaro.git
+[submodule "meta-renesas"]
+	path = meta-renesas
+	url = https://github.com/slawr/meta-renesas.git

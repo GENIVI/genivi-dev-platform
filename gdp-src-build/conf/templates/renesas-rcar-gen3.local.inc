@@ -2,7 +2,12 @@
 include local.inc
 
 # Add R-Car Gfx and MMP packages to install
-IMAGE_INSTALL_append_rcar-gen3 = "libdrm-kms kernel-module-gles gles-user-module libgbm-dev packagegroup-gstreamer1.0-plugins weston-bin kernel-module-pvrsrvkm packagegroup-graphics-libegl"
+IMAGE_INSTALL_append_rcar-gen3 = "\
+    packagegroup-gstreamer1.0-plugins \
+    packagegroup-wayland-community \
+    packagegroup-graphics-renesas-proprietary \
+    packagegroup-graphics-renesas-wayland \
+"
 
 MACHINE ?= "m3ulcb"
 
@@ -29,7 +34,7 @@ MULTI_PROVIDER_WHITELIST += "virtual/libgl virtual/egl virtual/libgles1 virtual/
 # for Wayland/Weston
 PREFERRED_PROVIDER_virtual/libgles1 = ""
 PREFERRED_PROVIDER_virtual/libgles2 = "gles-user-module"
-PREFERRED_PROVIDER_virtual/egl = "gles-user-module"
+PREFERRED_PROVIDER_virtual/egl = "libegl"
 PREFERRED_PROVIDER_virtual/libgl = ""
 PREFERRED_PROVIDER_virtual/mesa = ""
 PREFERRED_PROVIDER_libgbm = "libgbm"
