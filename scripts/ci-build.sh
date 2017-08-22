@@ -228,7 +228,7 @@ git submodule status
 # Deal with special setup, copy binary drivers etc.
 set -x
 if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
-  cd renesas-rcar-gen3
+  cd meta-renesas
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
   cd -
 fi
