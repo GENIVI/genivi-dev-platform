@@ -40,14 +40,17 @@ RDEPENDS_${PN} = " \
     rpm \
     "
 
-inherit systemd
+inherit systemd useradd
 SYSTEMD_SERVICE_${PN} = "package_manager.service partition_manager.service module_loader_ecu1.service software_loading_manager.service lifecycle_manager.service"
 
+USERADD_PACKAGES = "${PN}"
+USERADD_PARAM_${PN} = "-r swm"
+
 do_install () {
-    install -d ${D}${libdir}/${PN}
+    install -o swm -d ${D}${libdir}/${PN}
 
     # TODO: Probably want to just copy in the needed files
-    cp -r ${S}/* ${D}${libdir}/${PN}
+    cp --no-preserve=ownership -r ${S}/* ${D}${libdir}/${PN}
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 -c "${WORKDIR}/package_manager.service" ${D}${systemd_system_unitdir}
