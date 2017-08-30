@@ -9,6 +9,7 @@ Environment=PYTHONPATH=/usr/lib/genivi-swm/common/
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 Environment=SLM_SWM_SIMULATION=false
 ExecStart=/usr/bin/python /usr/lib/genivi-swm/partition_manager/partition_manager.py fg
+User=swm
 
 [Install]
 WantedBy=multi-user.target

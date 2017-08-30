@@ -8,6 +8,7 @@ Requires=network-online.target
 Environment=PYTHONPATH=/usr/lib/genivi-swm/common/
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 ExecStart=/usr/bin/python /usr/lib/genivi-swm/module_loader_ecu1/module_loader_ecu1.py fg
+User=swm
 
 [Install]
 WantedBy=multi-user.target
