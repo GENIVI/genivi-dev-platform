@@ -8,7 +8,7 @@ DESCRIPTION = "GENIVI Development Platform image which includes currently a simp
 HMI and three proof-of-concepts (PoC's) and demos. The GENIVI Browser PoC, \
 the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
 
-PV = "1.3+snapshot-${DATE}"
+PV = "1.3+snapshot"
 
 BOOT_SPACE_rpi = "40960"
 
