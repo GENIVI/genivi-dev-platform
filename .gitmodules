@@ -1,6 +1,6 @@
 [submodule "meta-ivi"]
 	path = meta-ivi
-	url = http://github.com/genivi/meta-ivi.git
+	url = git://github.com/GENIVI/meta-ivi.git
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = git://github.com/meta-qt5/meta-qt5.git
@@ -15,11 +15,11 @@
 	url = git://git.yoctoproject.org/poky
 [submodule "meta-oic"]
 	path = meta-oic
-	url = http://git.yoctoproject.org/git/meta-oic.git
+	url = git://git.yoctoproject.org/meta-oic.git
 	branch = 1.0.1
 [submodule "meta-iot-web"]
 	path = meta-iot-web
-	url = https://github.com/ostroproject/meta-iot-web
+	url = git://github.com/ostroproject/meta-iot-web
 [submodule "meta-rvi"]
 	path = meta-rvi
 	url = git://github.com/GENIVI/meta-rvi.git
@@ -31,7 +31,7 @@
 	url = git://git.yoctoproject.org/meta-raspberrypi
 [submodule "meta-renesas-rcar-gen2"]
 	path = meta-renesas-rcar-gen2
-	url = https://github.com/slawr/meta-renesas-rcar-gen2.git
+	url = git://github.com/slawr/meta-renesas-rcar-gen2.git
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
@@ -43,10 +43,10 @@
 	url = git://github.com/OSSystems/meta-browser.git
 [submodule "meta-linaro"]
 	path = meta-linaro
-	url = https://git.linaro.org/openembedded/meta-linaro.git
+	url = git://git.linaro.org/openembedded/meta-linaro.git
 [submodule "meta-renesas"]
 	path = meta-renesas
-	url = https://github.com/slawr/meta-renesas.git
+	url = git://github.com/slawr/meta-renesas.git
 [submodule "meta-flatpak"]
 	path = meta-flatpak
-	url = https://github.com/klihub/meta-flatpak
+	url = git://github.com/klihub/meta-flatpak
