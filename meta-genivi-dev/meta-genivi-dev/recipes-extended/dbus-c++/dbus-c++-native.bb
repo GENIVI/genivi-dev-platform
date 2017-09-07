@@ -3,4 +3,5 @@ inherit native
 
 DEPENDS = "glib-2.0-native dbus-native expat-native"
 
-SRC_URI_append = " file://0001-Fix-build-error-in-test.patch"
+SRC_URI_append = " file://0001-Fix-build-error-in-test.patch \
+                   file://0001-Pass-correct-type-of-argument.patch "
