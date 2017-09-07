@@ -15,7 +15,7 @@ S = "${WORKDIR}/git"
 
 inherit autotools pkgconfig
 
-EXTRA_OECONF_append = " --disable-ecore"
+EXTRA_OECONF_append = " --disable-ecore --enable-examples=no --enable-tests=no "
 
 FILES_${PN}-dbg += "${bindir}/dbusxx-xml2cpp ${bindir}/dbusxx-introspect"
 FILES_${PN}-dev += "${bindir}/.dev"
