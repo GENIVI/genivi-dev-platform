@@ -222,6 +222,7 @@ fi
 # go.cd when fetching materials, but materials can be overriden by FORK /
 # BRANCH / TAG / COMMIT
 echo "Submodules:"
+git submodule sync    # Because submodules may have changed
 git submodule update  # Because submodules may have changed
 git submodule status
 
