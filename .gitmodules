@@ -25,7 +25,7 @@
 	url = git://github.com/GENIVI/meta-rvi.git
 [submodule "meta-erlang"]
 	path = meta-erlang
-	url = git://github.com/joaohf/meta-erlang.git
+	url = git://github.com/gunnarx/meta-erlang.git
 [submodule "meta-raspberrypi"]
 	path = meta-raspberrypi
 	url = git://git.yoctoproject.org/meta-raspberrypi
