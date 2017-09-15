@@ -13,6 +13,8 @@ LICENSE_FLAGS_WHITELIST  += "commercial"
 PREFERRED_VERSION_audiomanager ?= "7.0"
 PREFERRED_VERSION_audiomanagerplugins ?= "7.0"
 
+PREFERRED_VERSION_erlang-native = "18.2.3"
+PREFERRED_VERSION_erlang = "18.2.3"
 
 # Disk Space Monitoring during the build
 #
