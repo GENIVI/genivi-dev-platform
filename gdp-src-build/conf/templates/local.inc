@@ -10,6 +10,9 @@ LICENSE_FLAGS_WHITELIST  += "commercial"
 
 #INCOMPATIBLE_LICENSE ?= "GPLv3"
 
+PREFERRED_VERSION_erlang-native = "18.2.3"
+PREFERRED_VERSION_erlang = "18.2.3"
+
 # Disk Space Monitoring during the build
 #
 # Monitor the disk space during the build. If there is less that 1GB of space or less
