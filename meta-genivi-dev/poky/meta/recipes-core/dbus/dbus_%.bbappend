@@ -5,7 +5,7 @@ SRC_URI_append = "file://dbus_user.service \
                   file://dbus.conf \
                  "
 
-do_install_append() {
+do_install_append_class-target() {
     mkdir -p ${D}/etc/systemd/user
     cp ${WORKDIR}/dbus_user.service ${D}/etc/systemd/user/dbus.service
     cp ${WORKDIR}/dbus_user.socket ${D}/etc/systemd/user/dbus.socket
