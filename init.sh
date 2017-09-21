@@ -21,6 +21,7 @@ function setupGitSubmodules() {
         "porter"
         "qemux86-64"
         "r-car-m3-starter-kit"
+        "r-car-h3-starter-kit"
         "raspberrypi2"
         "raspberrypi3"
         "silk")
@@ -29,6 +30,7 @@ function setupGitSubmodules() {
         "minnowboard"
         "qemux86-64"
         "r-car-m3-starter-kit"
+        "r-car-h3-starter-kit"
         "raspberrypi2"
         "raspberrypi3")
     local modules=()
@@ -93,6 +95,7 @@ function setupGitSubmodules() {
     bsparr["silk"]="meta-renesas"
     bsparr["dragonboard-410c"]="meta-qcom"
     bsparr["r-car-m3-starter-kit"]="meta-linaro meta-renesas meta-ivi-renesas"
+    bsparr["r-car-h3-starter-kit"]="meta-linaro meta-renesas meta-ivi-renesas"
 
     # This looks somewhat complex but the intention is to clone only needed
     # submodules.  The module list is calculated as : all the submodules we
