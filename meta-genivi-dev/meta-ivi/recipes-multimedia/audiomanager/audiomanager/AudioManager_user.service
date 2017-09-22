@@ -5,7 +5,8 @@ After=dbus.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/AudioManager -c /usr/lib/control/libPluginControlInterface.so -l /usr/lib/command/ -r /usr/lib/routing/
+ExecStart=/usr/bin/AudioManager -c /usr/lib/audiomanager/control/libPluginControlInterface.so \
+    -l /usr/lib/audiomanager/command/ -r /usr/lib/audiomanager/routing/
 Restart=always
 RestartSec=5
 TimeoutSec=5
