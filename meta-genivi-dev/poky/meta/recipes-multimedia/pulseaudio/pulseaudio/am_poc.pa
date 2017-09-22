@@ -56,7 +56,7 @@ load-module module-filter-heuristics
 load-module module-filter-apply
 
 #Make  the  specified  sink (identified by its symbolic name) the  default sink.
-set-default-sink null
+set-default-sink master
 # Make the specified source (identified by its symbolic name) the default source.
 set-default-source null-monitor
 
