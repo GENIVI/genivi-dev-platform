@@ -1,6 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-DEPENDS += "mesa"
+DEPENDS += "mesa wayland-ivi-extension"
 DEPENDS_append_rcar-gen3 = " libgbm"
 
 SRC_URI += "\
