@@ -8,9 +8,7 @@ require recipes-yocto-ivi/images/ivi-image.inc
 # distro
 EXTRA_IMAGEDEPENDS_remove = "qemu-native qemu-helper-native"
 
-DESCRIPTION = "GENIVI Development Platform image which includes currently a simple \
-HMI and three proof-of-concepts (PoC's) and demos. The GENIVI Browser PoC, \
-the Fuel-Stop-Adviser (FSA) PoC and the GENIVI AudioManager (AM) Demo."
+DESCRIPTION = "GENIVI Development Platform image"
 
 PV = "13.0"
 
