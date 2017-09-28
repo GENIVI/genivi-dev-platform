@@ -1,21 +1,25 @@
-# Copyright (C) 2015 GENIVI Alliance
+# Copyright (C) 2017 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 
-SRC_URI_append = "\
-    file://EGLWLInputEventExample.service \
-    file://EGLWLMockNavigation.service \
+INPUT_EXAMPLE_DESKTOP_FILE="EGLWLInputEventExample.desktop"
+MOCK_NAVIGATION_DESKTOP_FILE="EGLWLMockNavigation.desktop"
+
+SRC_URI_append = "                         \
+    file://${INPUT_EXAMPLE_DESKTOP_FILE}   \
+    file://${MOCK_NAVIGATION_DESKTOP_FILE} \
     "
 
 FILES_${PN} += "\
-    ${libdir}/systemd/user/* \
+    /usr/share/applications/* \
     "
 
 do_install_append() {
-	install -d ${D}${libdir}/systemd/user
-	install -m 0444 ${WORKDIR}/EGLWLInputEventExample.service \
-	                ${D}${libdir}/systemd/user
-	install -m 0444 ${WORKDIR}/EGLWLMockNavigation.service \
-	                ${D}${libdir}/systemd/user
+  install -Dm 0644 ${WORKDIR}/${INPUT_EXAMPLE_DESKTOP_FILE}   \
+                   ${D}/usr/share/applications/${INPUT_EXAMPLE_DESKTOP_FILE}
+
+  install -Dm 0644 ${WORKDIR}/${MOCK_NAVIGATION_DESKTOP_FILE} \
+                   ${D}/usr/share/applications/${MOCK_NAVIGATION_DESKTOP_FILE}
 }
+

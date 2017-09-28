@@ -1,6 +1,0 @@
-[Unit]
-Description=Genivi Browser PoC service
-Requires=dbus.service
-
-[Service]
-ExecStart=/opt/browser/bin/browser

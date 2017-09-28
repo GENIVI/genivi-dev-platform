@@ -31,7 +31,4 @@ do_install_append() {
                         ${D}${libdir}/systemd/user
         mkdir -p ${D}/home/root/.config/systemd/user/default.target.wants/gdp-new-hmi.service
 	ln -sf /usr/lib/systemd/user/gdp-new-hmi.service ${D}/home/root/.config/systemd/user/default.target.wants/gdp-new-hmi.service
-	install -d ${D}/usr/share/applications/
-        install -m 0444 ${WORKDIR}/git/manifests/* \
-                        ${D}/usr/share/applications/
 }

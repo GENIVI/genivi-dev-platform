@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Input Example
+Type=Application
+Icon=
+Unit=EGLWLInputEventExample
+Exec=/usr/bin/EGLWLInputEventExample -platform wayland
