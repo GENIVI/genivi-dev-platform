@@ -3,4 +3,4 @@ Name=Input Example
 Type=Application
 Icon=
 Unit=EGLWLInputEventExample
-Exec=/usr/bin/EGLWLInputEventExample -platform wayland
+Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 /usr/bin/EGLWLInputEventExample -platform wayland
