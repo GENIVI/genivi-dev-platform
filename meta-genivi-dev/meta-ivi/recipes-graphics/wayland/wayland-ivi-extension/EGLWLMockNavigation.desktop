@@ -3,4 +3,4 @@ Name=Mock Navigation
 Type=Application
 Icon=file://usr/share/gdp/hmi_icons_033115-2.png
 Unit=EGLWLMockNavigation
-Exec=/usr/bin/EGLWLMockNavigation -platform wayland
+Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 /usr/bin/EGLWLMockNavigation -platform wayland
