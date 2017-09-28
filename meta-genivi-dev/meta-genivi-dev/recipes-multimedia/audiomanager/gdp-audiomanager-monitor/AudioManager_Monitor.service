@@ -1,8 +1,0 @@
-[Unit]
-Description=Genivi AudioManager PoC
-Requires=pulseaudio.service AudioManager.service
-
-[Service]
-Environment=DBUS_FATAL_WARNINGS=0
-Environment=LD_PRELOAD=/usr/lib/libEGL.so.1
-ExecStart=/usr/bin/AudioManagerMonitor

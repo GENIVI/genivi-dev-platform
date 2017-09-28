@@ -7,9 +7,11 @@ DEPENDS = "qtbase qtdeclarative pulseaudio audiomanager"
 
 SRCREV = "eea896440e5ad49622c7b1a4095f0d63c3465aa2"
 
+DESKTOP_FILE = "AudioManager_Monitor.desktop"
+
 SRC_URI = "\
     git://github.com/GENIVI/audio-manager-demo.git \
-    file://AudioManager_Monitor.service \
+    file://${DESKTOP_FILE} \
     file://0001-gdp-audio-monitor-include-fix.patch \
     "
 
@@ -22,12 +24,16 @@ QMAKE_PROFILES = "${S}/"
 inherit qmake5
 
 do_install_append() {
-    mkdir -p ${D}/etc/systemd/user
-    cp ${WORKDIR}/AudioManager_Monitor.service ${D}/etc/systemd/user
+    install -Dm 644 ${WORKDIR}/${DESKTOP_FILE} \
+                    ${D}/usr/share/applications/${DESKTOP_FILE}
 }
 
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 INHIBIT_PACKAGE_STRIP = "1"
 
-FILES_${PN} += "/opt/AudioManagerMonitor/*"
+FILES_${PN} += "                           \
+                /opt/AudioManagerMonitor/* \
+                /usr/share/applications/*   \
+"
+
 FILES_${PN}-dbg += "/usr/bin/AudioManagerMonitor/.debug/*"

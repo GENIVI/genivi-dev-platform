@@ -9,10 +9,11 @@ SRCREV = "231265ba9cc7581f8fb36d9e7f862f211d43564a"
 
 DEPENDS = "qtbase qtwebkit"
 
+DESKTOP_FILE = "browser.desktop"
+
 SRC_URI = "git://github.com/GENIVI/browser-poc.git \
            file://browser_poc_smaller_bookmarks_qml.patch \
-           file://browser.service \
-           file://demoui.service \
+           file://${DESKTOP_FILE} \
            file://COPYING \
            file://layer_manager_surface_id.patch \
            file://0001-browser-missing-method-for-connect.patch \
@@ -37,12 +38,15 @@ do_install_append() {
     cp -r ${S}/testapp/images ${D}/opt/testapp
     cp -r ${S}/testapp/qml ${D}/opt/testapp
     mkdir -p ${D}/etc/systemd/user
-    cp ${WORKDIR}/browser.service ${WORKDIR}/demoui.service ${D}/etc/systemd/user
+
+    install -Dm 644 ${WORKDIR}/${DESKTOP_FILE} \
+                    ${D}/usr/share/applications/${DESKTOP_FILE}
 }
 
 FILES_${PN} += "/opt/browser/bin/* \
                 /opt/demoui/* \
                 /opt/testapp/* \
+                /usr/share/applications/* \
                "
 
 FILES_${PN}-dbg += "/opt/browser/bin/.debug/* \
