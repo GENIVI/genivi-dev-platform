@@ -6,3 +6,4 @@ SRC_URI_append = "\
 "
 
 DEPENDS_append_koelsch = " libegl gles-user-module"
+DEPENDS_append_rcar-gen3 = " mesa"
