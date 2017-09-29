@@ -117,7 +117,6 @@ stage_artifact() {
   done
 }
 
-
 # Layer version overrides:
 # Find and evaluate environment variables of type
 
@@ -193,7 +192,6 @@ print_layer_overrides() {
   done
 }
 
-
 # FIXME: Asking git to list submodules would be better
 LAYERS="
 meta-browser
@@ -214,7 +212,25 @@ poky
 renesas-rcar-gen3
 "
 
+# Clean up function called at end of script, or if interrupted
+cleanup() {
+  # Restore git config user - if this was not defined locally before then it is
+  # unset (which might mean a global setting is used)
+  if [ -z "$olduser" ] ; then
+    git config --unset user.name
+  else
+    git config user.name "$olduser"
+  fi
+  if [ -z "$oldemail" ] ; then
+    git config --unset user.email
+  else
+    git config user.email "$oldemail"
+  fi
+}
+
 # ---- Main program ----
+
+trap cleanup SIGINT SIGTERM
 
 D=$(dirname "$0")
 cd "$D"
@@ -331,8 +347,10 @@ fi
 cd "$BASEDIR"
 
 # Need to set an identity for some git patching done by recipes
+olduser="$(git config user.name)"
+oldemail="$(git config user.email)"
 git config user.name "CI build -- ignore"
-git config user.email no_email@genivigo.com
+git config user.email no_email
 
 # Normally the material (source code) is defined in the pipeline itself in the
 # CIAT system but there are multiple ways to override it provided here.
@@ -516,3 +534,4 @@ echo
 echo -n "Counting entries in staging/licenses : "
 ls staging/licenses | wc -l
 
+cleanup
