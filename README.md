@@ -42,7 +42,7 @@ To initiate the build environment:
     source init.sh $target
 
 The current supported targets are qemux86-64, porter, raspberrypi2, raspberrypi3,
-minnowboard, silk and r-car-m3-starter-kit.
+minnowboard, silk, r-car-m3-starter-kit and r-car-h3-starter-kit.
 Currently this requires the use of the bash shell
 
 The `init.sh` script handles the the `$target` specific bitbake configuration.
