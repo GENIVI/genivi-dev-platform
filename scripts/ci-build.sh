@@ -123,6 +123,12 @@ stop_if_failure
 # The values can be overridden by defining environment variables
 # If no value given, use this default:
 define_with_default BUILD_SDK false
+define_with_default RELEASE_BUILD true
+if [ $RELEASE_BUILD == true ] ; then
+  define_with_default SOURCE_ARCHIVE true
+else
+  define_with_default SOURCE_ARCHIVE false
+fi
 define_with_default RM_WORK false
 define_with_default REUSE_STANDARD_DL_DIR true
 define_with_default REUSE_STANDARD_SSTATE_DIR true
@@ -254,6 +260,16 @@ fi
 # LOCAL CONF MODIFICATIONS
 if [[ "$RM_WORK" == "true" ]]; then
   append_local_conf 'INHERIT += "rm_work"'
+fi
+
+if [[ "$SOURCE_ARCHIVE" == "true" ]]; then
+  append_local_conf 'INHERIT += "archiver"'
+fi
+
+if [[ "$RELEASE_BUILD" == "true" ]]; then
+  append_local_conf 'COPY_LIC_MANIFEST = "1"'
+  append_local_conf 'COPY_LIC_DIRS = "1"'
+  append_local_conf 'LICENSE_CREATE_PACKAGE = "1"'
 fi
 
 if [[ -n "$DL_DIR" ]]; then
