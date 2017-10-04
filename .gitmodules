@@ -28,7 +28,7 @@
 	url = git://git.yoctoproject.org/meta-raspberrypi
 [submodule "meta-renesas"]
 	path = meta-renesas
-	url = git://github.com/slawr/meta-renesas.git
+	url = git://github.com/genivi/meta-renesas.git
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
