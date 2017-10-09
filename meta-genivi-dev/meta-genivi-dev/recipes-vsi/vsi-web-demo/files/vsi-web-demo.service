@@ -1,0 +1,12 @@
+[Install]
+WantedBy=basic.target
+
+[Unit]
+Description=VSI web demo server
+Requires=dbus.service
+After=basic.target
+
+[Service]
+Type=simple
+ExecStart=/opt/vsi_web_demo/startbackenddemo.sh
+WorkingDirectory=/opt/vsi_web_demo
