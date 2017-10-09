@@ -15,4 +15,5 @@ ALLOW_EMPTY_${PN} = "1"
 
 RDEPENDS_${PN} += "\
     vehicle-signal-interface \
+    vsi-web-demo \
     "

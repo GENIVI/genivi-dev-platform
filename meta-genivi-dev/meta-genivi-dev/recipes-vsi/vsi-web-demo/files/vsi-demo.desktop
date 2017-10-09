@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=VSI Demo
+Type=Application
+Icon=file:///usr/bin/chromium/product_logo_128.png
+Exec=/opt/vsi_web_demo/startvisualdemo.sh
