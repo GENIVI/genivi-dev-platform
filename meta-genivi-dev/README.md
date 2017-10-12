@@ -51,8 +51,8 @@ Layer Dependency List
 URI: git://git.yoctoproject.org/meta-ivi
 * branch:   13.0
 
-URI: https://github.com/meta-qt5/meta-qt5.git
-* branch:   krogoth
+URI: git://code.qt.io/yocto/meta-qt5.git
+* branch:   5.6
 
 URI: git://git.openembedded.org/meta-openembedded
 * layers:   meta-oe, meta-ruby, meta-filesystems, meta-python
