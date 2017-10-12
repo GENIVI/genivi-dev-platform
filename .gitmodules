@@ -3,7 +3,7 @@
 	url = http://github.com/genivi/meta-ivi.git
 [submodule "meta-qt5"]
 	path = meta-qt5
-	url = git://github.com/meta-qt5/meta-qt5.git
+	url = git://code.qt.io/yocto/meta-qt5.git
 [submodule "meta-openembedded"]
 	path = meta-openembedded
 	url = git://git.openembedded.org/meta-openembedded
