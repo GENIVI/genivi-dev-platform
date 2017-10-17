@@ -270,20 +270,31 @@ if [[ "$RM_WORK" == "true" ]]; then
 fi
 
 if [[ -n "$DL_DIR" ]]; then
-  append_local_conf 'DL_DIR = "$DL_DIR"'
+  append_local_conf "DL_DIR = \"$DL_DIR\""
 fi
 
 if [[ -n "$SSTATE_DIR" ]]; then
-  append_local_conf 'SSTATE_DIR = "$SSTATE_DIR"'
+  append_local_conf "SSTATE_DIR = \"$SSTATE_DIR\""
 fi
 
 if [[ -n "$BB_NUMBER_THREADS" ]]; then
-  append_local_conf 'BB_NUMBER_THREADS = "$BB_NUMBER_THREADS"'
+  append_local_conf "BB_NUMBER_THREADS = \"$BB_NUMBER_THREADS\""
 fi
 
 if [[ -n "$PARALLEL_MAKE" ]]; then
   echo $PARALLEL_MAKE | egrep -q '^-j' || PARALLEL_MAKE="-j$PARALLEL_MAKE"
-  append_local_conf 'PARALLEL_MAKE = "$PARALLEL_MAKE"'
+  append_local_conf "PARALLEL_MAKE = \"$PARALLEL_MAKE\""
+fi
+
+if [[ "$SOURCE_ARCHIVE" == "true" ]]; then
+  append_local_conf 'INHERIT += "archiver"'
+  # Archiving patched sources is the default, but let's be explicit
+  append_local_conf 'ARCHIVER_MODE[src] = "patched"'
+fi
+
+if [[ "$COPY_LICENSES" == "true" ]]; then
+  append_local_conf 'COPY_LIC_DIRS = "1"'
+  append_local_conf 'COPY_LIC_MANIFEST = "1"'
 fi
 
 if [[ "$SOURCE_ARCHIVE" == "true" ]]; then
