@@ -123,11 +123,14 @@ stop_if_failure
 # The values can be overridden by defining environment variables
 # If no value given, use this default:
 define_with_default BUILD_SDK false
+define_with_default COPY_LICENSES false
 define_with_default RM_WORK false
 define_with_default REUSE_STANDARD_DL_DIR true
 define_with_default REUSE_STANDARD_SSTATE_DIR true
 define_with_default SGX_DRIVERS $AGENT_STANDARD_SGX_LOCATION
 define_with_default SGX_GEN_3_DRIVERS $AGENT_STANDARD_SGX_GEN3_LOCATION
+define_with_default SOURCE_ARCHIVE false
+define_with_default STANDARD_RELEASE_BUILD false
 
 stop_if_failure
 
@@ -151,12 +154,18 @@ fi
 ensure_var_is_defined MACHINE
 export MACHINE
 
+# OVERRIDING VARIABLES
 if [[ "$REUSE_STANDARD_DL_DIR" == "true" ]]; then
   DL_DIR="$AGENT_STANDARD_DL_DIR"
 fi
 
 if [[ "$REUSE_STANDARD_SSTATE_DIR" == "true" ]]; then
   SSTATE_DIR="$AGENT_STANDARD_SSTATE_DIR"
+fi
+
+if [[ "$STANDARD_RELEASE_BUILD" == "true" ]]; then
+  SOURCE_ARCHIVE=true  # NOTE: override
+  COPY_LICENSES=true
 fi
 
 echo Configuration:
@@ -173,6 +182,9 @@ echo "REUSE_STANDARD_SSTATE_DIR = $REUSE_STANDARD_SSTATE_DIR"
 echo "DL_DIR = $DL_DIR"
 echo "SSTATE_DIR = $DL_DIR"
 echo "RM_WORK = $RM_WORK"
+echo "STANDARD_RELEASE_BUILD" = "$STANDARD_RELEASE_BUILD"
+echo "SOURCE_ARCHIVE" = "$SOURCE_ARCHIVE"
+echo "COPY_LICENSES" = "$COPY_LICENSES"
 
 # build steps
 cd "$BASEDIR/gdp-src-build"
@@ -252,25 +264,37 @@ else
 fi
 
 # LOCAL CONF MODIFICATIONS
+
 if [[ "$RM_WORK" == "true" ]]; then
   append_local_conf 'INHERIT += "rm_work"'
 fi
 
 if [[ -n "$DL_DIR" ]]; then
-  append_local_conf "DL_DIR = \"$DL_DIR\""
+  append_local_conf 'DL_DIR = "$DL_DIR"'
 fi
 
 if [[ -n "$SSTATE_DIR" ]]; then
-  append_local_conf "SSTATE_DIR = \"$SSTATE_DIR\""
+  append_local_conf 'SSTATE_DIR = "$SSTATE_DIR"'
 fi
 
 if [[ -n "$BB_NUMBER_THREADS" ]]; then
-  append_local_conf "BB_NUMBER_THREADS = \"$BB_NUMBER_THREADS\""
+  append_local_conf 'BB_NUMBER_THREADS = "$BB_NUMBER_THREADS"'
 fi
 
 if [[ -n "$PARALLEL_MAKE" ]]; then
   echo $PARALLEL_MAKE | egrep -q '^-j' || PARALLEL_MAKE="-j$PARALLEL_MAKE"
-  append_local_conf "PARALLEL_MAKE = \"$PARALLEL_MAKE\""
+  append_local_conf 'PARALLEL_MAKE = "$PARALLEL_MAKE"'
+fi
+
+if [[ "$SOURCE_ARCHIVE" == "true" ]]; then
+  append_local_conf 'INHERIT += "archiver"'
+  # Archiving patched sources is the default, but let's be explicit
+  append_local_conf 'ARCHIVER_MODE[src] = "patched"'
+fi
+
+if [[ "$COPY_LICENSES" == "true" ]]; then
+  append_local_conf 'COPY_LIC_DIRS = "1"'
+  append_local_conf 'COPY_LIC_MANIFEST = "1"'
 fi
 
 if [[ "$BUILD_SDK" != "true" ]]; then
