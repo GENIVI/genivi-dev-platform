@@ -126,6 +126,7 @@ stop_if_failure
 define_with_default BUILD_SDK false
 define_with_default COPY_LICENSES false
 define_with_default LAYER_ARCHIVE false
+define_with_default CREATE_RELEASE_DIR false
 define_with_default RM_WORK false
 define_with_default REUSE_STANDARD_DL_DIR true
 define_with_default REUSE_STANDARD_SSTATE_DIR true
@@ -166,8 +167,10 @@ if [[ "$REUSE_STANDARD_SSTATE_DIR" == "true" ]]; then
 fi
 
 if [[ "$STANDARD_RELEASE_BUILD" == "true" ]]; then
-  SOURCE_ARCHIVE=true  # NOTE: override
+  SOURCE_ARCHIVE=true  # NOTE: overriding env settings
   COPY_LICENSES=true
+  LAYER_ARCHIVE=true
+  CREATE_RELEASE_DIR=true
 fi
 
 echo Configuration:
@@ -350,6 +353,23 @@ git diff gdp-src-build/conf/templates/*.inc >>$build_info_file
 
 mkdir -p staging/images
 mv staging/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*,*201*.iso,*.dtd} staging/images/ 2>/dev/null || true
+
+if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
+  set +e
+  mkdir -p release
+  echo "Copying images to release/ (if it exists)"
+  cp staging/images/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*,*201*.iso,*.dtd} release/ 2>/dev/null || true
+  echo "Copying staging/sources to release/ (if it exists)"
+  cp -a staging/sources release/ 2>/dev/null
+  echo "Archiving licenses into release/ (if it exists)"
+  cd staging
+  tar cfj release/licenses.tar.bz2 licenses
+  cd ..
+  echo "Copying various metadata to release/ (if it exists)"
+  cp staging/files-in-image.txt release/ 2>/dev/null
+  cp staging/license.manifest release/ 2>/dev/null
+  set -e
+fi
 
 echo Artifacts in staging/
 ls -R staging/
