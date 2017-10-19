@@ -1,0 +1,29 @@
+Index: gcc-linaro-5.2-2015.11-2/gcc/regrename.c
+===================================================================
+--- gcc-linaro-5.2-2015.11-2.orig/gcc/regrename.c
++++ gcc-linaro-5.2-2015.11-2/gcc/regrename.c
+@@ -217,6 +217,12 @@ record_operand_use (struct du_head *head
+ {
+   if (cur_operand == NULL)
+     return;
++  if (head->cannot_rename)
++  {
++    cur_operand->failed = true;
++    return;
++  }
++
+   gcc_assert (cur_operand->n_chains < MAX_REGS_PER_ADDRESS);
+   cur_operand->heads[cur_operand->n_chains] = head;
+   cur_operand->chains[cur_operand->n_chains++] = this_du;
+Index: gcc-linaro-5.2-2015.11-2/gcc/regrename.h
+===================================================================
+--- gcc-linaro-5.2-2015.11-2.orig/gcc/regrename.h
++++ gcc-linaro-5.2-2015.11-2/gcc/regrename.h
+@@ -69,6 +69,7 @@ struct operand_rr_info
+ {
+   /* The number of chains recorded for this operand.  */
+   int n_chains;
++  bool failed;
+   /* Holds either the chain for the operand itself, or for the registers in
+      a memory operand.  */
+   struct du_chain *chains[MAX_REGS_PER_ADDRESS];
