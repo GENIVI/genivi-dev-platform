@@ -467,21 +467,22 @@ echo 'For conf , see files *.conf, and any diff below' >>$build_info_file
 git diff gdp-src-build/conf/templates/*.inc >>$build_info_file
 
 mkdir -p staging/images
-mv staging/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*,*201*.iso,*.dtd} staging/images/ 2>/dev/null || true
+mv staging/*/{*201*ext*,*201*rootfs*,*sdimg*,*qemuboot.conf*,modules*.tgz,*hddimg*,bzImage*201*,*201*.iso,*201*.wic,*.efi,*.dtd} staging/images/ 2>/dev/null || true
+cd staging && rm -rf "$TARGET"
+cd "$BASEDIR"
 
 if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
   set +e
   mkdir -p release
-  echo "Copying images to release/ (if it exists)"
-  cp staging/images/{*201*ext*,*201*rootfs*,*sdimg*,*hddimg*,bzImage*201*,*201*.iso,*.dtd} release/ 2>/dev/null || true
-  echo "Copying staging/sources to release/ (if it exists)"
+  echo "Moving images to release/"
+  mv staging/images release/ 2>/dev/null || true
+  echo "Moving staging/sources to release/"
   cp -a staging/sources release/ 2>/dev/null
-  echo "Archiving licenses into release/ (if it exists)"
-  cd staging
-  tar cfj release/licenses.tar.bz2 licenses
-  cd ..
-  echo "Copying various metadata to release/ (if it exists)"
+  echo "Moving staging/licenses into release/"
+  mv staging/licenses release/
+  echo "Copying various metadata to release"
   cp staging/files-in-image.txt release/ 2>/dev/null
+  cp staging/build_info.txt release/ 2>/dev/null
   cp staging/license.manifest release/ 2>/dev/null
   set -e
 fi
