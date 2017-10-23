@@ -23,13 +23,17 @@ SRC_URI_append ="\
 
 
 do_install_append() {
-     install -Dm 0444 ${WORKDIR}/git/${APP}.svg \
+    install -d ${D}/opt/com.genivi.gdp.hvac/bin/imports/
+    cp -fr ${S}/imports/* ${D}/opt/com.genivi.gdp.hvac/bin/imports/
+    install -d ${D}/opt/com.genivi.gdp.hvac/bin/
+
+    install -Dm 0444 ${WORKDIR}/git/${APP}.svg \
                  ${D}/opt/${APP}/share/icons/${APP}.svg
 
-     install -Dm 0555 ${EXE} \
+    install -Dm 0555 ${EXE} \
                  ${D}/opt/${APP}/bin/${EXE}
 
-     install -Dm 0644 ${WORKDIR}/${APP}.desktop \
+    install -Dm 0644 ${WORKDIR}/${APP}.desktop \
                  ${D}/usr/share/applications/${APP}.desktop
 }
 
