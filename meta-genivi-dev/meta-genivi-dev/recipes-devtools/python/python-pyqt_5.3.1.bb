@@ -14,7 +14,7 @@ PYQT_OE_VERSION = "Qt_5_3_1"
 PR = "r1"
 
 SRC_URI = "\
-    http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.3.1/PyQt-gpl-5.3.1.tar.gz \
+    ${SOURCEFORGE_MIRROR}/projects/pyqt/files/PyQt5/PyQt-5.3.1/PyQt-gpl-5.3.1.tar.gz \
     file://qpycore.pro \
     file://qpygui.pro \
     file://dbus.pro \
