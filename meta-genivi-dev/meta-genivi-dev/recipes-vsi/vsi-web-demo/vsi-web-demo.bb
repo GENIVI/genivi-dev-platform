@@ -8,7 +8,6 @@ SECTION = "base"
 SRC_URI = " \
     git://github.com/GENIVI/vsi_web_demo.git \
     file://vsi-web-demo.service \
-    file://vsi-demo.desktop\
 "
 SRCREV = "268f69986fdc51cd5dc75fb4b75539f547f7b5bc"
 LICENSE = "MPL-2.0 & MIT"
@@ -30,6 +29,8 @@ RDEPENDS_${PN} += "python3-pip gcc gcc-symlinks binutils"
 # ln -s /lib/ /lib64
 
 SYSTEMD_SERVICE_${PN} = " vsi-web-demo.service"
+
+SYSTEMD_SERVICE_${PN} = "vsi-web-demo.service"
 
 S = "${WORKDIR}/git"
 
