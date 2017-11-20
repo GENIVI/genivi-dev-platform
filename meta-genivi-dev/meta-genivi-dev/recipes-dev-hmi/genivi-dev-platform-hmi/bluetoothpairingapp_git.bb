@@ -11,7 +11,7 @@ RDEPENDS_${PN} = "blueconnect"
 
 inherit qmake5
 
-SRC_URI = "git://github.com/dunderroffe/bluetoothPairingApp;branch=master"
+SRC_URI = "git://github.com/genivi/bluetoothPairingApp;branch=master"
 SRCREV = "ad09140f7fb2ce3056a3827729bc833fbb485e8f"
 
 APP = "com.genivi.gdp.bluetoothPairingApp"
