@@ -247,6 +247,8 @@ define_with_default BUILD_SDK false
 define_with_default COPY_LICENSES false
 define_with_default LAYER_ARCHIVE false
 define_with_default CREATE_RELEASE_DIR false
+define_with_default MIRROR "https://docs.projects.genivi.org/releases/yocto_mirror"
+define_with_default PREMIRROR ""  # By default none (but we have the shared DL_DIR)
 define_with_default RM_WORK false
 define_with_default REUSE_STANDARD_DL_DIR true
 define_with_default REUSE_STANDARD_SSTATE_DIR true
@@ -315,6 +317,8 @@ echo "BUILD_SDK = $BUILD_SDK"
 echo "COPY_LICENSES" = "$COPY_LICENSES"
 echo "CREATE_RELEASE_DIR" = "$CREATE_RELEASE_DIR"
 echo "DL_DIR = $DL_DIR"
+echo "MIRROR" = "$MIRROR"
+echo "PREMIRROR" = "$PREMIRROR"
 echo "REUSE_STANDARD_DL_DIR = $REUSE_STANDARD_DL_DIR"
 echo "REUSE_STANDARD_SSTATE_DIR = $REUSE_STANDARD_SSTATE_DIR"
 echo "RM_WORK = $RM_WORK"
@@ -454,6 +458,32 @@ fi
 if [[ "$COPY_LICENSES" == "true" ]]; then
   append_local_conf 'COPY_LIC_DIRS = "1"'
   append_local_conf 'COPY_LIC_MANIFEST = "1"'
+fi
+
+# The own-mirrors bbclass is generally more convenient for PREMIRRORS, but
+# this format makes it similar to the $MIRROR setup below, which needs to be
+# explicit anyhow.
+if [[ -n "$PREMIRROR" ]]; then
+  append_local_conf "
+PREMIRRORS_prepend = \"\\
+     git://.*/.* $PREMIRROR \\n \\
+     ftp://.*/.* $PREMIRROR \\n \\
+     http://.*/.* $PREMIRROR \\n \\
+     https://.*/.* $PREMIRROR \\n \\
+     \"
+"
+fi
+
+# This is the "post" mirror (i.e. checked last).
+if [[ -n "$MIRROR" ]]; then
+  append_local_conf "
+MIRRORS_append = \"\\
+     git://.*/.* $MIRROR \\n \\
+     ftp://.*/.* $MIRROR \\n \\
+     http://.*/.* $MIRROR \\n \\
+     https://.*/.* $MIRROR \\n \\
+     \"
+"
 fi
 
 if [[ "$BUILD_SDK" != "true" ]]; then
