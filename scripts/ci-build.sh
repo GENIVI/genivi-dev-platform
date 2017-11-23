@@ -347,8 +347,10 @@ fi
 cd "$BASEDIR"
 
 # Need to set an identity for some git patching done by recipes
+set +e  # The following two commands can fail if value is unset
 olduser="$(git config user.name)"
 oldemail="$(git config user.email)"
+set -e
 git config user.name "CI build -- ignore"
 git config user.email no_email
 
