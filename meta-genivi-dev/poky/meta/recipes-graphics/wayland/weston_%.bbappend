@@ -6,7 +6,6 @@ SRC_URI_append = "\
     file://GDP_Background.png \
     file://GDP_Browser_Button.png \
     file://start_am-poc.sh \
-    file://start_browser-poc.sh \
     file://weston.ini \
 "
 
@@ -41,7 +40,6 @@ do_install_append() {
     install -m644 ${WORKDIR}/GDP*.png ${D}/usr/share/weston
     mkdir -p ${D}/${bindir}/
     cp ${WORKDIR}/start_am-poc.sh ${D}/${bindir}
-    cp ${WORKDIR}/start_browser-poc.sh ${D}/${bindir}
     mkdir -p ${D}${systemd_unitdir}/system/
     cp ${WORKDIR}/weston.service ${D}${systemd_unitdir}/system/
     mkdir -p ${D}${systemd_unitdir}/system/multi-user.target.wants/
