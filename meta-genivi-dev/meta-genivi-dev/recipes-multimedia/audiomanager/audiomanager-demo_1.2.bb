@@ -4,7 +4,7 @@ DESCRIPTION = "Demo of the GENIVI AudioManager"
 LICENSE = "MPLv2"
 LIC_FILES_CHKSUM = "file://AudioManagerPoC/README;md5=be0fe05c89ff7a2632eb080f72e8c129"
 
-DEPENDS = "qtbase qtdeclarative qtwebkit"
+DEPENDS = "qtbase qtdeclarative"
 
 SRCREV = "daf851ee7a41d1b0572c0c95e15f61e427ce97f1"
 

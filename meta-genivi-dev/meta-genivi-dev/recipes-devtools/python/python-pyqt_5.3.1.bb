@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "\
     file://LICENSE;md5=027a10affabd63483e5a6ef03ed8590a \
 "
 
-DEPENDS = "sip-native python-sip python3-dbus qtbase qtdeclarative qtsvg qtwebkit"
+DEPENDS = "sip-native python-sip python3-dbus qtbase qtdeclarative qtsvg"
 RDEPENDS_${PN} = "python-core"
 
 PYQT_OE_VERSION = "Qt_5_3_1"
@@ -29,14 +29,12 @@ inherit qmake5 sip pythonnative python-dir
 
 B = "${S}"
 
-PARALLEL_MAKE = ""
-
 QMAKE_PROFILES = "pyqt.pro"
 # NOTE: has to match with MIN(qt version we have in OE, last known Qt version by SIP/PyQt)
 EXTRA_SIPTAGS = "-tWS_X11 -t${PYQT_OE_VERSION} -xVendorID -xPyQt_Accessibility -xPyQt_Desktop_OpenGL -xPyQt_SessionManager"
 #EXTRA_OEMAKE = " MAKEFLAGS= "
 
-SIP_MODULES = "QtCore QtGui QtNetwork QtQml QtQuick QtSvg QtWebKit QtWidgets QtOpenGL QtXmlPatterns"
+SIP_MODULES = "QtCore QtGui QtNetwork QtQml QtQuick QtSvg QtWidgets QtOpenGL QtXmlPatterns"
 MAKE_MODULES = "dbus qpy/QtCore qpy/QtGui ${SIP_MODULES}"
 
 EXTRA_OECMAKE += "-DQT_NO_ACCESSIBILITY"
@@ -56,7 +54,6 @@ EXTRA_QMAKEVARS_POST += "\
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtOpenGL \
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtQml \
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtQuick \
-    INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtWebKit \
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtNetwork \
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtSql \
     INCLUDEPATH+=${STAGING_INCDIR}/qt5/QtSvg \

@@ -31,7 +31,5 @@ RDEPENDS_${PN} += "\
     qtquick1-plugins \
     qtwayland \
     qtwayland-plugins \
-    qtwebkit \
-    qtwebkit-qmlplugins \
     qtgraphicaleffects-qmlplugins \
     "
