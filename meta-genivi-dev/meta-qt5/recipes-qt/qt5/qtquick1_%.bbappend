@@ -1,0 +1,2 @@
+
+PACKAGECONFIG_remove = "webkit"
