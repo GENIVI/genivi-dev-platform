@@ -167,8 +167,16 @@ layer_override() {
       echo "***** NOTE: OVERRIDING LAYER $name USING \$${var_name} = $value *****"
       d="$PWD"
       cd $name || echo "Layer name wrong?  Can't cd to dir : $name"
-      git fetch
-      git checkout "$value"
+      git fetch --all
+
+      # If forked, make sure to use the right remote, otherwise origin
+      # For branches, prefer the explicit: remote/branchname
+      if git remote | grep -q temp_fork ; then
+        git checkout "temp_fork/$value" 2>/dev/null || git checkout $value
+      else
+        git checkout "origin/$value" 2>/dev/null || git checkout $value
+      fi
+
       cd "$d"
       break  # First one wins, priority order: COMMIT >= TAG >= BRANCH
     fi
@@ -307,12 +315,12 @@ fi
 echo Configuration:
 echo
 echo "TARGET = $TARGET"
+echo "FORK = $FORK"
 echo "BRANCH = $BRANCH"
 echo "TAG = $TAG"
 echo "COMMIT = $COMMIT"
 echo "RELEASE = $RELEASE (currently unused)"
 print_layer_overrides "$LAYERS"
-echo
 echo "BUILD_SDK = $BUILD_SDK"
 echo "COPY_LICENSES" = "$COPY_LICENSES"
 echo "CREATE_RELEASE_DIR" = "$CREATE_RELEASE_DIR"
@@ -387,20 +395,6 @@ if [[ -n "$COMMIT" ]]; then
   git checkout $COMMIT
 fi
 
-# Do version override on sublayers (if any such overrides defined)
-
-for l in $LAYERS ; do
-  layer_override $l
-done
-
-# Remind us exactly what submodules hashes are used (this is already stated by
-# go.cd when fetching materials, but materials can be overriden by FORK /
-# BRANCH / TAG / COMMIT environment variables
-echo "Submodules:"
-git submodule sync    # Because submodules may have changed
-git submodule update  # Because submodules may have changed during override
-git submodule status
-
 # Deal with special setup, copy binary drivers etc.
 if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
   cd meta-renesas
@@ -426,6 +420,19 @@ if [[ "$TARGET" == "dragonboard-410c" ]]; then
 else
   source ./init.sh $TARGET -f
 fi
+
+# Do version override on sublayers (if any such overrides defined)
+cd ..
+for l in $LAYERS ; do
+  layer_override $l
+done
+cd gdp-src-build
+
+# Remind us exactly what submodules hashes are used (this is already stated by
+# go.cd when fetching materials, but materials can be overriden by FORK /
+# BRANCH / TAG / COMMIT environment variables
+echo "Submodules (after any updates or overrides):"
+git submodule status
 
 # LOCAL CONF MODIFICATIONS
 
