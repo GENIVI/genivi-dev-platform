@@ -396,7 +396,7 @@ if [[ -n "$COMMIT" ]]; then
 fi
 
 # Deal with special setup, copy binary drivers etc.
-if [[ "$TARGET" == "r-car-m3-starter-kit" ]];  then
+if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
   cd meta-renesas
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
   cd -
