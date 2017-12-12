@@ -564,10 +564,12 @@ if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
   set -e
 fi
 
+set +e
 echo "Artifacts in staging/ and release/"
 ls -al staging/ release/
 echo
 echo "...in release/images/ :"
 ls -al release/images/
+set -e
 
 cleanup
