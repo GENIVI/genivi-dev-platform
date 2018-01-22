@@ -56,3 +56,6 @@
 [submodule "meta-sdl"]
 	path = meta-sdl
 	url = git://github.com/phongt/meta-sdl.git
+[submodule "meta-lgsvl-browser"]
+	path = meta-lgsvl-browser
+	url = https://github.com/lgsvl/meta-lgsvl-browser.git
