@@ -31,6 +31,7 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-erlang \
   ${TOPDIR}/../meta-rvi \
   ${TOPDIR}/../meta-flatpak \
+  ${TOPDIR}/../meta-lgsvl-browser \
   "
 
 BBLAYERS_NON_REMOVABLE ?= " \
