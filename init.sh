@@ -55,11 +55,10 @@ function setupGitSubmodules() {
         if [[ ! ${supported[@]} =~ "$target" ]] && [[ ${!#} != "-f" ]]; then
             echo "However currently, only the following targets are officially supported:"
             printf '%s\n' "${supported[@]}"
-            echo "You can either "
-            echo "re-run with a supported target (or override this check with -f)"
-            echo "or get the gdp-11 branch:"
-            echo "   git checkout origin/gdp-11 and then re-run"
-            echo "   source init.sh $target"
+            echo "You can try to run it anyway by adding -f flag, or use a supported target"
+            echo "or check if your hardware was fully supported on an earlier release:"
+            echo "   git checkout origin/gdp-<version> and then re-run"
+            echo "   source init.sh $machine"
             return 1
         fi
     fi
