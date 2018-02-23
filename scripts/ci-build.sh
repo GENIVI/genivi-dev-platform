@@ -201,24 +201,7 @@ print_layer_overrides() {
 }
 
 # FIXME: Asking git to list submodules would be better
-LAYERS="
-meta-browser
-meta-erlang
-meta-genivi-dev
-meta-intel
-meta-iot-web
-meta-ivi
-meta-linaro
-meta-oic
-meta-openembedded
-meta-qcom
-meta-qt5
-meta-raspberrypi
-meta-renesas
-meta-rvi
-poky
-renesas-rcar-gen3
-"
+LAYERS="$(git submodule status | awk '{print $2}')"
 
 # Clean up function called at end of script, or if interrupted
 cleanup() {
