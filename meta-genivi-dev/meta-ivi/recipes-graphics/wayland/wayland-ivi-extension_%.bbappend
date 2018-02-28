@@ -9,6 +9,7 @@ MOCK_NAVIGATION_DESKTOP_FILE="EGLWLMockNavigation.desktop"
 SRC_URI_append = "                         \
     file://${INPUT_EXAMPLE_DESKTOP_FILE}   \
     file://${MOCK_NAVIGATION_DESKTOP_FILE} \
+    file://0001-examples-print.cpp-include-stdlib.h-for-free.patch \
     "
 
 FILES_${PN} += "\
