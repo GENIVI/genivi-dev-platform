@@ -7,7 +7,7 @@ BBFILES ?= ""
 
 BBLAYERS ?= " \
   ${TOPDIR}/../poky/meta \
-  ${TOPDIR}/../poky/meta-yocto \
+  ${TOPDIR}/../poky/meta-poky \
   ${TOPDIR}/../poky/meta-yocto-bsp \
   ${TOPDIR}/../meta-ivi/meta-ivi \
   ${TOPDIR}/../meta-ivi/meta-ivi-bsp \
@@ -34,7 +34,7 @@ BBLAYERS ?= " \
 
 BBLAYERS_NON_REMOVABLE ?= " \
   ${OEROOT}/meta \
-  ${OEROOT}/meta-yocto \
+  ${OEROOT}/meta-poky \
   ${OEROOT}/../meta-ivi/meta-ivi \
   "
 
