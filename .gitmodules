@@ -38,9 +38,6 @@
 [submodule "meta-qcom"]
     path = meta-qcom
     url = git://git.yoctoproject.org/meta-qcom
-[submodule "meta-browser"]
-	path = meta-browser
-	url = git://github.com/OSSystems/meta-browser.git
 [submodule "meta-linaro"]
 	path = meta-linaro
 	url = https://git.linaro.org/openembedded/meta-linaro.git
