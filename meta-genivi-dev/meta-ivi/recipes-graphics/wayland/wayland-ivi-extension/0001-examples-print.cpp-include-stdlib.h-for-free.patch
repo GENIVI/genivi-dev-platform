@@ -1,0 +1,36 @@
+From b170fdaa309c50da2e310ed9029eb19d8b8cc42a Mon Sep 17 00:00:00 2001
+From: Gunnar Andersson <gandersson@genivi.org>
+Date: Wed, 28 Feb 2018 12:43:28 +0100
+Subject: [PATCH] examples/print.cpp: #include stdlib.h for free()
+
+free() function is used, so stdlib.h should be included.
+
+Signed-off-by: Gunnar Andersson <gandersson@genivi.org>
+---
+ ivi-layermanagement-examples/LayerManagerControl/src/print.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ivi-layermanagement-examples/LayerManagerControl/src/print.cpp b/ivi-layermanagement-examples/LayerManagerControl/src/print.cpp
+index 7b1feef..0ab9ae4 100644
+--- a/ivi-layermanagement-examples/LayerManagerControl/src/print.cpp
++++ b/ivi-layermanagement-examples/LayerManagerControl/src/print.cpp
+@@ -20,6 +20,8 @@
+ #include "ilm_control.h"
+ #include "LMControl.h"
+ 
++#include <stdlib.h>
++
+ #include <iostream>
+ using std::cout;
+ using std::cin;
+@@ -29,7 +31,6 @@ using std::endl;
+ using std::dec;
+ using std::hex;
+ 
+-
+ #include <map>
+ using std::map;
+ 
+-- 
+2.9.5
+
