@@ -24,6 +24,5 @@ RDEPENDS_${PN} += "\
     gpsd-gpsctl \
     gpsd-udev \
     libgps \
-    libgpsd \
     python-pygps \
     "
