@@ -29,7 +29,6 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-iot-web \
   ${TOPDIR}/../meta-erlang \
   ${TOPDIR}/../meta-rvi \
-  ${TOPDIR}/../meta-browser \
   ${TOPDIR}/../meta-flatpak \
   "
 
