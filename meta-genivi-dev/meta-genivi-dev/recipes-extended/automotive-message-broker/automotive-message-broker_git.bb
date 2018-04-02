@@ -6,7 +6,7 @@ HOMEPAGE = "https://github.com/otcshare/automotive-message-broker/wiki"
 LICENSE = "LGPL-2.1"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b42382de5d854b9bb598acf2e8827de3"
 
-inherit cmake systemd
+inherit cmake systemd useradd
 
 PV = "0.14+git${SRCPV}"
 
@@ -23,6 +23,9 @@ EXTRA_OECMAKE += "-Denable_icecc=OFF"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE_${PN} = "ambd.service"
+
+USERADD_PACKAGES = "${PN}"
+USERADD_PARAM_${PN} = "-r ambd"
 
 S = "${WORKDIR}/git"
 
