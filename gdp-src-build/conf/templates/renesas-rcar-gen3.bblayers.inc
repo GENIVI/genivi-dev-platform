@@ -4,8 +4,6 @@
 
 BBLAYERS += " \
   ${TOPDIR}/../meta-renesas/meta-rcar-gen3 \
-  ${TOPDIR}/../meta-linaro/meta-linaro-toolchain \
-  ${TOPDIR}/../meta-genivi-dev/meta-linaro-gdp/meta-linaro-toolchain \
   ${TOPDIR}/../meta-genivi-dev/meta-renesas \
   ${TOPDIR}/../meta-linaro/meta-optee \
   ${TOPDIR}/../meta-ivi-renesas \
