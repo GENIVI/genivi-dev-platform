@@ -382,21 +382,6 @@ if [[ -n "$COMMIT" ]]; then
   git checkout $COMMIT
 fi
 
-# Deal with special setup, copy binary drivers etc.
-if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
-  cd meta-renesas
-  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
-  cd -
-fi
-
-if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
-  echo "Copying binary graphics drivers for $GFX_MACHINE"
-  cd meta-renesas/meta-rcar-gen2
-  ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
-  ./copy_mm_software_lcb.sh /var/go/sgx_bin/
-  cd -
-fi
-
 # INIT
 cd "$BASEDIR"
 echo "Running init.sh"
@@ -484,6 +469,23 @@ MIRRORS_append = \"\\
 "
 fi
 
+# Deal with special setup, copy binary drivers etc.
+if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
+  cd "$BASEDIR/meta-renesas"
+  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
+  cd "$BASEDIR"
+fi
+
+# FIXME: this should be phased out eventually since gen2 is unsupported
+if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
+  echo "Copying binary graphics drivers for $GFX_MACHINE"
+  cd "$BASEDIR/meta-renesas/meta-rcar-gen2"
+  ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
+  ./copy_mm_software_lcb.sh /var/go/sgx_bin/
+  cd "$BASEDIR"
+fi
+
+cd "$BASEDIR/gdp-src-build"
 if [[ "$BUILD_SDK" != "true" ]]; then
   bitbake genivi-dev-platform
   if [[ "$EXPORT_TESTS" == "true" ]]; then
