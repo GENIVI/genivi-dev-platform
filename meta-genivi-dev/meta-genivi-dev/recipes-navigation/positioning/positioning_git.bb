@@ -35,12 +35,12 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://github.com/GENIVI/positioning.git;protocol=http"
-SRCREV = "53b518d5eb8559c1c78150639a5f000453108cec"
+SRCREV = "b2649d35df7501fe426218a8eca931c2a81c8ad4"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "dbus dbus-c++ dbus-c++-native dlt-daemon gpsd libxslt-native"
+DEPENDS = "dbus dbus-c++ dbus-c++-native dlt-daemon libxslt-native"
 
 inherit cmake pkgconfig 
 
