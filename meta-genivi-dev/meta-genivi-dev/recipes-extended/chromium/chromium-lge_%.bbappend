@@ -33,3 +33,8 @@ SRC_URI_append_rcar-gen3 = "\
 SRC_URI_append_dragonboard-410c = "\
     file://0001-Rotate-gcc-toolchain-s-build-flags.patch \
 "
+
+# Workaround for x64 platforms
+# Chromium expects clang to be used and enables Control Flow Integrity for in this platform
+# We have to explicitly disable it
+GN_ARGS += "is_cfi=false"
