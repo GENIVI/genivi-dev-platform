@@ -1,0 +1,12 @@
+[Unit]
+Description=Udisks2 Disk Manager (automount of USB storage devices)
+
+Requires=udisks2.service
+After=udisks2.service
+
+[Service]
+ExecStart=/usr/libexec/udisks2/udisks2-disk-manager.sh
+Restart=always
+
+[Install]
+WantedBy=default.target
