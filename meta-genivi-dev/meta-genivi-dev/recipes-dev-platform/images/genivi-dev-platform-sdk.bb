@@ -6,13 +6,11 @@ to form a standalone SDK."
 
 inherit populate_sdk populate_sdk_qt5
 
-QT5PKG = "qtcreator-debug"
-
 IMAGE_FEATURES_append = "\
 	debug-tweaks         \
 	dev-pkgs             \
 	eclipse-debug        \
-	${QT5PKG}            \
+	qtcreator-debug      \
 	tools-debug          \
 	tools-profile        \
 	tools-sdk            \
