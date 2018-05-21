@@ -1,0 +1,121 @@
+#!/bin/sh
+
+# usage:
+#  start-qemu [<image-name>]
+#
+# if image name is not provided, the script will attempt to run
+# genivi-dev-platform
+#
+# QEMU will be started in daemonized mode and the PID will be written to
+# /tmp/qemu.pid
+#
+# Additional ENV variables can be set to control start-up:
+#
+#    MACHINE                - Yocto target MACHINE
+#    QEMU_DRIVE             - "-drive" argument to qemu
+#    QEMU_GRAPHICS_ENABLE   - enable SDL graphics with HW acceleration
+#    QEMU_AUDIO_ENABLE      - Will enable audio in qemu (-soundhw ac97)
+#    DISK_IMG               - .ext4 image to use in "-drive" argument
+#    KERNEL_IMG             - path to Linux kernel (-kernel)
+#
+# NOTE: current settings
+#           network: TAP 192.168.7.2::192.168.7.1
+#           VNC: port 23
+#           serial console: stdio
+
+set -e
+set -x
+
+# if called under Yocto/OE shell, BUILDDIR will already be set correctly
+if [ -z "$BUILDDIR" ]; then
+    # try to guess BUILDDIR
+    BUILDDIR="`dirname $0`"/../gdp-src-build
+fi
+
+IMAGE_NAME=$1
+if [ -n "$IMAGE_NAME" ]; then
+    # IMAGE name was passed in command line, skip the argument
+    shift
+else
+    IMAGE_NAME=genivi-dev-platform
+fi
+
+if [ -d ${BUILDDIR}/tmp ]; then
+    BUILDTMP=${BUILDDIR}/tmp
+else
+    BUILDTMP=${BUILDDIR}/tmp-glibc
+fi
+
+QEMU_ARGS=""
+
+# Extract MACHINE definition from local.conf.
+eval "$(sed -nre '/^MACHINE *\??\??= */{s/^MACHINE *\??\??= */EXTRACTED_MACHINE=/;p}' $BUILDDIR/conf/local.conf)"
+MACHINE=${MACHINE:-"$EXTRACTED_MACHINE"}
+case "$MACHINE" in
+    *x86*)
+        case "$MACHINE" in
+            *x86-64*)
+                QEMU_SYSTEM=${QEMU_SYSTEM:-"qemu-system-x86_64"}
+                ;;
+            *86*)
+                QEMU_SYSTEM=${QEMU_SYSTEM:-"qemu-system-i386"}
+                ;;
+        esac
+
+        ;;
+    *)
+        echo "Unsupported MACHINE: ${MACHINE}"
+        exit 1
+        ;;
+esac
+
+if [ -w /dev/kvm ]; then
+    QEMU_ARGS="$QEMU_ARGS -enable-kvm"
+fi
+DISK_IMG=${DISK_IMG:-"${BUILDTMP}/deploy/images/${MACHINE}/${IMAGE_NAME}-${MACHINE}.ext4"}
+KERNEL_IMG=${KERNEL_IMG:-"${BUILDTMP}/deploy/images/${MACHINE}/bzImage"}
+
+RANDOM_MAC="52:54:00$(od -txC -An -N3 /dev/urandom|tr \  :)"
+
+# use to pass -drive .. parameters directly
+QEMU_DRIVE=${QEMU_DRIVE:-""}
+
+if [ -n "$QEMU_DRIVE" ]; then
+    QEMU_ARGS="$QEMU_ARGS $QEMU_DRIVE "
+else
+    QEMU_ARGS="$QEMU_ARGS -drive file=${DISK_IMG},format=raw "
+fi
+
+if [ -n "${QEMU_GRAPHICS_ENABLE}" ]; then
+    QEMU_ARGS="$QEMU_ARGS \
+                -display sdl,gl=on \
+                -device virtio-vga,virgl=on \
+                --append vga=0 uvesafb.mode_option=640x480-32 "
+else
+    QEMU_ARGS="$QEMU_ARGS -display vnc=:23 "
+fi
+
+if [ -n "${QEMU_AUDIO_ENABLE}" ]; then
+    QEMU_ARGS="$QEMU_ARGS -soundhw ac97 "
+fi
+
+echo "--- qemu version"
+$QEMU_SYSTEM --version
+
+echo "--- starting qemu"
+
+$QEMU_SYSTEM \
+    -kernel ${KERNEL_IMG} \
+    -cpu core2duo \
+    -m 512M \
+    -daemonize \
+    -pidfile /tmp/qemu.pid \
+    -snapshot \
+    -no-reboot \
+    -device nec-usb-xhci \
+    -device usb-tablet \
+    -device virtio-rng-pci  \
+    -device virtio-net-pci,netdev=net0,mac="${RANDOM_MAC}" \
+    -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
+    -append "root=/dev/hda console=ttyS0 rw mem=512M ip=192.168.7.2::192.168.7.1:255.255.255.0 oprofile.timer=1" \
+    $QEMU_ARGS
