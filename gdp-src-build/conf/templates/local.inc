@@ -32,3 +32,8 @@ BB_DISKMON_DIRS = "\
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
+
+# Support OE QA test suite export with bitbake -c testexport <image name>
+INHERIT += "testexport"
+TEST_EXPORT_ONLY = "1"
+TEST_SUITES = "ping ssh scp date dmesg connman systemd gdp"
