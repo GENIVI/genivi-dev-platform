@@ -247,6 +247,8 @@ define_with_default SGX_DRIVERS $AGENT_STANDARD_SGX_LOCATION
 define_with_default SGX_GEN_3_DRIVERS $AGENT_STANDARD_SGX_GEN3_LOCATION
 define_with_default SOURCE_ARCHIVE false
 define_with_default STANDARD_RELEASE_BUILD false
+define_with_default NO_ROOT_PASSWORD false
+define_with_default EXPORT_TESTS false
 
 # The following only apply to temporary (local) dirs.  If any of
 # REUSE_STANDARD_{DL,SSTATE}_DIR is defined then those directories will be
@@ -318,6 +320,8 @@ echo "SGX_GEN_3_DRIVERS = $SGX_GEN_3_DRIVERS"
 echo "SOURCE_ARCHIVE" = "$SOURCE_ARCHIVE"
 echo "SSTATE_DIR = $DL_DIR"
 echo "STANDARD_RELEASE_BUILD" = "$STANDARD_RELEASE_BUILD"
+echo "NO_ROOT_PASSWORD" = "$NO_ROOT_PASSWORD"
+echo "EXPORT_TESTS" = "$EXPORT_TESTS"
 
 # build steps
 cd "$BASEDIR/gdp-src-build"
@@ -450,6 +454,10 @@ if [[ "$COPY_LICENSES" == "true" ]]; then
   append_local_conf 'COPY_LIC_MANIFEST = "1"'
 fi
 
+if [[ "$NO_ROOT_PASSWORD" == "true" ]]; then
+  append_local_conf 'EXTRA_USERS_PARAMS = ""'
+fi
+
 # The own-mirrors bbclass is generally more convenient for PREMIRRORS, but
 # this format makes it similar to the $MIRROR setup below, which needs to be
 # explicit anyhow.
@@ -478,6 +486,9 @@ fi
 
 if [[ "$BUILD_SDK" != "true" ]]; then
   bitbake genivi-dev-platform
+  if [[ "$EXPORT_TESTS" == "true" ]]; then
+    bitbake -c testexport genivi-dev-platform
+  fi
 fi
 
 if [[ "$BUILD_SDK" == "true" ]]; then
