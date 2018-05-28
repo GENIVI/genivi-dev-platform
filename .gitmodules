@@ -56,3 +56,6 @@
 [submodule "meta-sdl"]
 	path = meta-sdl
 	url = git://github.com/phongt/meta-sdl.git
+[submodule "meta-updater"]
+	path = meta-updater
+	url = https://github.com/advancedtelematic/meta-updater.git
