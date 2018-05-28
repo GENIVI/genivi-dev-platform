@@ -1,4 +1,5 @@
 # GENIVI Development Platform
+
 The GENIVI Development Platform integrates software components developed by GENIVI into a release that can be downloaded and run on popular hardware development boards.
 
 ## Download
