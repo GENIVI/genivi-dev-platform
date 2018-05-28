@@ -84,7 +84,7 @@ function setupGitSubmodules() {
     # Define hardware-dependent layers.
     # Multiple layers can be specified for a target if space-separated.
     declare -A bsparr
-    bsparr["qemux86-64"]=""
+    bsparr["qemux86-64"]="meta-updater meta-updater-qemux86-64"
     bsparr["minnowboard"]="meta-intel"
     bsparr["raspberrypi2"]="meta-raspberrypi"
     bsparr["raspberrypi3"]="meta-raspberrypi"
