@@ -2,9 +2,9 @@
 The GENIVI Development Platform integrates software components developed by GENIVI into a release that can be downloaded and run on popular hardware development boards.
 
 ## Download
-Download an image for your platform below. The current release is GDP 11.
+Download an image for your platform below. The current release is GDP 13.
 
-[Download page](https://at.projects.genivi.org/wiki/display/GDP/GENIVI+Demo+Platform+%28GDP%29+Download+page)
+[Download page](https://at.projects.genivi.org/wiki/display/GDP/GDP+Download+page)
 
 ### More information on the GDP is below;
 * GDP [project home page](https://projects.genivi.org/gdp)
