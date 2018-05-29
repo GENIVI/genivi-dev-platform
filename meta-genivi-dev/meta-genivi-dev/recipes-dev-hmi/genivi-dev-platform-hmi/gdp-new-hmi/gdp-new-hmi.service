@@ -5,7 +5,7 @@ After=weston.service
 
 [Service]
 Environment=LD_PRELOAD=/usr/lib/libEGL.so
-ExecStart=/opt/gdp-hmi/bin/gdp-hmi -platform wayland
+ExecStart=/usr/bin/gdp-hmi -platform wayland
 Restart=always
 RestartSec=5
 
