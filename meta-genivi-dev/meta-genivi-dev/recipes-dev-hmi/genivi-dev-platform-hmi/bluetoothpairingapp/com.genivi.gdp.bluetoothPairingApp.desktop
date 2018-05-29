@@ -1,6 +1,0 @@
-[Desktop Entry]
-Name=BluetoothPairingApp
-Type=Application
-Exec=/opt/com.genivi.gdp.bluetoothPairingApp/bin/bluetoothPairingApp -platform wayland
-Icon=file:///opt/com.genivi.gdp.bluetoothPairingApp/bluetooth.svg
-

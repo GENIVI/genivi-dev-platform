@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Connected Home
 Type=Application
-Icon=file://opt/com.genivi.gdp.connectedhome/share/icons/com.genivi.gdp.connectedhome.svg
-Unit=com.genivi.gdp.connectedhome
-Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 /opt/com.genivi.gdp.connectedhome/bin/qt-smart-demo -platform wayland
+Icon=file://@APPLICATION_ICON_TARGET_PATH@
+Unit=@APPLICATION_UNIT@
+Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 @APPLICATION_BIN_TARGET_PATH@
