@@ -1,47 +1,27 @@
-# Copyright (C) 2015-2016 GENIVI Alliance
+# Copyright (C) 2015-2018 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
-
+SUMMARY = "GDP HVAC app with D-BUS interface"
+HOMEPAGE = "https://github.com/GENIVI/HVAC"
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
-SRC_URI = "git://github.com/GENIVI/HVAC"
-SRCREV  = "dc5185223e7301807ce1a12c8f30528851fb4dc8"
 
-SUMMARY = "HVAC"
 DEPENDS = "qtbase qtdeclarative dbus"
 RDEPENDS_${PN} = "qtquickcontrols-qmlplugins"
 
-S = "${WORKDIR}/git"
+SRC_URI = "\
+    git://github.com/GENIVI/HVAC \
+    file://${APPLICATION_DESKTOP_FILE} \
+"
+SRCREV  = "dc5185223e7301807ce1a12c8f30528851fb4dc8"
 
-inherit qmake5
+APPLICATION_DESKTOP_FILE = "com.genivi.gdp.${PN}.desktop"
+APPLICATION_BIN = "${B}/HVAC_rvi_vtc1010"
+APPLICATION_ICON = "${S}/com.genivi.gdp.${PN}.svg"
+APPLICATION_UNIT = "com.genivi.gdp.hvac"
 
-APP = "com.genivi.gdp.${PN}"
-EXE = "HVAC_rvi_vtc1010"
-
-SRC_URI_append ="\
-    file://${APP}.desktop \
-    "
-
+require apps.inc
 
 do_install_append() {
-    install -d ${D}/opt/com.genivi.gdp.hvac/bin/imports/
-    cp -fr ${S}/imports/* ${D}/opt/com.genivi.gdp.hvac/bin/imports/
-    install -d ${D}/opt/com.genivi.gdp.hvac/bin/
-
-    install -Dm 0444 ${WORKDIR}/git/${APP}.svg \
-                 ${D}/opt/${APP}/share/icons/${APP}.svg
-
-    install -Dm 0555 ${EXE} \
-                 ${D}/opt/${APP}/bin/${EXE}
-
-    install -Dm 0644 ${WORKDIR}/${APP}.desktop \
-                 ${D}/usr/share/applications/${APP}.desktop
+    install -d ${D}${APPLICATION_DIR_TARGET_PATH}/imports
+    cp -fr ${S}/imports/* ${D}${APPLICATION_DIR_TARGET_PATH}/imports
 }
-
-FILES_${PN} += "\
-    /opt/* \
-    ${libdir} \
-    ${libdir}/systemd \
-    ${libdir}/systemd/user \
-    ${libdir}/systemd/user/* \
-    /usr/share/* \
-    "
