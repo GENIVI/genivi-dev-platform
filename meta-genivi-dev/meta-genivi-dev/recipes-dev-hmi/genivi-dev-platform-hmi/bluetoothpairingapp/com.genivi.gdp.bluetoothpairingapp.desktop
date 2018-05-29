@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=BluetoothPairingApp
+Type=Application
+Icon=file://@APPLICATION_ICON_TARGET_PATH@
+Exec=@APPLICATION_BIN_TARGET_PATH@
+
