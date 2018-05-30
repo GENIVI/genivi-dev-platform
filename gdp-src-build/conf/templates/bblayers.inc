@@ -22,6 +22,7 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta-genivi-dev/meta-erlang \
   ${TOPDIR}/../meta-genivi-dev/meta-genivi-dev \
   ${TOPDIR}/../meta-genivi-dev/meta-ivi \
+  ${TOPDIR}/../meta-genivi-dev/meta-oic \
   ${TOPDIR}/../meta-genivi-dev/meta-qt5 \
   ${TOPDIR}/../meta-genivi-dev/meta-rvi \
   ${TOPDIR}/../meta-genivi-dev/meta-openembedded/meta-oe \
