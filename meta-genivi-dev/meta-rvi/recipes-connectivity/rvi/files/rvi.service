@@ -7,13 +7,13 @@ After=getty@tty2.service
 [Service]
 Environment="HOME=/opt/rvi_core"
 Environment="RVI_PORT=8900"
-Environment="CONFIG=/etc/opt/rvi/rvi.config"
+Environment="CONFIG=/etc/rvi/rvi.config"
 Environment="RVI_BACKEND=38.101.164.230"
 
 StandardOutput=journal
 StandardError=journal
-ExecStart=/bin/sh -c "RVI_MYIP=$(/sbin/ip route | /usr/bin/awk '/default/ { print $3 }') CONFIG=/etc/opt/rvi/rvi.config RVI_BACKEND=38.101.164.230 /opt/rvi_core/rvi_ctl -c /etc/opt/rvi/rvi.config console"
-ExecStop=/opt/rvi_core/rvi_ctl stop
+ExecStart=/bin/sh -c "RVI_MYIP=$(/sbin/ip route | /usr/bin/awk '/default/ { print $3 }') CONFIG=/etc/rvi/rvi.config RVI_BACKEND=38.101.164.230 /usr/share/rvi_core/rvi_ctl -c /etc/rvi/rvi.config console"
+ExecStop=/usr/share/rvi_core/rvi_ctl stop
 GuessMainPID=yes
 RemainAfterExit=yes
 
