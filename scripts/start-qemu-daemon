@@ -15,13 +15,17 @@
 #    QEMU_DRIVE             - "-drive" argument to qemu
 #    QEMU_GRAPHICS_ENABLE   - enable SDL graphics with HW acceleration
 #    QEMU_AUDIO_ENABLE      - Will enable audio in qemu (-soundhw ac97)
+#    QEMU_OSTREE_BOOT       - Boot using a libostree disk image and boot rom
+#    QEMU_NO_SNAPSHOT       - Omits -snapshot from qemu arguments
 #    DISK_IMG               - .ext4 image to use in "-drive" argument
 #    KERNEL_IMG             - path to Linux kernel (-kernel)
+#    U_BOOT_IMG             - path to U-boot .rom (-bios)
 #
 # NOTE: current settings
 #           network: TAP 192.168.7.2::192.168.7.1
 #           VNC: port 23
 #           serial console: stdio
+#           serial console: localhost:1337 (TCP)
 
 set -e
 set -x
@@ -69,21 +73,37 @@ case "$MACHINE" in
         ;;
 esac
 
+if [ -z "${QEMU_NO_SNAPSHOT}" ]; then
+    QEMU_ARGS="$QEMU_ARGS -snapshot"
+fi
+
 if [ -w /dev/kvm ]; then
     QEMU_ARGS="$QEMU_ARGS -enable-kvm"
 fi
 DISK_IMG=${DISK_IMG:-"${BUILDTMP}/deploy/images/${MACHINE}/${IMAGE_NAME}-${MACHINE}.ext4"}
 KERNEL_IMG=${KERNEL_IMG:-"${BUILDTMP}/deploy/images/${MACHINE}/bzImage"}
+U_BOOT_IMG=${U_BOOT_IMG:-"${BUILDTMP}/deploy/images/${MACHINE}/u-boot-qemux86-64.rom"}
 
 RANDOM_MAC="52:54:00$(od -txC -An -N3 /dev/urandom|tr \  :)"
 
 # use to pass -drive .. parameters directly
 QEMU_DRIVE=${QEMU_DRIVE:-""}
 
+if [ -n "${QEMU_OSTREE_BOOT}" ]; then
+    QEMU_ARGS="$QEMU_ARGS -bios ${U_BOOT_IMG} "
+else
+    QEMU_ARGS="$QEMU_ARGS -kernel ${KERNEL_IMG} "
+    QEMU_ARGS="$QEMU_ARGS -append 'root=/dev/hda console=ttyS0 rw mem=512M ip=192.168.7.2::192.168.7.1:255.255.255.0 oprofile.timer=1'"
+fi
+
 if [ -n "$QEMU_DRIVE" ]; then
     QEMU_ARGS="$QEMU_ARGS $QEMU_DRIVE "
 else
-    QEMU_ARGS="$QEMU_ARGS -drive file=${DISK_IMG},format=raw "
+    if [ -n "${QEMU_OSTREE_BOOT}" ]; then
+        QEMU_ARGS="$QEMU_ARGS -drive file=${BUILDTMP}/deploy/images/${MACHINE}/${IMAGE_NAME}-${MACHINE}.otaimg,if=ide,format=raw"
+    else
+        QEMU_ARGS="$QEMU_ARGS -drive file=${DISK_IMG},format=raw "
+    fi
 fi
 
 if [ -n "${QEMU_GRAPHICS_ENABLE}" ]; then
@@ -104,18 +124,16 @@ $QEMU_SYSTEM --version
 
 echo "--- starting qemu"
 
-$QEMU_SYSTEM \
-    -kernel ${KERNEL_IMG} \
+eval $QEMU_SYSTEM \
     -cpu core2duo \
     -m 512M \
     -daemonize \
     -pidfile /tmp/qemu.pid \
-    -snapshot \
     -no-reboot \
     -device nec-usb-xhci \
     -device usb-tablet \
     -device virtio-rng-pci  \
+    -serial tcp:127.0.0.1:1337,server,nowait \
     -device virtio-net-pci,netdev=net0,mac="${RANDOM_MAC}" \
     -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
-    -append "root=/dev/hda console=ttyS0 rw mem=512M ip=192.168.7.2::192.168.7.1:255.255.255.0 oprofile.timer=1" \
     $QEMU_ARGS
