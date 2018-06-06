@@ -1,3 +1,0 @@
-Common targets are:
-    genivi-dev-platform
-
