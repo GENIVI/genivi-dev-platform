@@ -15,3 +15,8 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/unfocused.target ${D}${systemd_system_unitdir}/unfocused.target
     install -m 0644 ${WORKDIR}/lazy.target      ${D}${systemd_system_unitdir}/lazy.target
 }
+
+# udisks2 depends on polkit systemd.bb conflicts with polkit.bb on
+# installation.  We assume not to use polkit for systemd here - see commit
+# message for more info.
+PACKAGECONFIG_remove = "polkit"
