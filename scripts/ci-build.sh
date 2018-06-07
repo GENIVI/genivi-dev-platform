@@ -40,7 +40,7 @@ fi
 AGENT_STANDARD_DL_DIR="/var/cache/yocto/downloads"
 AGENT_STANDARD_SSTATE_DIR="/var/cache/yocto/sstate"
 AGENT_STANDARD_SGX_LOCATION="/var/go/sgx_bin"
-AGENT_STANDARD_SGX_GEN3_LOCATION="/var/go/sgx_bin_gen3"
+AGENT_STANDARD_SGX_GEN3_LOCATION="/var/go/rcar-gen3/gfx-mmp_ybsp-370_20180423"
 
 # ---- Helper functions ----
 
@@ -471,8 +471,9 @@ fi
 
 # Deal with special setup, copy binary drivers etc.
 if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
+  echo "Copying binary graphics and mmp drivers for $TARGET"
   cd "$BASEDIR/meta-renesas"
-  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh /var/go/sgx_bin_gen3/
+  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh $SGX_GEN_3_DRIVERS
   cd "$BASEDIR"
 fi
 
