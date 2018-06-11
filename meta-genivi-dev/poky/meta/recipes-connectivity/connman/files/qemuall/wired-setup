@@ -1,0 +1,27 @@
+#!/bin/sh
+
+CONFIGF=/var/lib/connman/wired.config
+
+mkdir -p /var/lib/connman/
+
+# Extract wired network config from /proc/cmdline
+NET_CONF=`cat /proc/cmdline |sed -ne 's/^.*ip=\([^ ]*\):\([^ ]*\):\([^ ]*\):\([^ ]*\).*$/\1\/\4\/\3/p'`
+
+# Check if eth0 is already set via kernel cmdline
+if [ "x$NET_CONF" = "x" ]; then
+    # Wired interface is not configured via kernel cmdline
+    # Remove connman config file template
+    rm -f ${CONFIGF}
+else
+    cat <<EOF > /var/lib/connman/wired.config
+[global]
+Name = Wired
+Description = Wired network configuration
+
+[service_ethernet]
+Type = ethernet
+IPv4 = ${NET_CONF}
+MAC = 52:54:00:12:34:56
+Nameservers = 8.8.8.8
+EOF
+fi
