@@ -1,0 +1,13 @@
+Index: git/include/configs/qemu-x86.h
+===================================================================
+--- git.orig/include/configs/qemu-x86.h
++++ git/include/configs/qemu-x86.h
+@@ -82,7 +82,7 @@
+ 
+ #undef CONFIG_BOOTCOMMAND
+ #define CONFIG_BOOTCOMMAND "run loadenv;" \
+-			   "setenv bootargs $bootargs\" console=ttyS0 root=/dev/ram0 rw rootfstype=ext4 rootwait rootdelay=2 ostree_root=/dev/hda ramdisk_size=16384 \";" \
++			   "setenv bootargs $bootargs\" console=ttyS0 root=/dev/ram0 rw rootfstype=ext4 rootwait rootdelay=2 ostree_root=/dev/hda ramdisk_size=16384 ip=192.168.7.2::192.168.7.1:255.255.255.0 \";" \
+ 			   "ext2load ide 0 $loadaddr \"/boot\"$kernel_image;" \
+ 			   "ext2load ide 0 $ramdiskaddr \"/boot\"$ramdisk_image;" \
+ 			   "zboot $loadaddr - $ramdiskaddr $filesize"
