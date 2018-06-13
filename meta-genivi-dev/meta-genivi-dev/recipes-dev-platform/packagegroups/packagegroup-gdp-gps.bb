@@ -20,7 +20,6 @@ RDEPENDS_${PN} += "\
     gpsd \
     gps-utils \
     gpsd-conf \
-    gpsd-dev \
     gpsd-gpsctl \
     gpsd-udev \
     libgps \
