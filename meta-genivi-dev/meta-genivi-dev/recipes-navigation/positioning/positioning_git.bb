@@ -7,7 +7,7 @@
 # Author: Marco Residori
 #
 # Copyright (C) 2013, XS Embedded GmbH
-# 
+#
 # License:
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -17,10 +17,10 @@
 ###########################################################################
 
 #
-# Description: This is a Yocto recipe of the 4 proofs of concept contained 
-#              in the positioning repository. 
-#              Each PoC has its own sub-package. In this way it is possible to 
-#              install only the PoC(s) that are of interest        
+# Description: This is a Yocto recipe of the 4 proofs of concept contained
+#              in the positioning repository.
+#              Each PoC has its own sub-package. In this way it is possible to
+#              install only the PoC(s) that are of interest
 #
 # Status: Work in Progress
 #
@@ -42,7 +42,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "dbus dbus-c++ dbus-c++-native dlt-daemon gpsd libxslt-native"
 
-inherit cmake pkgconfig 
+inherit cmake pkgconfig
 
 PACKAGES =+ "${PN}-gnss ${PN}-gnss-test ${PN}-sns ${PN}-sns-test ${PN}-repl ${PN}-repl-test ${PN}-enhpos ${PN}-enhpos-test "
 
@@ -61,31 +61,29 @@ DEPENDS_${PN}-enhpos = "${PN}-gnss ${PN}-sns"
 RDEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 DEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 
-do_configure() {
-    cd ${S} && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON -DWITH_IPHONE=OFF .
-}
-
-do_compile() {
-    cd ${S} && make
-}
+EXTRA_OECMAKE = "-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON -DWITH_IPHONE=OFF"
 
 do_install() {
     install -d ${D}/${bindir}
     install -d ${D}/${libdir}
     install -d ${D}${includedir}/${PN}
     install -d ${D}${datadir}/${PN}
-    install -m 755 ${S}/log-replayer/src/log-replayer ${D}/${bindir}
-    install -m 755 ${S}/log-replayer/test/test-log-replayer ${D}/${bindir}
-    install -m 644 ${S}/log-replayer/logs/*.log ${D}${datadir}/${PN}
-    install -m 755 ${S}/gnss-service/src/*.so ${D}/${libdir}
-    install -m 755 ${S}/gnss-service/test/gnss-service-client ${D}/${bindir}
-    install -m 755 ${S}/gnss-service/test/compliance-test/gnss-service-compliance-test ${D}/${bindir}
-    install -m 755 ${S}/sensors-service/src/*.so ${D}/${libdir}
-    install -m 755 ${S}/sensors-service/test/sensors-service-client ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/*/src/enhanced-position-service ${D}/${bindir}
-    install -m 755 ${S}/enhanced-position-service/*/test/enhanced-position-client ${D}/${bindir}
+
+    install -m 755 ${B}/log-replayer/src/log-replayer ${D}/${bindir}
+    install -m 755 ${B}/log-replayer/test/test-log-replayer ${D}/${bindir}
+    install -m 644 ${B}/log-replayer/logs/*.log ${D}${datadir}/${PN}
+
+    install -m 755 ${B}/gnss-service/src/*.so ${D}/${libdir}
+    install -m 755 ${B}/gnss-service/test/gnss-service-client ${D}/${bindir}
+    install -m 755 ${B}/gnss-service/test/compliance-test/gnss-service-compliance-test ${D}/${bindir}
+
+    install -m 755 ${B}/sensors-service/src/*.so ${D}/${libdir}
+    install -m 755 ${B}/sensors-service/test/sensors-service-client ${D}/${bindir}
+
+    install -m 755 ${B}/enhanced-position-service/*/src/enhanced-position-service ${D}/${bindir}
+    install -m 755 ${B}/enhanced-position-service/*/test/enhanced-position-client ${D}/${bindir}
     install -m 755 ${S}/enhanced-position-service/*/api/*.xml ${D}${datadir}/${PN}
-    install -m 755 ${S}/enhanced-position-service/dbus/api/*.h ${D}${includedir}/${PN}
+    install -m 755 ${B}/enhanced-position-service/dbus/api/*.h ${D}${includedir}/${PN}
 }
 
 FILES_${PN}-gnss = "${libdir}/libgnss-service*.so "
@@ -105,7 +103,6 @@ FILES_${PN}-enhpos-test = "${bindir}/enhanced-position-client \
 
 BBCLASSEXTEND = "native"
 
-#TODO: fix this
-do_package_qa() {
-  echo "workaround to avoid problem with RPATH"
-}
+INSANE_SKIP_${PN}-gnss-test += "rpaths"
+INSANE_SKIP_${PN}-sns-test += "rpaths"
+INSANE_SKIP_${PN}-enhpos += "rpaths"
