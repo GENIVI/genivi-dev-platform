@@ -33,6 +33,9 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/ambd.service ${D}${systemd_unitdir}/system
 }
 
-FILES_${PN} += "${systemd_unitdir}/ambd.service"
+PRIVATE_LIBS = "libamb-plugins-common.so"
 
-INSANE_SKIP_${PN} = "dev-deps"
+FILES_${PN} += "\
+    ${systemd_unitdir}/ambd.service \
+    ${libdir}/libamb-plugins-common.so \
+"
