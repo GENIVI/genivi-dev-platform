@@ -566,4 +566,11 @@ echo "...in release/images/ :"
 ls -al release/images/
 set -e
 
+# The artifact upload in CI actually fails if there are broken symlinks. They
+# might be broken for various reasons, but one could be that we move some image
+# files from staging to release, leaving some dangling symlinks.  Remove all
+# broken symlinks from the result directories, staging/ and release/
+
+find staging release -type l ! -exec test -e "{}" \; -exec rm "{}" \;
+
 cleanup
