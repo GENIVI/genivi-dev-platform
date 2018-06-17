@@ -568,7 +568,7 @@ if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
 fi
 
 # Also clean any broken links in staging
-find staging -type l ! -exec test -e "{}" \; -exec rm "{}" \;
+find staging -type l  -exec rm "{}" \;
 
 set +e
 echo "Artifacts in staging/ and release/"
