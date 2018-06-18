@@ -550,8 +550,10 @@ if [[ "$CREATE_RELEASE_DIR" == "true" ]]; then
   mkdir -p release
   echo "Moving images to release/"
   mv staging/images release/ 2>/dev/null || true
-  echo "Moving staging/sources to release/"
-  cp -a staging/sources release/ 2>/dev/null
+  echo "Archiving staging/sources to release/"
+  cd staging
+  tar cf ../release/sources.tar sources && mv sources "$BASEDIR/sources"
+  cd "$BASEDIR"
   echo "Moving staging/licenses into release/"
   mv staging/licenses release/
   echo "Copying various metadata to release"
