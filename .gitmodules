@@ -65,3 +65,6 @@
 [submodule "meta-updater-qemux86-64"]
 	path = meta-updater-qemux86-64
 	url = https://github.com/advancedtelematic/meta-updater-qemux86-64.git
+[submodule "meta-updater-raspberrypi"]
+	path = meta-updater-raspberrypi
+	url = https://github.com/advancedtelematic/meta-updater-raspberrypi.git
