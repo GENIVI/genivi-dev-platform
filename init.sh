@@ -88,8 +88,8 @@ function setupGitSubmodules() {
     declare -A bsparr
     bsparr["qemux86-64"]="meta-updater meta-updater-qemux86-64"
     bsparr["minnowboard"]="meta-intel"
-    bsparr["raspberrypi2"]="meta-raspberrypi"
-    bsparr["raspberrypi3"]="meta-raspberrypi"
+    bsparr["raspberrypi2"]="meta-raspberrypi meta-updater meta-updater-raspberrypi"
+    bsparr["raspberrypi3"]="meta-raspberrypi meta-updater meta-updater-raspberrypi"
     bsparr["dragonboard-410c"]="meta-qcom"
     bsparr["r-car-m3-starter-kit"]="meta-linaro meta-renesas meta-ivi-renesas"
     bsparr["r-car-h3-starter-kit"]="meta-linaro meta-renesas meta-ivi-renesas"
