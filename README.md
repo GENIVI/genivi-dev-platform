@@ -2,7 +2,7 @@
 The GENIVI Development Platform integrates software components developed by GENIVI into a release that can be downloaded and run on popular hardware development boards.
 
 ## Download
-Download an image for your platform below. The current release is GDP 13.
+Download an image for your platform below.
 
 [Download page](https://at.projects.genivi.org/wiki/display/GDP/GDP+Download+page)
 
@@ -15,16 +15,21 @@ Download an image for your platform below. The current release is GDP 13.
 
 Contributing to GDP
 ----------------------------
-Please see the  [MAINTAINERS](https://github.com/genivi/meta-genivi-dev/blob/master/MAINTAINERS) file for information on contacting them as well as instructions for submitting patches.
 
 The GENIVI Development Platform project welcomes contributions:
 * Subscribe to the mailing list [here](https://lists.genivi.org/mailman/listinfo/genivi-projects).
 * IRC Channel: #automotive in freenode.net
 * View or Report bugs: [GENIVI uses JIRA as bug tracker and task management tool](https://at.projects.genivi.org/jira/projects/GDP/issues).
 
+Send Pull Requests here on GitHub.  If that method for some reason is not
+appropriate for you, just contact us on the mailing list and we will accept
+patches in other ways.
+
+Please see the  [CONTRIBUTING.md](https://github.com/genivi/genivi-dev-platform/blob/master/CONTRIBUTING.md) file for information on commit quality.
+
 For information about the Yocto Project, check the [Yocto Project website](https://www.yoctoproject.org).  
 
-For information about the Yocto GENIVI Baseline, see [Yocto GENIVI Baseline website](http://projects.genivi.org/GENIVI_Baselines/meta-ivi).
+For information about the Yocto GENIVI Baseline, see [Yocto GENIVI Baseline website](https://at.projects.genivi.org/wiki/display/PROJ/Yocto+GENIVI+Baseline)
 
 genivi-dev-platform.git usage
 ------------------------------------
@@ -43,7 +48,7 @@ To initiate the build environment:
 
 The current supported targets are qemux86-64, porter, raspberrypi2, raspberrypi3,
 minnowboard, silk, r-car-m3-starter-kit and r-car-h3-starter-kit.
-Currently this requires the use of the bash shell
+Currently this requires the use of the bash shell.
 
 The `init.sh` script handles the the `$target` specific bitbake configuration.
 The `$target` templates can be found in gdp-src-build/templates, as well as common
@@ -54,4 +59,4 @@ To build:
 
     bitbake genivi-dev-platform
 
-Please see the README in meta-genivi-dev for further information.
+Problems?  Just ask on the mailing list (defined above)
