@@ -1,0 +1,37 @@
+From b8f9a332e28f00035a37bd7eeb9e6471e998ab83 Mon Sep 17 00:00:00 2001
+From: Mirza Krak <mirza.krak@northern.tech>
+Date: Thu, 26 Jul 2018 14:27:36 +0200
+Subject: [PATCH 1/1] rvi_ctl.template: get rid of dependecy on "install"
+
+Use mkdir instead which is most certanly already in place.
+
+Signed-off-by: Mirza Krak <mirza.krak@northern.tech>
+---
+ scripts/rvi_ctl.template | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/rvi_ctl.template b/scripts/rvi_ctl.template
+index 82ae11b..d93fe2a 100644
+--- a/scripts/rvi_ctl.template
++++ b/scripts/rvi_ctl.template
+@@ -104,7 +104,7 @@ then
+ 	else
+ 	    RUNDIR=${RVI_RUNDIR}
+ 	fi
+-	install -d --mode=0755 ${RUNDIR}
++	mkdir -p ${RUNDIR}
+ 	cd ${RUNDIR}
+ 	RVI_LOGDIR="${RVI_LOGDIR}" ${RVI_BINDIR}/setup_gen rvi ${CONFIG_FILE} rvi
+     )
+@@ -122,7 +122,7 @@ LAUNCH="${ERL} -boot ${RUNDIR}/rvi/start -sname ${SNAME} -config ${RUNDIR}/rvi/s
+ 
+ case "${CMD}" in
+    start)
+-	 install -D -d --mode 0755  ${RVI_LOGDIR}
++	 mkdir -p ${RVI_LOGDIR}
+ 	 exec run_erl -daemon ${RUNDIR}/ ${RVI_LOGDIR} "exec ${LAUNCH}"
+ 	 ;;
+ 
+-- 
+2.18.0
+
