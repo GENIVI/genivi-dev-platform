@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI += "\
     file://rvi.service \
     file://device_id \
+    file://0001-rvi_ctl.template-get-rid-of-dependecy-on-install.patch \
     "
 
 do_install_append () {
