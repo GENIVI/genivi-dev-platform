@@ -59,3 +59,9 @@
 [submodule "meta-lgsvl-browser"]
 	path = meta-lgsvl-browser
 	url = https://github.com/lgsvl/meta-lgsvl-browser.git
+[submodule "meta-updater"]
+	path = meta-updater
+	url = https://github.com/advancedtelematic/meta-updater.git
+[submodule "meta-updater-qemux86-64"]
+	path = meta-updater-qemux86-64
+	url = https://github.com/advancedtelematic/meta-updater-qemux86-64.git

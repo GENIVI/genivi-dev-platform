@@ -1,46 +1,21 @@
-# Copyright (C) 2015-2016 GENIVI Alliance
+# Copyright (C) 2015-2018 GENIVI Alliance
 # Released under the MIT license (see COPYING.MIT for the terms)
-
+SUMMARY = "Connected Home"
+HOMEPAGE = "https://github.com/GENIVI/connected-home"
 LICENSE  = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
-SRC_URI = "git://github.com/GENIVI/connected-home"
-SRCREV  = "2847ab9547be807d0767c69b0c0df7c90461fc6e"
 
-
-SUMMARY = "Connected Home"
 DEPENDS = "qtbase qtdeclarative"
 
-S = "${WORKDIR}/git"
+SRC_URI = "\
+    git://github.com/GENIVI/connected-home \
+    file://${APPLICATION_DESKTOP_FILE} \
+"
+SRCREV  = "2847ab9547be807d0767c69b0c0df7c90461fc6e"
 
-inherit qmake5
+APPLICATION_DESKTOP_FILE = "com.genivi.gdp.${PN}.desktop"
+APPLICATION_BIN = "${B}/qt-smart-demo"
+APPLICATION_ICON = "${S}/com.genivi.gdp.${PN}.svg"
+APPLICATION_UNIT = "com.genivi.gdp.connectedhome"
 
-APP = "com.genivi.gdp.${PN}"
-EXE = "qt-smart-demo"
-
-SRC_URI_append ="\
-    file://${APP}.desktop \
-    "
-
-
-do_install_append() {
-     install -Dm 644 ${WORKDIR}/git/${APP}.svg \
-                 ${D}/opt/${APP}/share/icons/${APP}.svg
-
-     install -Dm 555 ${EXE} \
-                 ${D}/opt/${APP}/bin/${EXE}
-
-     install -Dm 644 ${WORKDIR}/${APP}.desktop \
-                 ${D}/usr/share/applications/${APP}.desktop
-
-     install -d ${WORKDIR}/git/imports \
-                ${D}/opt/${APP}/bin/imports
-}
-
-FILES_${PN} += "\
-    /opt/${APP} \
-    /usr/bin/${EXE} \
-    ${libdir} \
-    ${libdir}/systemd \
-    ${libdir}/systemd/user \
-    ${libdir}/systemd/user/* \
-    "
+require apps.inc
