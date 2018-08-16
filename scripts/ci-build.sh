@@ -471,7 +471,7 @@ fi
 
 # Deal with special setup, copy binary drivers etc.
 if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
-  echo "Copying binary graphics and mmp drivers for $TARGET"
+  echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
   cd "$BASEDIR/meta-renesas"
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh $SGX_GEN_3_DRIVERS
   cd "$BASEDIR"
