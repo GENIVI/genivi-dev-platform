@@ -29,3 +29,5 @@ require conf/distro/sota.conf.inc
 
 #SOTA_PACKED_CREDENTIALS = "<path to credentials>"
 SYSTEMD_AUTO_ENABLE_pn-aktualizr = "disable"
+
+OSTREE_KERNEL_ARGS_sota = " cma=256M 8250.nr_uarts=1 bcm2708_fb.fbwidth=720 bcm2708_fb.fbheight=480 bcm2708_fb.fbswap=1 vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 dwc_otg.lpm_enable=0 console=ttyS0,115200 usbhid.mousepoll=0 "
