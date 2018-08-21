@@ -37,6 +37,12 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-sdl \
     packagegroup-gdp-dev \
     packagegroup-gdp-cdl \
+    packagegroup-core-buildessential \
+    packagegroup-gdp-devtools \
+    python-dev \
+    python3-dev \
+    perl-dev \
+    python-dev-native \
     "
 
 IMAGE_INSTALL_append_rcar-gen2 = " \
