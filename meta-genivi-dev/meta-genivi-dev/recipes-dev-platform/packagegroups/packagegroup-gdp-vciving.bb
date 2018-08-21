@@ -1,4 +1,4 @@
-DESCRIPTION = "GENIVI Browser Proof-of-Concept (PoC) package group"
+DESCRIPTION = "VCIVING project and prerequisites, including -dev packages for on-target installations"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${IVI_COREBASE}/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
@@ -8,24 +8,18 @@ LIC_FILES_CHKSUM[vardepsexclude] += "IVI_COREBASE"
 inherit packagegroup
 
 PACKAGES = "\
-    packagegroup-gdp-browser \
+    packagegroup-gdp-vciving \
     "
 
 ALLOW_EMPTY_${PN} = "1"
 
 RDEPENDS_${PN} += "\
-    genivi-browser-test-hmi-precompiled \
-    chromium-lge \
-    avahi-daemon \
-    cannelloni \
-    cmake \
-    connman-client \
-    git \
-    openssh-sftp-server \
-    python-dev \
+    alsa-dev \
+    espeak \
+    ffmpeg-dev \
+    flac \
+    gstreamer1.0-libav \
+    portaudio-v19-dev \
     python3-dev \
-    python-pip \
     python3-pip \
-    udisks2 \
-    udisks2-disk-manager \
     "
