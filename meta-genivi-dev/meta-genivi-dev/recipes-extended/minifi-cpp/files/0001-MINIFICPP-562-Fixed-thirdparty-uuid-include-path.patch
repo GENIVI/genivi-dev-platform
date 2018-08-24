@@ -1,0 +1,52 @@
+From 9ca6b4c2451f2b09436d0619541894e2190e85c6 Mon Sep 17 00:00:00 2001
+From: "Andrew I. Christianson" <andy@andyic.org>
+Date: Wed, 18 Jul 2018 11:33:43 -0400
+Subject: [PATCH 1/1] MINIFICPP-562 Fixed thirdparty/uuid include path
+
+This closes #376.
+
+Signed-off-by: Marc Parisi <phrocker@apache.org>
+---
+ thirdparty/uuid/CMakeLists.txt              | 2 ++
+ thirdparty/uuid/include/{ => uuid}/config.h | 0
+ thirdparty/uuid/include/{ => uuid}/uuid.h   | 0
+ thirdparty/uuid/include/{ => uuid}/uuidP.h  | 0
+ thirdparty/uuid/include/{ => uuid}/uuidd.h  | 0
+ 5 files changed, 2 insertions(+)
+ rename thirdparty/uuid/include/{ => uuid}/config.h (100%)
+ rename thirdparty/uuid/include/{ => uuid}/uuid.h (100%)
+ rename thirdparty/uuid/include/{ => uuid}/uuidP.h (100%)
+ rename thirdparty/uuid/include/{ => uuid}/uuidd.h (100%)
+
+diff --git a/thirdparty/uuid/CMakeLists.txt b/thirdparty/uuid/CMakeLists.txt
+index ca0059d..4b39a0b 100644
+--- a/thirdparty/uuid/CMakeLists.txt
++++ b/thirdparty/uuid/CMakeLists.txt
+@@ -17,6 +17,8 @@
+ # under the License.
+ #
+ 
++include_directories("include/uuid")
++
+ add_library(
+     uuid
+     clear.c
+diff --git a/thirdparty/uuid/include/config.h b/thirdparty/uuid/include/uuid/config.h
+similarity index 100%
+rename from thirdparty/uuid/include/config.h
+rename to thirdparty/uuid/include/uuid/config.h
+diff --git a/thirdparty/uuid/include/uuid.h b/thirdparty/uuid/include/uuid/uuid.h
+similarity index 100%
+rename from thirdparty/uuid/include/uuid.h
+rename to thirdparty/uuid/include/uuid/uuid.h
+diff --git a/thirdparty/uuid/include/uuidP.h b/thirdparty/uuid/include/uuid/uuidP.h
+similarity index 100%
+rename from thirdparty/uuid/include/uuidP.h
+rename to thirdparty/uuid/include/uuid/uuidP.h
+diff --git a/thirdparty/uuid/include/uuidd.h b/thirdparty/uuid/include/uuid/uuidd.h
+similarity index 100%
+rename from thirdparty/uuid/include/uuidd.h
+rename to thirdparty/uuid/include/uuid/uuidd.h
+-- 
+2.18.0
+

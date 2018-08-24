@@ -1,0 +1,11 @@
+[Unit]
+Description=MiNiFI, collect data where it originates
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/minifi.sh start
+ExecStop=/usr/bin/minifi.sh stop
+
+[Install]
+WantedBy=multi-user.target
