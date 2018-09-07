@@ -219,6 +219,60 @@ cleanup() {
   fi
 }
 
+cel_echo() {
+  echo "$1" >>$combined_error_log
+}
+
+# This function will look through the console log for the text
+# "(log file is located at..."
+# This is message printed by bitbake when an error is reported and refers to
+# the full log of that bitbake step for that component (e.g.
+# log.do_compile.8790). To complement the console-log, these detailed logs are
+# often necessary for evaluating what actually happened during that step for
+# that component.  We therefore extract (only) those that are mentioned in an
+# error, and place them where the CI system can find and publish them separately.
+
+error_log_dir=artifacts/error_logs
+copy_error_logs() {
+  bitbake_log=$(readlink -f gdp-src-build/bitbake-cookerdaemon.log)
+  console_log=$(readlink -f gdp-src-build/tmp/log/cooker/*/console-latest.log)
+  echo "Finding any detailed error logs from: $console_log"
+  combined_error_log="$error_log_dir/all_logs_combined.txt"
+
+  # There should only be one console log found here but let's loop just in case:
+  err_log_files=
+  for f in $console_log ; do
+    err_log_files="$err_log_files $(egrep 'ERROR:.*\(log file' < "$f" | sed 's!.*(log file is located at \([^)]*\))!\1!')"
+  done
+
+  echo Error log files are: $err_log_files
+
+  if [ -n "$err_log_files" ] ; then
+    mkdir -p $error_log_dir
+    cp -L $console_log $bitbake_log $err_log_files $error_log_dir/
+    for f in $console_log $bitbake_log $err_log_files ; do
+      cel_echo "==========================================================================="
+      cel_echo " $(basename $f)"
+      cel_echo "==========================================================================="
+      cel_echo
+      cat $f >>"$combined_error_log"
+      cel_echo
+    done
+
+    # Copy/move remaining files
+    # Add .txt suffix to log files since there is no Content-Type defined, so
+    # this way the web browser will display them, rather than download them.
+    cd "$error_log_dir"
+    for f in $console_log $bitbake_log $err_log_files ; do
+      f=$(basename $f)
+      mv $f $f.txt || true
+    done
+
+    echo Copied error logs:
+    ls -al $error_log_dir
+  fi
+}
+
 # ---- Main program ----
 
 trap cleanup SIGINT SIGTERM
@@ -573,6 +627,10 @@ fi
 find staging -type l  -exec rm "{}" \;
 
 set +e
+# Always create the dir or the upload of artifacts will fail
+mkdir -p "$error_log_dir"
+copy_error_logs
+
 echo "Artifacts in staging/ and release/"
 ls -al staging/ release/
 echo
