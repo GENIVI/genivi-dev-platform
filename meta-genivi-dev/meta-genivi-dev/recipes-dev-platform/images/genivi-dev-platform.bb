@@ -51,3 +51,7 @@ IMAGE_INSTALL_append_rpi = " \
 	packagegroup-base \
 	mesa-megadriver \
 "
+
+IMAGE_INSTALL_append_qemuall = " \
+    connman-conf \
+"
