@@ -9,14 +9,6 @@ IMAGE_INSTALL_append_rcar-gen3 = "\
     packagegroup-graphics-renesas-wayland \
 "
 
-MACHINE ?= "m3ulcb"
-
-# This sets the SoC
-# H3: r8a7795, M3: r8a7796
-#SOC_FAMILY = "r8a7795"
-SOC_FAMILY ?= "r8a7796"
-
-
 # add the static lib to SDK toolchain
 SDKIMAGE_FEATURES_append = " staticdev-pkgs"
 
