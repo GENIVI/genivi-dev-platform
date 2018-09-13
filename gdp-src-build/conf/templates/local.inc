@@ -21,7 +21,6 @@ PREFERRED_VERSION_erlang = "18.2.3"
 SECURITY_CFLAGS_pn-dbus-c++ = "${SECURITY_NO_PIE_CFLAGS}"
 SECURITY_CFLAGS_pn-python-uinput = "${SECURITY_NO_PIE_CFLAGS}"
 SECURITY_CFLAGS_pn-python-storm = "${SECURITY_NO_PIE_CFLAGS}"
-SECURITY_CFLAGS_pn-iotivity = ""
 
 # Disk Space Monitoring during the build
 #
