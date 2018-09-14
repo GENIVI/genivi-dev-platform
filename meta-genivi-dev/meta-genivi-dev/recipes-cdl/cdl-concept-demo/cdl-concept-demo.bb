@@ -7,7 +7,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 SRC_URI = "git://github.com/GENIVI/car-data-logger.git;protocol=https"
 SRCREV  = "c63adbb4809319a53a934dbf9f344f75c738d570"
 
-DEPENDS = "qtbase qtdeclarative vsomeip common-api-c++-someip dbus dlt-daemon common-api-c++-dbus common-api-c++"
+DEPENDS = "common-api-c++ common-api-c++-dbus common-api-c++-someip dbus dlt-daemon qtbase qtdeclarative vsomeip"
+RDEPENDS_${PN} = "bash"
 
 S = "${WORKDIR}/git"
 
