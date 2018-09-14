@@ -1,6 +1,10 @@
 # Include generic GDP local configuration
 include local.inc
 
+# Make sure Linux kernel image and devicetree are
+# installed to rootfs (/boot)
+IMAGE_INSTALL_append = " kernel-image kernel-devicetree"
+
 # Add R-Car Gfx and MMP packages to install
 IMAGE_INSTALL_append_rcar-gen3 = "\
     packagegroup-gstreamer1.0-plugins \
