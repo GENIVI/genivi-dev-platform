@@ -1,0 +1,6 @@
+# short-description: Single partition rootfs with UUID and no bootloader
+# long-description: Creates a partitioned image with a single partition in
+# use and does not contain a bootloader.
+
+part / --source rootfs --use-uuid --fstype=ext4 --label root --align 4096
+
