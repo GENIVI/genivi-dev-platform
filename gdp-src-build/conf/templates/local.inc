@@ -47,3 +47,8 @@ CONF_VERSION = "1"
 INHERIT += "testexport"
 TEST_EXPORT_ONLY = "1"
 TEST_SUITES = "ping ssh scp date dmesg connman systemd gdp devpackages"
+
+# This will be assigned to IMAGE_FSTYPE later. This default value is used if
+# the type is not defined in machine-specific templates. (At least one value
+# for IMAGE_FSTYPE is required or the build will fail)
+CUSTOM_IMAGE_FSTYPE ??= "tar.gz"

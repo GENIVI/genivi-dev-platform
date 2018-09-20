@@ -1,6 +1,9 @@
 # Include generic GDP local configuration
 include local.inc
 
+WKS_FILE ?= "singlepart-noloader.wks"
+CUSTOM_IMAGE_FSTYPE ?= "wic.gz"
+
 # Make sure Linux kernel image and devicetree are
 # installed to rootfs (/boot)
 IMAGE_INSTALL_append = " kernel-image kernel-devicetree"

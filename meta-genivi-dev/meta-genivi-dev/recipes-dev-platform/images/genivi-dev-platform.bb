@@ -53,3 +53,6 @@ IMAGE_INSTALL_append_rpi = " \
 IMAGE_INSTALL_append_qemuall = " \
     connman-conf \
 "
+
+# CUSTOM_IMAGE_FSTYPE should be defined in each machine-specific local.conf template
+IMAGE_FSTYPES = "${CUSTOM_IMAGE_FSTYPE}"
