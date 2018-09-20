@@ -1,0 +1,102 @@
+From 5c5427d6e9ed093053e8493597727d1174493e65 Mon Sep 17 00:00:00 2001
+From: Mirza Krak <mirza.krak@northern.tech>
+Date: Thu, 16 Aug 2018 12:56:22 +0200
+Subject: [PATCH 1/1] arm: rpi: vc4-kms overlay applied manually
+
+Signed-off-by: Mirza Krak <mirza.krak@northern.tech>
+---
+ arch/arm/boot/dts/bcm270x.dtsi        | 18 +++++++++++-------
+ arch/arm/boot/dts/bcm2710-rpi-3-b.dts |  5 ++++-
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm270x.dtsi b/arch/arm/boot/dts/bcm270x.dtsi
+index 05828277ff89..3241e8cf6ad0 100644
+--- a/arch/arm/boot/dts/bcm270x.dtsi
++++ b/arch/arm/boot/dts/bcm270x.dtsi
+@@ -47,12 +47,13 @@
+ 
+ 		pixelvalve0: pixelvalve@7e206000 {
+ 			/* Add alias */
+-			status = "disabled";
++			interrupts = <2 13>; /* pwa0 */
++			status = "okay";
+ 		};
+ 
+ 		pixelvalve1: pixelvalve@7e207000 {
+-			/* Add alias */
+-			status = "disabled";
++			interrupts = <2 14>; /* pwa1 */
++			status = "okay";
+ 		};
+ 
+ 		dpi: dpi@7e208000 {
+@@ -81,7 +82,8 @@
+ 
+ 		hvs: hvs@7e400000 {
+ 			/* Add alias */
+-			status = "disabled";
++			interrupts = <2 1>;
++			status = "okay";
+ 		};
+ 
+ 		firmwarekms: firmwarekms@7e600000 {
+@@ -107,7 +109,8 @@
+ 
+ 		pixelvalve2: pixelvalve@7e807000 {
+ 			/* Add alias */
+-			status = "disabled";
++			interrupts = <2 10>; /* pixelvalve */
++			status = "okay";
+ 		};
+ 
+ 		hdmi@7e902000 { /* hdmi */
+@@ -125,7 +128,8 @@
+ 		v3d@7ec00000 { /* vd3 */
+ 			compatible = "brcm,vc4-v3d";
+ 			power-domains = <&power RPI_POWER_DOMAIN_V3D>;
+-			status = "disabled";
++			interrupts = <1 10>;
++			status = "okay";
+ 		};
+ 
+ 		axiperf: axiperf {
+@@ -178,5 +182,5 @@
+ };
+ 
+ &vc4 {
+-	status = "disabled";
++	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/bcm2710-rpi-3-b.dts b/arch/arm/boot/dts/bcm2710-rpi-3-b.dts
+index 37aed344cbbf..c33a5cc2f2ea 100644
+--- a/arch/arm/boot/dts/bcm2710-rpi-3-b.dts
++++ b/arch/arm/boot/dts/bcm2710-rpi-3-b.dts
+@@ -9,7 +9,7 @@
+ 	model = "Raspberry Pi 3 Model B";
+ 
+ 	chosen {
+-		bootargs = "8250.nr_uarts=1";
++		bootargs = "8250.nr_uarts=1 cma=256M";
+ 	};
+ 
+ 	aliases {
+@@ -148,6 +148,7 @@
+ };
+ 
+ &i2c2 {
++	status = "okay";
+ 	clock-frequency = <100000>;
+ };
+ 
+@@ -172,6 +173,8 @@
+ 
+ &hdmi {
+ 	hpd-gpios = <&expgpio 4 GPIO_ACTIVE_LOW>;
++	interrupts = <2 8>, <2 9>;
++	status = "okay";
+ };
+ 
+ &audio {
+-- 
+2.18.0
+

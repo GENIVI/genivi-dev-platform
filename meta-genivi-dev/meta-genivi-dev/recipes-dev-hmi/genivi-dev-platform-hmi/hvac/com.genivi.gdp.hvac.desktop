@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Climate Controls
 Type=Application
-Icon=file://opt/com.genivi.gdp.hvac/share/icons/com.genivi.gdp.hvac.svg
-Unit=com.genivi.gdp.hvac
-Exec=bwrap --ro-bind / / --dev-bind /run /run --dev-bind /dev/dri/ /dev/dri --unshare-user /opt/com.genivi.gdp.hvac/bin/HVAC_rvi_vtc1010
+Icon=file://@APPLICATION_ICON_TARGET_PATH@
+Unit=@APPLICATION_UNIT@
+Exec=bwrap --ro-bind / / --dev-bind /run /run --dev-bind /dev/dri/ /dev/dri --unshare-user @APPLICATION_BIN_TARGET_PATH@

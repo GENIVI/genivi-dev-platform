@@ -13,5 +13,13 @@ S = "${WORKDIR}/git"
 
 inherit qmake5
 
-FILES_${PN} += "/opt/cdl/*"
-INSANE_SKIP_${PN} = "dev-so"
+do_install_append() {
+    install -d ${D}${datadir}/cdl
+    mv ${D}/opt/cdl ${D}${datadir}/cdl
+
+    # Clean-up
+    rm -rf ${D}/opt
+}
+
+FILES_${PN} += "${datadir}/cdl"
+INSANE_SKIP_${PN} = "dev-so libdir"
