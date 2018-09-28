@@ -7,26 +7,34 @@
 # the same commit anyway.
 #
 # Author: Zeeshan Ali <zeeshan.ali@pelagicore.com>
+#         Gunnar Andersson <gandersson@genivi.org>
 
-SHORTLOG="$*"
-if test -z "${SHORTLOG}"; then
-    echo "Usage: ${0} <commit summary>"
-    exit 1
+TMPFILE=/tmp/commit.$$
+COMMIT_SUMMARY="$*"
+
+# The commit log almost always needs to be edited, so let's make also the 
+# summary line optional. If not given, add a clear indication that it needs to
+# be written in the editor
+if test -z "${COMMIT_SUMMARY}"; then
+    COMMIT_SUMMARY="*** PUT SUMMARY HERE ***"
 fi
 
+# If multiple submodules are changed, we take the first one so that each one is
+# handled separately.
 CHANGED_MOD=$(git submodule status | grep '^+' | tr -d + | head -n 1)
 if test -z "${CHANGED_MOD}"; then
     echo "No module updated."
     exit 2
 fi
 
-SUBMODULE=$(echo ${CHANGED_MOD} | cut -d' ' -f2)
-NEWCOMMIT=$(echo ${CHANGED_MOD} | cut -d' ' -f1)
-OLDCOMMIT=$(git diff ${SUBMODULE}|grep "^-Subproject"|cut -d' ' -f3)
+SUBMODULE=$(echo "${CHANGED_MOD}" | cut -d' ' -f2)
+NEWCOMMIT=$(echo "${CHANGED_MOD}" | cut -d' ' -f1)
+OLDCOMMIT=$(git diff "${SUBMODULE}" | grep "^-Subproject" | cut -d' ' -f3)
 
-MSG="${SUBMODULE}: ${SHORTLOG}
+cat <<EOT >"${TMPFILE}"
+${SUBMODULE}: ${COMMIT_SUMMARY}
 
 $(git -C ${SUBMODULE} log --no-merges --format="%h %s" ${OLDCOMMIT}..${NEWCOMMIT})
-"
+EOT
 
-git commit -s -e -m "${MSG}" "${SUBMODULE}"
+git commit -s -e --file "${TMPFILE}" "${SUBMODULE}"
