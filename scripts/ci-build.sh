@@ -268,8 +268,17 @@ branch="master"
 # cd workingdir
 MACHINE="$TARGET" # For most boards - exceptions handled below
 
+# Is this needed if set uniquely in each of our local.conf files?
 if [[ "$TARGET" == "r-car-m3-starter-kit" ]]; then
   MACHINE="m3ulcb"
+fi
+
+if [[ "$TARGET" == "r-car-h3-starter-kit" ]]; then
+  MACHINE="h3ulcb"
+fi
+
+if [[ "$TARGET" == "r-car-m3-salvator-x" || "$TARGET" == "r-car-h3-salvator-x" ]]; then
+  MACHINE="salvator-x"
 fi
 
 ensure_var_is_defined MACHINE
@@ -464,12 +473,14 @@ MIRRORS_append = \"\\
 fi
 
 # Deal with special setup, copy binary drivers etc.
-if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
-  echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
-  cd "$BASEDIR/meta-renesas"
-  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh $SGX_GEN_3_DRIVERS
-  cd "$BASEDIR"
-fi
+case "$TARGET" in
+  r-car-*)
+    echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
+    cd "$BASEDIR/meta-renesas"
+    meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh "$SGX_GEN_3_DRIVERS"
+    cd "$BASEDIR"
+    ;;
+esac
 
 cd "$BASEDIR/gdp-src-build"
 if [[ "$BUILD_SDK" != "true" ]]; then
