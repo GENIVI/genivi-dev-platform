@@ -264,13 +264,6 @@ stop_if_failure
 git_gdp="https://github.com/GENIVI/genivi-dev-platform"
 branch="master"
 
-# Special case: Use porter script to copy graphics drivers for koelsch
-if [[ "$TARGET" == "koelsch" ]]; then
-  GFX_MACHINE=porter
-else
-  GFX_MACHINE=$TARGET
-fi
-
 # cd workingdir
 MACHINE="$TARGET" # For most boards - exceptions handled below
 
@@ -474,15 +467,6 @@ if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit"
   echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
   cd "$BASEDIR/meta-renesas"
   meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh $SGX_GEN_3_DRIVERS
-  cd "$BASEDIR"
-fi
-
-# FIXME: this should be phased out eventually since gen2 is unsupported
-if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
-  echo "Copying binary graphics drivers for $GFX_MACHINE"
-  cd "$BASEDIR/meta-renesas/meta-rcar-gen2"
-  ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
-  ./copy_mm_software_lcb.sh /var/go/sgx_bin/
   cd "$BASEDIR"
 fi
 
