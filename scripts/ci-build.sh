@@ -261,28 +261,6 @@ define_with_default KEEP_TMP false
 
 stop_if_failure
 
-git_gdp="https://github.com/GENIVI/genivi-dev-platform"
-branch="master"
-
-# cd workingdir
-MACHINE="$TARGET" # For most boards - exceptions handled below
-
-# Is this needed if set uniquely in each of our local.conf files?
-if [[ "$TARGET" == "r-car-m3-starter-kit" ]]; then
-  MACHINE="m3ulcb"
-fi
-
-if [[ "$TARGET" == "r-car-h3-starter-kit" ]]; then
-  MACHINE="h3ulcb"
-fi
-
-if [[ "$TARGET" == "r-car-m3-salvator-x" || "$TARGET" == "r-car-h3-salvator-x" ]]; then
-  MACHINE="salvator-x"
-fi
-
-ensure_var_is_defined MACHINE
-export MACHINE
-
 # OVERRIDING VARIABLES
 if [[ "$REUSE_STANDARD_DL_DIR" == "true" ]]; then
   DL_DIR="$AGENT_STANDARD_DL_DIR"
