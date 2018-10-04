@@ -1,0 +1,32 @@
+From dc329c9a115299bd507f3a495572e9a6704b5358 Mon Sep 17 00:00:00 2001
+From: Mirza Krak <mirza.krak@northern.tech>
+Date: Thu, 4 Oct 2018 14:32:37 +0000
+Subject: [PATCH 1/1] a2dp_source_player_adapter: fix API reference to
+ GetDataOnSessionKey
+
+Argument 4 should be of type *DeviceHandle and not *uint32_t
+
+Signed-off-by: Mirza Krak <mirza.krak@northern.tech>
+
+Upstream: Pending
+
+---
+ src/components/media_manager/src/audio/a2dp_source_player_adapter.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/components/media_manager/src/audio/a2dp_source_player_adapter.cc b/src/components/media_manager/src/audio/a2dp_source_player_adapter.cc
+index 5e9d6ab0b..a61982dc4 100644
+--- a/src/components/media_manager/src/audio/a2dp_source_player_adapter.cc
++++ b/src/components/media_manager/src/audio/a2dp_source_player_adapter.cc
+@@ -91,7 +91,7 @@ void A2DPSourcePlayerAdapter::StartActivity(int32_t application_key) {
+   if (application_key != current_application_) {
+     current_application_ = application_key;
+ 
+-    uint32_t device_id = 0;
++    connection_handler::DeviceHandle device_id = 0;
+     session_observer_.GetDataOnSessionKey(application_key, 0, NULL, &device_id);
+     std::string mac_adddress;
+     session_observer_.GetDataOnDeviceID(device_id, NULL, NULL, &mac_adddress);
+-- 
+2.11.0
+
