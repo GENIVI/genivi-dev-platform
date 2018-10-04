@@ -18,7 +18,6 @@ RDEPENDS_${PN} += "\
     openssh-sftp-server \
     connman-client \
     cannelloni \
-    minifi-cpp \
     udisks2 \
     udisks2-disk-manager \
     "
