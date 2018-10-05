@@ -4,7 +4,7 @@
 
 BBLAYERS += " \
   ${TOPDIR}/../meta-renesas/meta-rcar-gen3 \
-  ${TOPDIR}/../meta-genivi-dev/meta-renesas \
+  ${TOPDIR}/../meta-genivi-dev/meta-renesas/meta-rcar-gen3 \
   ${TOPDIR}/../meta-linaro/meta-optee \
   ${TOPDIR}/../meta-ivi-renesas \
   "
