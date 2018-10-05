@@ -36,6 +36,7 @@ RDEPENDS_${PN} = " \
     python-pygobject \
     python-dbus \
     python-storm \
+    python-pysqlite \
     squashfs-tools \
     rpm \
     "
