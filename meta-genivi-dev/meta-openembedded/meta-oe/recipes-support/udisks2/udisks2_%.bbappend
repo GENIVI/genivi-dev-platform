@@ -26,6 +26,8 @@ SYSTEMD_PACKAGES += "${PN}-disk-manager"
 SYSTEMD_SERVICE_${PN}-disk-manager = "udisks2-disk-manager.service"
 SYSTEMD_AUTO_ENABLE_${PN}-disk-manager = "enable"
 
+RPROVIDES_${PN} += "${PN}-disk-manager"
+
 FILES_${PN} += "${sysconfdir}/dbus-1/system.d/org.freedesktop.UDisks2.conf"
 
 FILES_${PN}-disk-manager = "\
