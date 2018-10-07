@@ -236,6 +236,7 @@ stop_if_failure
 # If no value given, use this default:
 define_with_default BUILD_SDK false
 define_with_default COPY_LICENSES false
+define_with_default IMAGE_NAME genivi-dev-platform
 define_with_default LAYER_ARCHIVE false
 define_with_default CREATE_RELEASE_DIR false
 define_with_default MIRROR "https://docs.projects.genivi.org/releases/yocto_mirror"
@@ -488,9 +489,9 @@ fi
 
 cd "$BASEDIR/gdp-src-build"
 if [[ "$BUILD_SDK" != "true" ]]; then
-  bitbake genivi-dev-platform
+  bitbake $IMAGE_NAME
   if [[ "$EXPORT_TESTS" == "true" ]]; then
-    bitbake -c testexport genivi-dev-platform
+    bitbake -c testexport $IMAGE_NAME
   fi
 fi
 
@@ -513,13 +514,13 @@ set +e
 rm -rf staging
 shopt -s nullglob
 stage_artifact mv gdp-src-build/tmp/deploy/licenses
-stage_artifact mv gdp-src-build/tmp/deploy/licenses/genivi-dev-platform*/license.manifest
+stage_artifact mv gdp-src-build/tmp/deploy/licenses/$IMAGE_NAME*/license.manifest
 stage_artifact mv gdp-src-build/tmp/deploy/sdk*
 stage_artifact cp gdp-src-build/tmp/deploy/images/*
 stage_artifact mv gdp-src-build/tmp/deploy/sources
 stage_artifact cp gdp-src-build/conf/*.conf
 stage_artifact mv logs.tar.gz
-stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/genivi-dev-platform/files-in-image.txt
+stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/$IMAGE_NAME/files-in-image.txt
 stage_artifact mv gdp-src-build/buildhistory
 stage_artifact mv gdp-src-build/tmp/buildstats
 
