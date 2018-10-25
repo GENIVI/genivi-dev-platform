@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=FM Radio
 Type=Application
-Icon=file://opt/com.genivi.gdp.fmradio/share/icons/com.genivi.gdp.fmradio.svg
-Unit=com.genivi.gdp.fmradio
-Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 /opt/com.genivi.gdp.fmradio/bin/fm-radio-app -platform wayland
+Icon=file://@APPLICATION_ICON_TARGET_PATH@
+Unit=@APPLICATION_UNIT@
+Exec=bwrap --ro-bind / / --dev-bind /dev/dri/ /dev/dri --unshare-user --uid 128 --gid 512 @APPLICATION_BIN_TARGET_PATH@

@@ -236,11 +236,12 @@ stop_if_failure
 # If no value given, use this default:
 define_with_default BUILD_SDK false
 define_with_default COPY_LICENSES false
+define_with_default IMAGE_NAME genivi-dev-platform
 define_with_default LAYER_ARCHIVE false
 define_with_default CREATE_RELEASE_DIR false
 define_with_default MIRROR "https://docs.projects.genivi.org/releases/yocto_mirror"
 define_with_default PREMIRROR ""  # By default none (but we have the shared DL_DIR)
-define_with_default RM_WORK false
+define_with_default RM_WORK true
 define_with_default REUSE_STANDARD_DL_DIR true
 define_with_default REUSE_STANDARD_SSTATE_DIR true
 define_with_default SGX_DRIVERS $AGENT_STANDARD_SGX_LOCATION
@@ -260,26 +261,6 @@ define_with_default KEEP_SSTATE false
 define_with_default KEEP_TMP false
 
 stop_if_failure
-
-git_gdp="https://github.com/GENIVI/genivi-dev-platform"
-branch="master"
-
-# Special case: Use porter script to copy graphics drivers for koelsch
-if [[ "$TARGET" == "koelsch" ]]; then
-  GFX_MACHINE=porter
-else
-  GFX_MACHINE=$TARGET
-fi
-
-# cd workingdir
-MACHINE="$TARGET" # For most boards - exceptions handled below
-
-if [[ "$TARGET" == "r-car-m3-starter-kit" ]]; then
-  MACHINE="m3ulcb"
-fi
-
-ensure_var_is_defined MACHINE
-export MACHINE
 
 # OVERRIDING VARIABLES
 if [[ "$REUSE_STANDARD_DL_DIR" == "true" ]]; then
@@ -470,27 +451,20 @@ MIRRORS_append = \"\\
 fi
 
 # Deal with special setup, copy binary drivers etc.
-if [[ "$TARGET" == "r-car-m3-starter-kit" || "$TARGET" == "r-car-h3-starter-kit" ]];  then
-  echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
-  cd "$BASEDIR/meta-renesas"
-  meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh $SGX_GEN_3_DRIVERS
-  cd "$BASEDIR"
-fi
-
-# FIXME: this should be phased out eventually since gen2 is unsupported
-if [[ "$GFX_MACHINE" == "porter" || "$GFX_MACHINE" == silk ]]; then
-  echo "Copying binary graphics drivers for $GFX_MACHINE"
-  cd "$BASEDIR/meta-renesas/meta-rcar-gen2"
-  ./copy_gfx_software_$GFX_MACHINE.sh /var/go/sgx_bin
-  ./copy_mm_software_lcb.sh /var/go/sgx_bin/
-  cd "$BASEDIR"
-fi
+case "$TARGET" in
+  r-car-*)
+    echo "Copying binary graphics and mmp drivers for $TARGET from: $SGX_GEN_3_DRIVERS"
+    cd "$BASEDIR/meta-renesas"
+    meta-rcar-gen3/docs/sample/copyscript/copy_evaproprietary_softwares.sh "$SGX_GEN_3_DRIVERS"
+    cd "$BASEDIR"
+    ;;
+esac
 
 cd "$BASEDIR/gdp-src-build"
 if [[ "$BUILD_SDK" != "true" ]]; then
-  bitbake genivi-dev-platform
+  bitbake $IMAGE_NAME
   if [[ "$EXPORT_TESTS" == "true" ]]; then
-    bitbake -c testexport genivi-dev-platform
+    bitbake -c testexport $IMAGE_NAME
   fi
 fi
 
@@ -513,13 +487,13 @@ set +e
 rm -rf staging
 shopt -s nullglob
 stage_artifact mv gdp-src-build/tmp/deploy/licenses
-stage_artifact mv gdp-src-build/tmp/deploy/licenses/genivi-dev-platform*/license.manifest
+stage_artifact mv gdp-src-build/tmp/deploy/licenses/$IMAGE_NAME*/license.manifest
 stage_artifact mv gdp-src-build/tmp/deploy/sdk*
 stage_artifact cp gdp-src-build/tmp/deploy/images/*
 stage_artifact mv gdp-src-build/tmp/deploy/sources
 stage_artifact cp gdp-src-build/conf/*.conf
 stage_artifact mv logs.tar.gz
-stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/genivi-dev-platform/files-in-image.txt
+stage_artifact cp gdp-src-build/buildhistory/images/*/glibc/$IMAGE_NAME/files-in-image.txt
 stage_artifact mv gdp-src-build/buildhistory
 stage_artifact mv gdp-src-build/tmp/buildstats
 
