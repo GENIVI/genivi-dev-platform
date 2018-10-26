@@ -1,7 +1,7 @@
 SUMMARY = "SocketCAN over Ethernet tunnel using UDP to transfer CAN frames between two machines"
 SECTION = "console/network"
 LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://gpl-2.0.txt;md5=B234EE4D69F5FCE4486A80FDAF4A4263"
+LIC_FILES_CHKSUM = "file://gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 PR = "r0"
 
