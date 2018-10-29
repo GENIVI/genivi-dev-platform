@@ -47,8 +47,8 @@ To initiate the build environment:
     source init.sh $target
 
 The current supported targets are qemux86-64, raspberrypi2, raspberrypi3,
-minnowboard, r-car-m3-starter-kit and r-car-h3-starter-kit.
-Currently this requires the use of the bash shell.
+minnowboard, r-car-m3-starter-kit, r-car-h3-starter-kit, r-car-m3-salvator-x
+and r-car-h3-salvator-x. Currently this requires the use of the bash shell.
 
 The `init.sh` script handles the the `$target` specific bitbake configuration.
 The `$target` templates can be found in gdp-src-build/templates, as well as common
