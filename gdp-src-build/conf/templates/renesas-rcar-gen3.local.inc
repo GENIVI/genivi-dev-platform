@@ -154,5 +154,8 @@ DISTRO_FEATURES_append = " avb"
 # Configuration for ivi-shell and ivi-extension
 #DISTRO_FEATURES_append = " ivi-shell"
 
+# Configuration for USB 3.0
+#MACHINE_FEATURES_append = " usb3"
+
 # Add Capacity Aware migration Strategy (CAS)
 MACHINE_FEATURES_append = " cas"
