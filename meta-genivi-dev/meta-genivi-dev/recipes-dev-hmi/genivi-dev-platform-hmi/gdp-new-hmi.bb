@@ -9,7 +9,7 @@ SRC_URI = "\
     file://gdp-new-hmi.service \
 "
 
-SRCREV = "95aadfb33d95e14030585c3fa2e1afb0e7b743c8"
+SRCREV = "86f5a365a0b1c4cd96a6344db7137a0440c11f7b"
 
 S = "${WORKDIR}/git"
 
