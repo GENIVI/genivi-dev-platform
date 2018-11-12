@@ -3,7 +3,7 @@
 
 DESCRIPTION = "GENIVI Development Platform core image (minimal)"
 
-PV = "13.0"
+PV = "14.0"
 
 IMAGE_FEATURES_append = " ssh-server-openssh tools-debug"
 
