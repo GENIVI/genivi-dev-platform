@@ -272,10 +272,10 @@ if [[ "$REUSE_STANDARD_SSTATE_DIR" == "true" ]]; then
 fi
 
 if [[ "$STANDARD_RELEASE_BUILD" == "true" ]]; then
-  SOURCE_ARCHIVE=true  # NOTE: overriding env settings
-  COPY_LICENSES=true
-  LAYER_ARCHIVE=true
-  CREATE_RELEASE_DIR=true
+  define_with_default SOURCE_ARCHIVE true
+  define_with_default COPY_LICENSES true
+  define_with_default LAYER_ARCHIVE true
+  define_with_default CREATE_RELEASE_DIR true
 fi
 
 echo Configuration:
