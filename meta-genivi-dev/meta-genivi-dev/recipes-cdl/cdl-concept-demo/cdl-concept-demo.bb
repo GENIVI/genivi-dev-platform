@@ -24,3 +24,4 @@ do_install_append() {
 
 FILES_${PN} += "${datadir}/cdl"
 INSANE_SKIP_${PN} = "dev-so libdir"
+INSANE_SKIP_${PN}-dbg = "libdir"
