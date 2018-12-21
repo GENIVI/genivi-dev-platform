@@ -18,7 +18,6 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-rvi \
     packagegroup-gdp-vsi \
     packagegroup-gdp-sdl \
-    packagegroup-gdp-cdl \
 "
 
 # CES Demo
