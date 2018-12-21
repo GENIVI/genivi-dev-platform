@@ -15,7 +15,7 @@ SRC_URI = "\
     https://${REPO_URL}/releases/download/1.0/video.tar;unpack=0 \
 "
 
-SRCREV = "634262f864d8a0b3f33d5252438bf7a4d68b4685"
+SRCREV = "558f0970376df649d58d2a16048d7fecf88663be"
 
 SRC_URI[md5sum] = "7d9ad10d60a6cd84947f2acee685cf3d"
 SRC_URI[sha256sum] = "0d394a854355215dee5a83f52e4a24d8fea84a2ea0ee8129d4f1505e4f9e2426"
