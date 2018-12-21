@@ -20,3 +20,6 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-sdl \
     packagegroup-gdp-cdl \
 "
+
+# CES Demo
+IMAGE_INSTALL_append = " franca-ara franca-ara-capi-server"
