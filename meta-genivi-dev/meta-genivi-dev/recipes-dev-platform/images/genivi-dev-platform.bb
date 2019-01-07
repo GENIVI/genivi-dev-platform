@@ -21,4 +21,4 @@ IMAGE_INSTALL_append = " \
 "
 
 # CES Demo
-IMAGE_INSTALL_append = " franca-ara franca-ara-capi-server"
+IMAGE_INSTALL_append = " franca-ara franca-ara-beta franca-ara-capi-server"
