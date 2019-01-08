@@ -27,7 +27,7 @@ APPLICATION_UNIT = "com.genivi.gdp.franca.ara.beta"
 
 require recipes-dev-hmi/genivi-dev-platform-hmi/apps.inc
 
-PACKAGES += "${PN}-capi-server"
+#PACKAGES += "${PN}-capi-server"
 
 do_compile_append() {
     cd ${S}/tests/testprograms/capi_server
@@ -59,18 +59,20 @@ do_install() {
 do_install_append() {
     install -d ${D}${prefix}/local/bin/
     install -m 755 ${S}/deploy/usr/local/bin/run_franca_ara_beta.sh ${D}${prefix}/local/bin/
-    install -m 755 ${S}/tests/testprograms/capi_server/capi_server ${D}${prefix}/local/bin/
+#    install -m 755 ${S}/tests/testprograms/capi_server/capi_server ${D}${prefix}/local/bin/
 
+# Don't install the same files as original franca-ara recipe because they will conflict
     install -d ${D}${prefix}/local/share/franca-ara/conf/
-    install -m 644 ${S}/conf/ivi/vsomeip_ecu1.json ${D}${prefix}/local/share/franca-ara/conf/
+#    install -m 644 ${S}/conf/ivi/vsomeip_ecu1.json ${D}${prefix}/local/share/franca-ara/conf/
 
+# These are uniquely added in this recipe
     install -d ${D}${prefix}/local/share/franca-ara/setup/
     install -m 755 ${S}/deploy/usr/local/share/franca-ara/setup/set_fixed_ip.sh ${D}${prefix}/local/share/franca-ara/setup/
     install -m 755 ${S}/deploy/usr/local/share/franca-ara/setup/setup_multicast_route.sh ${D}${prefix}/local/share/franca-ara/setup/
 
+# ... but these are duplicate
     install -d ${D}${prefix}/local/share/franca-ara/images
-
-    tar xvf ${WORKDIR}/video.tar -C ${D}${prefix}/local/share/franca-ara/images/
+#    tar xvf ${WORKDIR}/video.tar -C ${D}${prefix}/local/share/franca-ara/images/
 }
 
 FILES_${PN} += "\
@@ -80,7 +82,8 @@ FILES_${PN} += "\
     ${prefix}/local/share/franca-ara/setup/ \
 "
 
-FILES_${PN}-capi-server = "\
-    ${prefix}/local/bin/capi_server \
-"
-INSANE_SKIP_${PN}-capi-server = "ldflags"
+#FILES_${PN}-capi-server = "\
+#    ${prefix}/local/bin/capi_server \
+#"
+
+#INSANE_SKIP_${PN}-capi-server = "ldflags"
