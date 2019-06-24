@@ -17,5 +17,4 @@ RDEPENDS_${PN} += "\
     rvi \
     genivi-swm \
     rvi-default-config \
-    aktualizr \
     "
