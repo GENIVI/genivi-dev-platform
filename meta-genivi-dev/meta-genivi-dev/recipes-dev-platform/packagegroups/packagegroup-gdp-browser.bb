@@ -15,5 +15,5 @@ ALLOW_EMPTY_${PN} = "1"
 
 RDEPENDS_${PN} += "\
     genivi-browser-test-hmi-precompiled \
-    chromium-lge \
+    chromium-ozone-stable \
     "
