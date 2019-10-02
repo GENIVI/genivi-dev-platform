@@ -10,6 +10,7 @@ Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 Environment=SLM_PACKAGE_MANAGER=rpm
 Environment=SLM_SWM_SIMULATION=false
 ExecStart=/usr/bin/python /usr/lib/genivi-swm/package_manager/package_manager.py fg
+User=swm
 
 [Install]
 WantedBy=multi-user.target

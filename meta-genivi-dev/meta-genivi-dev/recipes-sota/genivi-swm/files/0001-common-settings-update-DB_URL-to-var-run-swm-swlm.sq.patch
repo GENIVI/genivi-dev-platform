@@ -1,0 +1,41 @@
+From 69ee3d50bd26ff6708327558d0e7933136631c6c Mon Sep 17 00:00:00 2001
+From: Mirza Krak <mirza.krak@endian.se>
+Date: Thu, 3 May 2018 12:42:52 +0200
+Subject: [PATCH 1/1] common: settings: update DB_URL to
+ /var/run/swm/swlm.sqlite
+
+/var/run is root owned, and if we run the software_loading_module as a
+non-root user we will have issues with maintaining permissions, even if
+we can create an initial file with the correct permissions. If the
+process attempts to re-create the database it will need to remove the
+current file and fail when trying to create a new file in a root owned
+directory
+
+By moving the swl.sqlite file to /var/run/swm, we can control the
+permission of the "swm" directory allowing processes running under the
+same user/owner as the directory to modify its content to the fullest.
+
+Signed-off-by: Mirza Krak <mirza.krak@endian.se>
+
+Upstream: pending
+
+---
+ common/settings.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/common/settings.py b/common/settings.py
+index 8cf44efe6b85..19af8b30e9ec 100755
+--- a/common/settings.py
++++ b/common/settings.py
+@@ -29,7 +29,7 @@ HMI_ENABLED = str2bool(os.getenv('SLM_HMI_ENABLED', 'false'))
+
+ # Database Settings
+ # SWM operations and their results are stored in a SQLite database.
+-DB_URL = "sqlite:/var/run/swlm.sqlite"
++DB_URL = "sqlite:/var/run/swm/swlm.sqlite"
+
+ # Logging settings
+ LOGGER = 'swm.default'
+--
+2.16.2
+

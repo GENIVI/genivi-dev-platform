@@ -12,6 +12,8 @@ SRC_URI = "\
     file://software_loading_manager.service \
     file://module_loader_ecu1.service \
     file://org.genivi.SoftwareLoadingManager.conf \
+    file://0001-common-settings-update-DB_URL-to-var-run-swm-swlm.sq.patch \
+    file://swm.conf \
     "
 
 PR = "r0"
@@ -27,6 +29,7 @@ FILES_${PN} = " \
     ${systemd_system_unitdir}/lifecycle_manager.service \
     ${sysconfdir}/dbus-1/system.d/org.genivi.SoftwareLoadingManager.conf \
     ${bindir}/sota-demo-reset.sh \
+    ${libdir}/tmpfiles.d \
     "
 
 DEPENDS = "systemd"
@@ -41,14 +44,21 @@ RDEPENDS_${PN} = " \
     rpm \
     "
 
-inherit systemd
+inherit systemd useradd
 SYSTEMD_SERVICE_${PN} = "package_manager.service partition_manager.service module_loader_ecu1.service software_loading_manager.service lifecycle_manager.service"
 
+USERADD_PACKAGES = "${PN}"
+
+# Database is stored in home folder, home folder is created using systemd
+# tmpfiles.d
+USERADD_PARAM_${PN} = "--system --shell /bin/false \
+                       --home /var/run/swm --user-group swm"
+
 do_install () {
-    install -d ${D}${libdir}/${PN}
+    install -o swm -d ${D}${libdir}/${PN}
 
     # TODO: Probably want to just copy in the needed files
-    cp -r ${S}/* ${D}${libdir}/${PN}
+    cp --no-preserve=ownership -r ${S}/* ${D}${libdir}/${PN}
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 -c "${WORKDIR}/package_manager.service" ${D}${systemd_system_unitdir}
@@ -62,4 +72,7 @@ do_install () {
 
     install -d ${D}${bindir}
     install -m 0755 -c "${S}/nano_samples_rpi/sota-demo-reset.sh" ${D}${bindir}
+
+    install -d ${D}${libdir}/tmpfiles.d
+    install -m 644 ${WORKDIR}/swm.conf ${D}${libdir}/tmpfiles.d/swm.conf
 }
