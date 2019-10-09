@@ -1,12 +1,10 @@
 FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
 
 SRC_URI_append = "\
-    file://weston.service \
     file://GDP_AM_Button.png \
     file://GDP_Background.png \
     file://GDP_Browser_Button.png \
     file://start_am-poc.sh \
-    file://weston.ini \
 "
 
 inherit systemd
@@ -45,9 +43,5 @@ do_install_append() {
     mkdir -p ${D}${systemd_unitdir}/system/multi-user.target.wants/
     ln -sf /lib/systemd/system/weston.service ${D}/${systemd_unitdir}/system/multi-user.target.wants/weston.service
 
-    WESTON_INI_CONFIG=${sysconfdir}/xdg/weston
-    install -d ${D}${WESTON_INI_CONFIG}
-    install -m 0644 ${WORKDIR}/weston.ini ${D}${WESTON_INI_CONFIG}/weston.ini
 }
 
-FILES_${PN} += "${systemd_unitdir}/system/*"
