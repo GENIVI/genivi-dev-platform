@@ -38,10 +38,5 @@ do_install_append() {
     install -m644 ${WORKDIR}/GDP*.png ${D}/usr/share/weston
     mkdir -p ${D}/${bindir}/
     cp ${WORKDIR}/start_am-poc.sh ${D}/${bindir}
-    mkdir -p ${D}${systemd_unitdir}/system/
-    cp ${WORKDIR}/weston.service ${D}${systemd_unitdir}/system/
-    mkdir -p ${D}${systemd_unitdir}/system/multi-user.target.wants/
-    ln -sf /lib/systemd/system/weston.service ${D}/${systemd_unitdir}/system/multi-user.target.wants/weston.service
-
 }
 
