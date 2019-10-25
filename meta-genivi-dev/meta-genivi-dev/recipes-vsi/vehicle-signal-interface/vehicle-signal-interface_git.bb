@@ -6,7 +6,8 @@ HOMEPAGE = "https://github.com/GENIVI/vehicle_signal_interface"
 SECTION = "base"
 
 SRC_URI = "git://github.com/GENIVI/vehicle_signal_interface.git"
-SRCREV = "7e8fc2c3303f71478b403b00a7f8d21486fdb394"
+SRCREV = "d8cc4b1cbc7b0dd2d3c918c5f37e98055208e842"
+
 LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
