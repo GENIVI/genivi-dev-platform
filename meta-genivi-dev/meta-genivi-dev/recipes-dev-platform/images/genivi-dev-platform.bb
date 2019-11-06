@@ -19,4 +19,6 @@ IMAGE_INSTALL_append = " \
     packagegroup-gdp-vsi \
     packagegroup-gdp-sdl \
     packagegroup-gdp-cdl \
-"
+    packagegroup-core-buildessential \
+    packagegroup-gdp-vciving \
+    "

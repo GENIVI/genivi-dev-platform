@@ -46,7 +46,7 @@ CONF_VERSION = "1"
 # Support OE QA test suite export with bitbake -c testexport <image name>
 INHERIT += "testexport"
 TEST_EXPORT_ONLY = "1"
-TEST_SUITES = "ping ssh scp date dmesg connman systemd gdp devpackages"
+TEST_SUITES = "ping ssh scp date dmesg connman systemd gdp"
 
 # This will be assigned to IMAGE_FSTYPE later. This default value is used if
 # the type is not defined in machine-specific templates. (At least one value
