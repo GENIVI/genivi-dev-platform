@@ -1,0 +1,53 @@
+diff --git a/src/navigation/map-viewer/navit_genivi_mapviewer.xsl b/src/navigation/map-viewer/navit_genivi_mapviewer.xsl
+index a83d7fc..baa48f3 100644
+--- a/src/navigation/map-viewer/navit_genivi_mapviewer.xsl
++++ b/src/navigation/map-viewer/navit_genivi_mapviewer.xsl
+@@ -23,11 +23,11 @@
+         <xsl:template match="/config/plugins/plugin[1]" priority="1" >
+ 		<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../map-viewer/configuration-plugin/.libs/libgenivi_mapviewer_configuration.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_mapviewer_configuration.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../map-viewer/session-plugin/.libs/libgenivi_mapviewer_session.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_mapviewer_session.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../map-viewer/mapviewercontrol-plugin/.libs/libgenivi_mapviewer_mapviewercontrol.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_mapviewer_mapviewercontrol.so" ondemand="no"/>
+         </xsl:template>
+         <xsl:template match="/config/plugins/plugin">
+ 		<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
+diff --git a/src/navigation/navigation-core/navit_genivi_navigationcore.xsl b/src/navigation/navigation-core/navit_genivi_navigationcore.xsl
+index a0f2d61..d7dbba7 100644
+--- a/src/navigation/navigation-core/navit_genivi_navigationcore.xsl
++++ b/src/navigation/navigation-core/navit_genivi_navigationcore.xsl
+@@ -23,21 +23,21 @@
+         <xsl:template match="/config/plugins/plugin[1]" priority="1" >
+ 		<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/configuration-plugin/.libs/libgenivi_navigationcore_configuration.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_configuration.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/locationinput-plugin/.libs/libgenivi_navigationcore_locationinput.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_locationinput.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/routing-plugin/.libs/libgenivi_navigationcore_routing.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_routing.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/session-plugin/.libs/libgenivi_navigationcore_session.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_session.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/guidance-plugin/.libs/libgenivi_navigationcore_guidance.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_guidance.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/mapmatchedposition-plugin/.libs/libgenivi_navigationcore_mapmatchedposition.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_navigationcore_mapmatchedposition.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../navigation-core/enhancedposition-plugin/.libs/libgenivi_positioning_enhancedposition.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_positioning_enhancedposition.so" ondemand="no"/>
+ 		<xsl:text>&#x0A;                </xsl:text>
+-		<plugin path="../../poi-cam/.libs/libgenivi_poiservice_cam_navit.so" ondemand="no"/>
++		<plugin path="/usr/lib/navigation/libgenivi_poiservice_cam_navit.so" ondemand="no"/>
+         </xsl:template>
+         <xsl:template match="/config/plugins/plugin">
+ 		<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>

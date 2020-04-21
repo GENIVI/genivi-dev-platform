@@ -1,0 +1,13 @@
+Index: navit/navit/route.c
+===================================================================
+--- navit/navit/route.c	(revision 5827)
++++ navit/navit/route.c	(working copy)
+@@ -4103,7 +4103,7 @@ route_remove_attr(struct route *this_, struct attr *attr)
+ 	dbg(lvl_debug,"enter\n");
+ 	switch (attr->type) {
+ 	case attr_callback:
+-		callback_list_remove(this_->cbl2, attr->u.callback);
++//		callback_list_remove(this_->cbl2, attr->u.callback);
+ 		return 1;
+ 	case attr_vehicle:
+ 		this_->v=NULL;

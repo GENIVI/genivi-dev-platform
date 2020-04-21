@@ -15,5 +15,8 @@ ALLOW_EMPTY_${PN} = "1"
 
 RDEPENDS_${PN} += "\
     automotive-message-broker \
+    navigation-application \
+    navigation-service \
+    navit \
     positioning-enhpos \
     "

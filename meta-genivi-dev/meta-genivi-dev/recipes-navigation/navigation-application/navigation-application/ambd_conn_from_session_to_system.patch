@@ -1,0 +1,27 @@
+diff --git a/src/fuel-stop-advisor/fuel-stop-advisor.cpp b/src/fuel-stop-advisor/fuel-stop-advisor.cpp
+index a687b7b..00fd0f4 100644
+--- a/src/fuel-stop-advisor/fuel-stop-advisor.cpp
++++ b/src/fuel-stop-advisor/fuel-stop-advisor.cpp
+@@ -159,7 +159,7 @@ class FuelStopAdvisor
+ 
+         //connect to amb and create two handlers for fuel and odometer
+ 		amb_dispatcher.attach(NULL);
+-		amb_conn = new DBus::Connection(DBus::Connection::SessionBus());
++		amb_conn = new DBus::Connection(DBus::Connection::SystemBus());
+ 		amb_conn->setup(&amb_dispatcher);
+ 		amb=new AutomotiveMessageBroker(*amb_conn);
+ 
+diff --git a/src/genivilogreplayer/logreplayerconfig.in.json b/src/genivilogreplayer/logreplayerconfig.in.json
+index 3caf943..3a70b66 100644
+--- a/src/genivilogreplayer/logreplayerconfig.in.json
++++ b/src/genivilogreplayer/logreplayerconfig.in.json
+@@ -11,7 +11,7 @@
+ 			"name" : "DBusSink",
+ 			"path" : "plugins/dbus/dbussinkplugin.so",
+ 			"frequency" : "100",
+-			"sessionbus" : 1
++			"system" : 1
+ 		}
+ 
+ 	]
+
